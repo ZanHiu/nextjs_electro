@@ -14,7 +14,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-      <html lang="en" data-locator-target="vscode">
+      <html 
+        lang="en" 
+        data-locator-target="vscode" 
+        data-new-gr-c-s-check-loaded="14.1226.0" 
+        data-gr-ext-installed=""
+      >
         <body className={`${outfit.className} antialiased text-gray-700`} >
           <Toaster />
           <AppContextProvider>
