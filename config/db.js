@@ -14,7 +14,7 @@ async function connectDB() {
     const opts = {
       bufferCommands: false,
     };
-    cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/electro_next`, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/${process.env.MONGODB_NAME}`, opts).then((mongoose) => {
       return mongoose;
     });
   }

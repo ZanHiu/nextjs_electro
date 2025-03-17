@@ -17,8 +17,6 @@ export default function RootLayout({ children }) {
       <html 
         lang="en" 
         data-locator-target="vscode" 
-        data-new-gr-c-s-check-loaded="14.1226.0" 
-        data-gr-ext-installed=""
       >
         <body className={`${outfit.className} antialiased text-gray-700`} >
           <Toaster />
