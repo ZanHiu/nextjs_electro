@@ -12,8 +12,6 @@ async function connectDB() {
   }
   if (!cached.promise) {
     const opts = {
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
       bufferCommands: false,
     };
     cached.promise = mongoose.connect(`${process.env.MONGODB_URI}/electro_next`, opts).then((mongoose) => {
