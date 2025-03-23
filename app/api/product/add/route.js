@@ -15,7 +15,6 @@ cloudinary.config({
 export async function POST(request) {
   try {
     const { userId } = getAuth(request);
-
     const isSeller = await authSeller(userId);
 
     if (!isSeller) {
