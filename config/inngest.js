@@ -1,9 +1,19 @@
 import { Inngest } from "inngest";
 import connectDB from "@/lib/db";
-import User from "@/models/user";
+import mongoose from "mongoose";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "electro-next" });
+
+const userSchema = new mongoose.Schema({
+  _id: { type: String, required: true},
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  imageUrl: { type: String, required: true },
+  cartItems: { type: Object, default: {} },
+}, { minimize: false });
+
+const User = mongoose.models.user || mongoose.model("user", userSchema);
 
 // Inngest Function to save user data from clerk to database
 export const syncUserCreation = inngest.createFunction(
