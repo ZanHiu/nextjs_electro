@@ -1,6 +1,6 @@
 import { Inngest } from "inngest";
-import connectDB from "./db";
-import User from "@/models/User";
+import connectDB from "@/lib/db";
+import User from "@/models/user";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "electro-next" });
