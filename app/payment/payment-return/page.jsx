@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useAppContext } from '@/context/AppContext';
 import Loading from '@/components/Loading';
 import { assets } from '@/assets/assets';
@@ -9,7 +8,6 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 
 const PaymentReturn = () => {
-  const searchParams = useSearchParams();
   const { router, setCartItems } = useAppContext();
   const [status, setStatus] = useState('processing');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -17,12 +15,14 @@ const PaymentReturn = () => {
   useEffect(() => {
     const verifyPayment = async () => {
       try {
-        const vnp_ResponseCode = searchParams.get('vnp_ResponseCode');
-        const vnp_OrderInfo = searchParams.get('vnp_OrderInfo');
-        const vnp_TransactionNo = searchParams.get('vnp_TransactionNo');
-        const vnp_PayDate = searchParams.get('vnp_PayDate');
-        const vnp_BankCode = searchParams.get('vnp_BankCode');
-        const vnp_Amount = searchParams.get('vnp_Amount');
+        // Lấy params từ URL trực tiếp
+        const params = new URLSearchParams(window.location.search);
+        const vnp_ResponseCode = params.get('vnp_ResponseCode');
+        const vnp_OrderInfo = params.get('vnp_OrderInfo');
+        const vnp_TransactionNo = params.get('vnp_TransactionNo');
+        const vnp_PayDate = params.get('vnp_PayDate');
+        const vnp_BankCode = params.get('vnp_BankCode');
+        const vnp_Amount = params.get('vnp_Amount');
         
         // Nếu không có thông tin VNPay, có thể là thanh toán COD
         if (!vnp_OrderInfo && !vnp_ResponseCode) {
@@ -80,7 +80,7 @@ const PaymentReturn = () => {
     };
 
     verifyPayment();
-  }, [searchParams, router, setCartItems]);
+  }, []); // Chỉ chạy một lần khi component mount
 
   if (showSuccess) {
     return (
