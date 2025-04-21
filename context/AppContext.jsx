@@ -1,5 +1,4 @@
 "use client";
-import { productsDummyData, userDummyData } from "@/assets/assets";
 import { useAuth, useUser } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -20,13 +19,19 @@ export const AppContextProvider = (props) => {
   const { getToken } = useAuth();
 
   const [products, setProducts] = useState([]);
+  const [saleProducts, setSaleProducts] = useState([]);
+  const [newProducts, setNewProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [userData, setUserData] = useState(false);
   const [isSeller, setIsSeller] = useState(false);
   const [cartItems, setCartItems] = useState({});
+  const [blogs, setBlogs] = useState([]);
+  const [homeBlogs, setHomeBlogs] = useState([]);
 
   const fetchProductData = async () => {
     try {
-      const { data } = await axios.get("/api/product/list");
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/list`);
       if (data.success) {
         setProducts(data.products);
       } else {
@@ -37,25 +42,107 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const fetchUserData = async () => {
+  const fetchBlogData = async () => {
     try {
-      if (user.publicMetadata.role === "seller") {
-        setIsSeller(true);
-      }
-      const token = await getToken();
-      const { data } = await axios.get("/api/user/data", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/blogs/list`);
       if (data.success) {
-        setUserData(data.user);
-        setCartItems(data.user.cartItems);
+        setBlogs(data.blogs);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const fetchHomeProducts = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/home`);
+      if (data.success) {
+        setNewProducts(data.newProducts);
+        setSaleProducts(data.saleProducts);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchHomeBlogs = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/blogs/home`);
+      if (data.success) {
+        setHomeBlogs(data.homeBlogs);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchCategoryData = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories/list`);
+      if (data.success) {
+        setCategories(data.categories);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchBrandData = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/list`);
+      if (data.success) {
+        setBrands(data.brands);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const getBrandName = (brandId) => {
+    const brand = brands.find(b => b.brandId === brandId);
+    return brand ? brand.name : "Unknown Brand";
+  };
+
+  const getCategoryName = (cateId) => {
+    const category = categories.find(c => c.cateId === cateId);
+    return category ? category.name : "Unknown Category";
+  };
+
+  const fetchUserData = async () => {
+    try {
+      if (!user) return;
+
+      if (user.publicMetadata.role === "seller") {
+        setIsSeller(true);
+      }
+      
+      const token = await getToken();
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      
+      if (data.success) {
+        setUserData(data.user);
+        setCartItems(data.user.cartItems || {});
+      } else {
+        // If user not found in DB, wait briefly and retry
+        setTimeout(fetchUserData, 1000);
+      }
+    } catch (error) {
+      // If error occurs, wait briefly and retry
+      setTimeout(fetchUserData, 1000);
     }
   };
 
@@ -67,11 +154,14 @@ export const AppContextProvider = (props) => {
       cartData[itemId] = 1;
     }
     setCartItems(cartData);
+    // if (!user) {
+    //   localStorage.setItem("cart", JSON.stringify(cartData));
+    // }
     if (user) {
       try {
         const token = await getToken();
         await axios.post(
-          "/api/cart/update",
+          `${process.env.NEXT_PUBLIC_API_URL}/cart/update`,
           { cartData },
           {
             headers: {
@@ -98,7 +188,7 @@ export const AppContextProvider = (props) => {
         try {
           const token = await getToken();
           await axios.post(
-            "/api/cart/update",
+            `${process.env.NEXT_PUBLIC_API_URL}/cart/update`,
             { cartData },
             {
               headers: {
@@ -127,7 +217,7 @@ export const AppContextProvider = (props) => {
     let totalAmount = 0;
     for (const items in cartItems) {
       let itemInfo = products.find((product) => product._id === items);
-      if (cartItems[items] > 0) {
+      if (itemInfo && cartItems[items] > 0) {
         totalAmount += itemInfo.offerPrice * cartItems[items];
       }
     }
@@ -136,11 +226,21 @@ export const AppContextProvider = (props) => {
 
   useEffect(() => {
     fetchProductData();
+    fetchCategoryData();
+    fetchBrandData();
+    fetchBlogData();
+    fetchHomeProducts();
+    fetchHomeBlogs();
   }, []);
 
   useEffect(() => {
     if (user) {
       fetchUserData();
+    } else {
+      // Reset user data when logged out
+      setUserData(false);
+      setCartItems({});
+      setIsSeller(false);
     }
   }, [user]);
 
@@ -155,6 +255,19 @@ export const AppContextProvider = (props) => {
     fetchUserData,
     products,
     fetchProductData,
+    saleProducts,
+    newProducts,
+    fetchHomeProducts,
+    categories,
+    fetchCategoryData,
+    brands,
+    fetchBrandData,
+    getBrandName,
+    getCategoryName,
+    blogs,
+    fetchBlogData,
+    homeBlogs,
+    fetchHomeBlogs,
     cartItems,
     setCartItems,
     addToCart,

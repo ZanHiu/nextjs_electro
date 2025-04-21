@@ -1,21 +1,31 @@
-import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import PaymentMethod from "./PaymentMethod";
 
 const OrderSummary = () => {
 
-  const { currency, router, getCartCount, getCartAmount, getToken, user, cartItems, setCartItems } = useAppContext()
+  const { 
+    currency, 
+    router, 
+    getCartCount, 
+    getCartAmount, 
+    getToken, 
+    user, 
+    cartItems, 
+    setCartItems, 
+    products, 
+  } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [userAddresses, setUserAddresses] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState('COD');
 
   const fetchUserAddresses = async () => {
     try {
       const token = await getToken();
-      const { data } = await axios.get('/api/user/get-address', {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/get-address`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -38,12 +48,50 @@ const OrderSummary = () => {
     setIsDropdownOpen(false);
   };
 
+  // const createOrder = async () => {
+  //   try {
+  //     if (!selectedAddress) {
+  //       return toast.error("Please select an address");
+  //     }
+
+  //     let cartItemsArray = Object.keys(cartItems).map((key) => ({
+  //       product: key,
+  //       quantity: cartItems[key],
+  //     }));
+  //     cartItemsArray = cartItemsArray.filter(item => item.quantity > 0);
+      
+  //     if (cartItemsArray.length === 0) {
+  //       return toast.error("Cart is empty");
+  //     }
+
+  //     const token = await getToken();
+  //     const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/orders/create`, {
+  //       address: selectedAddress._id,
+  //       items: cartItemsArray,
+  //     }, {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       }
+  //     });
+      
+  //     if (data.success) {
+  //       toast.success(data.message);
+  //       setCartItems({});
+  //       router.push("/order-placed");
+  //     } else {
+  //       toast.error(data.message);
+  //     }
+  //   } catch (error) {
+  //     toast.error(error.message);
+  //   }
+  // }
+
   const createOrder = async () => {
     try {
       if (!selectedAddress) {
         return toast.error("Please select an address");
       }
-
+  
       let cartItemsArray = Object.keys(cartItems).map((key) => ({
         product: key,
         quantity: cartItems[key],
@@ -53,28 +101,47 @@ const OrderSummary = () => {
       if (cartItemsArray.length === 0) {
         return toast.error("Cart is empty");
       }
-
+  
       const token = await getToken();
-      const { data } = await axios.post('/api/order/create', {
-        address: selectedAddress._id,
-        items: cartItemsArray,
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/create`,
+        {
+          address: selectedAddress._id,
+          items: cartItemsArray,
+          paymentMethod
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
-      
+      );
+  
       if (data.success) {
-        toast.success(data.message);
-        setCartItems({});
-        router.push("/order-placed");
-      } else {
-        toast.error(data.message);
+        if (paymentMethod === 'VNPAY') {
+          const paymentResponse = await axios.post(
+            `${process.env.NEXT_PUBLIC_API_URL}/payments/create-vnpay-payment`,
+            {
+              orderId: data.order._id,
+              amount: Math.round((getCartAmount() + Math.floor(getCartAmount() * 0.02)) * 23000)
+            },
+            {
+              headers: { Authorization: `Bearer ${token}` }
+            }
+          );
+  
+          if (paymentResponse.data.success) {
+            window.location.href = paymentResponse.data.paymentUrl;
+          }
+        } else {
+          setCartItems({});
+          router.push('/order-placed');
+        }
       }
     } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
 
   useEffect(() => {
     if (user) {
@@ -87,6 +154,16 @@ const OrderSummary = () => {
       <h2 className="text-xl md:text-2xl font-medium text-gray-700">
         Order Summary
       </h2>
+      <hr className="border-gray-500/30 my-5" />
+      <div>
+        <label className="text-base font-medium uppercase text-gray-600 block mb-2">
+          Payment Method
+        </label>
+        <PaymentMethod 
+          selectedMethod={paymentMethod}
+          onSelectMethod={setPaymentMethod}
+        />
+      </div>
       <hr className="border-gray-500/30 my-5" />
       <div className="space-y-6">
         <div>
@@ -171,7 +248,8 @@ const OrderSummary = () => {
       </div>
 
       <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        Place Order
+        {/* Place Order */}
+        {paymentMethod === 'VNPAY' ? 'Proceed to Payment' : 'Place Order'}
       </button>
     </div>
   );

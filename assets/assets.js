@@ -3,21 +3,28 @@ import search_icon from "./search_icon.svg";
 import user_icon from "./user_icon.svg";
 import cart_icon from "./cart_icon.svg";
 import add_icon from "./add_icon.svg";
+import delete_icon from "./delete_icon.svg";
 import order_icon from "./order_icon.svg";
 import instagram_icon from "./instagram_icon.svg";
 import facebook_icon from "./facebook_icon.svg";
 import twitter_icon from "./twitter_icon.svg";
 import box_icon from "./box_icon.svg";
 import product_list_icon from "./product_list_icon.svg";
+import product_icon from "./product_icon.svg";
+import tag_icon from "./tag_icon.svg";
+import cate_icon from "./cate_icon.svg";
 import menu_icon from "./menu_icon.svg";
+import money_icon from "./money_icon.svg";
 import arrow_icon from "./arrow_icon.svg";
 import increase_arrow from "./increase_arrow.svg";
 import decrease_arrow from "./decrease_arrow.svg";
+import dropdown_arrow from "./down_arrow.png";
 import arrow_right_icon_colored from "./arrow_right_icon_colored.svg";
 import my_location_image from "./my_location_image.svg";
 import arrow_icon_white from "./arrow_icon_white.svg";
 import heart_icon from "./heart_icon.svg";
 import star_icon from "./star_icon.svg";
+import stat_icon from "./stat_icon.svg";
 import redirect_icon from "./redirect_icon.svg";
 import star_dull_icon from "./star_dull_icon.svg";
 import header_headphone_image from "./header_headphone_image.png";
@@ -41,6 +48,9 @@ import sm_controller_image from "./sm_controller_image.png";
 import jbl_soundbox_image from "./jbl_soundbox_image.png";
 import boy_with_laptop_image from "./boy_with_laptop_image.png";
 import checkmark from "./checkmark.png";
+import feature_product_headphones from "./feature_product_headphones.jpg";
+import feature_product_earphones from "./feature_product_earphones.jpg";
+import feature_product_laptop from "./feature_product_laptop.jpg";
 import product_details_page_apple_earphone_image1 from "./product_details_page_apple_earphone_image1.png";
 import product_details_page_apple_earphone_image2 from "./product_details_page_apple_earphone_image2.png";
 import product_details_page_apple_earphone_image3 from "./product_details_page_apple_earphone_image3.png";
@@ -53,21 +63,28 @@ export const assets = {
   user_icon,
   cart_icon,
   add_icon,
+  delete_icon,
   order_icon,
   instagram_icon,
   facebook_icon,
   twitter_icon,
   box_icon,
   product_list_icon,
+  product_icon,
+  tag_icon,
+  cate_icon,
   menu_icon,
+  money_icon,
   arrow_icon,
   increase_arrow,
   decrease_arrow,
+  dropdown_arrow,
   arrow_right_icon_colored,
   my_location_image,
   arrow_icon_white,
   heart_icon,
   star_icon,
+  stat_icon,
   redirect_icon,
   star_dull_icon,
   header_headphone_image,
@@ -95,7 +112,10 @@ export const assets = {
   product_details_page_apple_earphone_image3,
   product_details_page_apple_earphone_image4,
   product_details_page_apple_earphone_image5,
-  checkmark
+  checkmark,
+  feature_product_headphones,
+  feature_product_earphones,
+  feature_product_laptop,
 };
 
 export const BagIcon = () => {

@@ -25,7 +25,7 @@ const AddAddress = () => {
     try {
       const token = await getToken();
       const { data } = await axios.post(
-        "/api/user/add-address",
+        `${process.env.NEXT_PUBLIC_API_URL}/users/add-address`,
         { address },
         {
           headers: {

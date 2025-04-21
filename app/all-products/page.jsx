@@ -1,28 +1,161 @@
-'use client'
+"use client";
+import { useState, useEffect } from "react";
+import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
+import axios from "axios";
 
 const AllProducts = () => {
+  const { products, categories, brands } = useAppContext();
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedBrand, setSelectedBrand] = useState('all');
+  const [filteredProducts, setFilteredProducts] = useState(products);
+  const [isOpenCategory, setIsOpenCategory] = useState(true);
+  const [isOpenBrand, setIsOpenBrand] = useState(true);
 
-    const { products } = useAppContext();
+  const fetchFilteredProducts = async () => {
+    try {
+      if (selectedCategory === 'all' && selectedBrand === 'all') {
+        setFilteredProducts(products);
+        return;
+      }
 
-    return (
-        <>
-            <Navbar />
-            <div className="flex flex-col items-start px-6 md:px-16 lg:px-32">
-                <div className="flex flex-col items-end pt-12">
-                    <p className="text-2xl font-medium">All products</p>
-                    <div className="w-16 h-0.5 bg-orange-600 rounded-full"></div>
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/filter`, {
+          params: {
+            categoryId: selectedCategory,
+            brandId: selectedBrand
+          }
+        }
+      );
+
+      if (response?.data.success) {
+        setFilteredProducts(response.data.products);
+      }
+    } catch (error) {
+      console.error("Error fetching filtered products:", error);
+      setFilteredProducts(products);
+    }
+  };
+
+  useEffect(() => {
+    fetchFilteredProducts();
+  }, [selectedCategory, selectedBrand, products]);
+
+  return (
+    <>
+      <Navbar />
+      <div className="flex flex-col items-start px-6 md:px-16 lg:px-32">
+        <div className="flex flex-col items-end pt-12">
+          <p className="text-2xl font-medium">All products</p>
+          <div className="w-16 h-0.5 bg-orange-600 rounded-full"></div>
+        </div>
+        <div className="flex gap-8 w-full mt-12">
+          {/* Filter Sidebar */}
+          <div className="hidden md:block w-64 flex-shrink-0 space-y-4">
+            {/* Categories Dropdown */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <button 
+                onClick={() => setIsOpenCategory(!isOpenCategory)}
+                className="w-full p-4 flex items-center justify-between font-semibold text-lg hover:bg-gray-50"
+              >
+                <span>Categories</span>
+                <Image
+                  className={`h-2.5 w-4 transition-transform ${isOpenCategory ? 'rotate-180' : ''}`}
+                  src={assets.dropdown_arrow}
+                  alt="dropdown_arrow"
+                />
+              </button>
+              
+              {isOpenCategory && (
+                <div className="p-4 space-y-2 border-t">
+                  <div className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                    <input
+                      type="radio"
+                      id="all-categories"
+                      name="category"
+                      checked={selectedCategory === 'all'}
+                      onChange={() => setSelectedCategory('all')}
+                      className="mr-2"
+                    />
+                    <label htmlFor="all-categories">All Categories</label>
+                  </div>
+                  {categories.map((category) => (
+                    <div key={category.cateId} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                      <input
+                        type="radio"
+                        id={`category-${category.cateId}`}
+                        name="category"
+                        checked={selectedCategory === category.cateId}
+                        onChange={() => setSelectedCategory(category.cateId)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`category-${category.cateId}`}>{category.name}</label>
+                    </div>
+                  ))}
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-12 pb-14 w-full">
-                    {products.map((product, index) => <ProductCard key={index} product={product} />)}
-                </div>
+              )}
             </div>
-            <Footer />
-        </>
-    );
+
+            {/* Brands Dropdown */}
+            <div className="bg-white rounded-lg shadow-md overflow-hidden">
+              <button 
+                onClick={() => setIsOpenBrand(!isOpenBrand)}
+                className="w-full p-4 flex items-center justify-between font-semibold text-lg hover:bg-gray-50"
+              >
+                <span>Brands</span>
+                <Image
+                  className={`h-2.5 w-4 transition-transform ${isOpenBrand ? 'rotate-180' : ''}`}
+                  src={assets.dropdown_arrow}
+                  alt="dropdown_arrow"
+                />
+              </button>
+              
+              {isOpenBrand && (
+                <div className="p-4 space-y-2 border-t">
+                  <div className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                    <input
+                      type="radio"
+                      id="all-brands"
+                      name="brand"
+                      checked={selectedBrand === 'all'}
+                      onChange={() => setSelectedBrand('all')}
+                      className="mr-2"
+                    />
+                    <label htmlFor="all-brands">All Brands</label>
+                  </div>
+                  {brands.map((brand) => (
+                    <div key={brand.brandId} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                      <input
+                        type="radio"
+                        id={`brand-${brand.brandId}`}
+                        name="brand"
+                        checked={selectedBrand === brand.brandId}
+                        onChange={() => setSelectedBrand(brand.brandId)}
+                        className="mr-2"
+                      />
+                      <label htmlFor={`brand-${brand.brandId}`}>{brand.name}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Products Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-12 pb-14 w-full">
+            {filteredProducts.map((product, index) => (
+              <ProductCard key={index} product={product} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </>
+  );
 };
 
 export default AllProducts;
