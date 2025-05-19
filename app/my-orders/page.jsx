@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
-import { getOrderStatusColor, getPaymentStatusColor } from '@/utils/helpers';
+import { getOrderStatusColor, getPaymentStatusColor } from "@/utils/helpers";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/Footer";
@@ -11,7 +11,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 const MyOrders = () => {
-  const { currency, getToken, user } = useAppContext();
+  const { currency, getToken, user, addToCart, router } = useAppContext();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -41,24 +41,49 @@ const MyOrders = () => {
   useEffect(() => {
     if (user) {
       fetchOrders();
-      // Fetch more frequently initially
-      const quickInterval = setInterval(() => {
+      const interval = setInterval(() => {
         fetchOrders();
-      }, 2000); // Every 2 seconds
-  
-      // After 30 seconds, switch to less frequent updates
-      setTimeout(() => {
-        clearInterval(quickInterval);
-        const normalInterval = setInterval(() => {
-          fetchOrders();
-        }, 10000); // Every 10 seconds
-  
-        return () => clearInterval(normalInterval);
-      }, 30000);
-  
-      return () => clearInterval(quickInterval);
+      }, 5000);
+
+      return () => clearInterval(interval);
     }
   }, [user]);
+
+  const handleCancelOrder = async (id) => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/cancel/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        fetchOrders();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const handleReorder = async (order) => {
+    try {
+      // Add all items from the order back to cart
+      for (const item of order.items) {
+        await addToCart(item.product._id, item.quantity);
+      }
+      
+      router.push('/cart');
+    } catch (error) {
+      toast.error("Failed to add items to cart");
+    }
+  };
 
   return (
     <>
@@ -118,12 +143,28 @@ const MyOrders = () => {
                     </p>
                   </div>
 
-                  <div className="col-span-2 text-sm text-right">
-                    <p
-                      className={`font-medium ${getOrderStatusColor(order.status)}`}
-                    >
+                  <div className="col-span-2 text-sm text-right space-y-2">
+                    <p className={`font-medium ${getOrderStatusColor(order.status)}`}>
                       {order.status}
                     </p>
+
+                    {order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
+                      <button
+                        onClick={() => handleCancelOrder(order._id)}
+                        className="text-red-600 hover:text-red-800 text-sm font-medium"
+                      >
+                        Cancel Order
+                      </button>
+                    )}
+
+                    {order.status === "COMPLETED" && (
+                      <button
+                        onClick={() => handleReorder(order)}
+                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                      >
+                        Order Again
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}

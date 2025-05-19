@@ -1,4 +1,3 @@
-'use client'
 import React from "react";
 import { useAppContext } from "@/context/AppContext";
 import { assets } from "@/assets/assets";
@@ -8,13 +7,13 @@ const HomeBlogs = () => {
   const { homeBlogs, blogs, router } = useAppContext();
 
   return (
-    <div className="mt-14">
-      <div className="flex flex-col items-center mb-10">
+    <div className="mt-14 pb-14">
+      <div className="flex flex-col items-center mb-8">
         <p className="text-3xl font-medium">Latest Blogs</p>
         <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-12 pb-14 w-full">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 pb-8 w-full">
         {homeBlogs.map((blog, index) => (
           <div key={blog._id || index} className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300">
             <div className="relative overflow-hidden aspect-w-16 aspect-h-9">
@@ -52,7 +51,7 @@ const HomeBlogs = () => {
         <div className="flex justify-center">
           <button 
             onClick={() => router.push('/all-blogs')} 
-            className="px-8 py-3 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-600 hover:text-white transition-colors duration-300"
+            className="px-6 py-2 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-600 hover:text-white transition-colors duration-300"
           >
             View All Blogs
           </button>

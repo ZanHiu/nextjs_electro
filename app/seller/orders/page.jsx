@@ -127,7 +127,7 @@ const Orders = () => {
 
                 <div className="col-span-2 text-sm">
                   <select 
-                    className="w-full border p-2 rounded mb-2 bg-white ${getStatusColor(order.status)}`}"
+                    className={`w-full border p-2 rounded mb-2 bg-white ${getOrderStatusColor(order.status)}`}
                     value={order.status}
                     onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                   >

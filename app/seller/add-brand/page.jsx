@@ -12,6 +12,7 @@ const AddBrand = () => {
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+  const [views, setViews] = useState('');
   const [brandId, setBrandId] = useState(0);
 
   const handleSubmit = async (e) => {
@@ -21,6 +22,7 @@ const AddBrand = () => {
 
     formData.append("name", name);
     formData.append("description", description);
+    formData.append("views", views);
     formData.append("brandId", brandId);
 
 
@@ -40,6 +42,7 @@ const AddBrand = () => {
         setFiles([]);
         setName('');
         setDescription('');
+        setViews('');
         setBrandId(0);
       } else {
         toast.error(data.message);
@@ -50,7 +53,7 @@ const AddBrand = () => {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
         <h1 className="text-2xl font-semibold mb-6">Add Brand</h1>
         <div className="flex flex-col gap-1 max-w-md">
@@ -108,19 +111,35 @@ const AddBrand = () => {
             required
           ></textarea>
         </div>
-        <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium" htmlFor="brand-id">
-            Brand Id
-          </label>
-          <input
-            id="brand-id"
-            type="number"
-            placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-            onChange={(e) => setBrandId(e.target.value)}
-            value={brandId}
-            required
-          />
+        <div className="grid grid-cols-2 gap-5">
+          <div className="flex flex-col gap-1">
+            <label className="text-base font-medium" htmlFor="views">
+              Views
+            </label>
+            <input
+              id="views"
+              type="number"
+              placeholder="0"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setViews(e.target.value)}
+              value={views}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base font-medium" htmlFor="brand-id">
+              Brand Id
+            </label>
+            <input
+              id="brand-id"
+              type="number"
+              placeholder="Type here"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setBrandId(e.target.value)}
+              value={brandId}
+              required
+            />
+          </div>
         </div>
         <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
           ADD

@@ -21,8 +21,10 @@ export const AppContextProvider = (props) => {
   const [products, setProducts] = useState([]);
   const [saleProducts, setSaleProducts] = useState([]);
   const [newProducts, setNewProducts] = useState([]);
+  const [hotProducts, setHotProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
+  const [topBrands, setTopBrands] = useState([]);
   const [userData, setUserData] = useState(false);
   const [isSeller, setIsSeller] = useState(false);
   const [cartItems, setCartItems] = useState({});
@@ -61,6 +63,7 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         setNewProducts(data.newProducts);
         setSaleProducts(data.saleProducts);
+        setHotProducts(data.hotProducts);
       } else {
         toast.error(data.message);
       }
@@ -100,6 +103,19 @@ export const AppContextProvider = (props) => {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/list`);
       if (data.success) {
         setBrands(data.brands);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const fetchTopBrands = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/top`);
+      if (data.success) {
+        setTopBrands(data.topBrands);
       } else {
         toast.error(data.message);
       }
@@ -230,6 +246,7 @@ export const AppContextProvider = (props) => {
     fetchBrandData();
     fetchBlogData();
     fetchHomeProducts();
+    fetchTopBrands();
     fetchHomeBlogs();
   }, []);
 
@@ -257,11 +274,14 @@ export const AppContextProvider = (props) => {
     fetchProductData,
     saleProducts,
     newProducts,
+    hotProducts,
     fetchHomeProducts,
     categories,
     fetchCategoryData,
     brands,
     fetchBrandData,
+    topBrands,
+    fetchTopBrands,
     getBrandName,
     getCategoryName,
     blogs,

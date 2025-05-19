@@ -39,8 +39,34 @@ const BrandList = () => {
     }
   }, [user])
 
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this brand?')) {
+      try {
+        const token = await getToken();
+        const { data } = await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_URL}/brands/delete/${id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (data.success) {
+          toast.success(data.message);
+          // Refresh brand list after deletion
+          fetchSellerBrand();
+        } else {
+          toast.error(data.message);
+        }
+      } catch (error) {
+        toast.error(error.message);
+      }
+    }
+  };
+
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
         <h1 className="text-2xl font-semibold mb-6">All Brand</h1>
         <div className="flex flex-col items-center w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
@@ -72,7 +98,7 @@ const BrandList = () => {
                   <td className="px-4 py-3 max-sm:hidden">{brand.brandId}</td>
                   <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
-                    <button onClick={() => router.push(`/category/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
+                    <button onClick={() => router.push(`/brands/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
                       <span className="hidden md:block">Visit</span>
                       {/* <Image
                         className="h-3.5"
@@ -80,7 +106,7 @@ const BrandList = () => {
                         alt="redirect_icon"
                       /> */}
                     </button>
-                    <button onClick={() => router.push(`/brand/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
+                    <button onClick={() => router.push(`/seller/edit-brand/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
                       <span className="hidden md:block">Edit</span>
                       {/* <Image
                         className="h-3.5"
@@ -88,7 +114,7 @@ const BrandList = () => {
                         alt="redirect_icon"
                       /> */}
                     </button>
-                    <button onClick={() => router.push(`/brand/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
+                    <button onClick={() => handleDelete(brand._id)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
                       <span className="hidden md:block">Delete</span>
                       {/* <Image
                         className="h-3.5"

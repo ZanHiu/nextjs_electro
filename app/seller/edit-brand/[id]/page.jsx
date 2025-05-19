@@ -7,41 +7,35 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 
-const EditProduct = () => {
+const EditBrand = () => {
   const { id } = useParams();
-  const { getToken, brands, categories, products, fetchProductData, router } =
+  const { getToken, brands, fetchBrandData, router } =
     useAppContext();
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [brandId, setBrandId] = useState("");
-  const [cateId, setCateId] = useState("");
-  const [price, setPrice] = useState("");
-  const [offerPrice, setOfferPrice] = useState("");
   const [existingImages, setExistingImages] = useState([]);
   const [views, setViews] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
-      await fetchProductData(); // Refresh products data
-      if (products.length > 0) {
-        const product = products.find((p) => p._id === id);
-        if (product) {
-          setName(product.name);
-          setDescription(product.description);
-          setBrandId(product.brandId);
-          setCateId(product.cateId);
-          setPrice(product.price);
-          setOfferPrice(product.offerPrice);
-          setExistingImages(product.image);
-          setViews(product.views);
+      await fetchBrandData(); // Refresh brands data
+      if (brands.length > 0) {
+        const brand = brands.find((p) => p._id === id);
+        if (brand) {
+          setName(brand.name);
+          setDescription(brand.description);
+          setBrandId(brand.brandId);
+          setExistingImages(brand.image);
+          setViews(brand.views);
         }
       }
     };
 
     fetchData();
-  }, [id, products.length]);
+  }, [id, brands.length]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,9 +45,6 @@ const EditProduct = () => {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("brandId", Number(brandId));
-    formData.append("cateId", Number(cateId));
-    formData.append("price", Number(price));
-    formData.append("offerPrice", Number(offerPrice));
     formData.append("views", Number(views));
 
     // Append new images if any
@@ -69,7 +60,7 @@ const EditProduct = () => {
     try {
       const token = await getToken();
       const { data } = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/edit/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/brands/edit/${id}`,
         formData,
         {
           headers: {
@@ -79,9 +70,9 @@ const EditProduct = () => {
       );
 
       if (data.success) {
-        await fetchProductData();
+        await fetchBrandData();
         toast.success(data.message);
-        router.push('/seller/products');
+        router.push('/seller/brands');
       } else {
         toast.error(data.message);
       }
@@ -99,13 +90,13 @@ const EditProduct = () => {
   return (
     <div className="flex-1 min-h-screen flex flex-col justify-between">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <h1 className="text-2xl font-semibold mb-6">Edit Product</h1>
+        <h1 className="text-2xl font-semibold mb-6">Edit Brand</h1>
         <div className="flex flex-col gap-1 max-w-md">
-          <label className="text-base font-medium" htmlFor="product-name">
-            Product Name
+          <label className="text-base font-medium" htmlFor="brand-name">
+            Brand Name
           </label>
           <input
-            id="product-name"
+            id="brand-name"
             type="text"
             placeholder="Type here"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
@@ -116,7 +107,7 @@ const EditProduct = () => {
         </div>
 
         <div>
-          <p className="text-base font-medium">Product Images</p>
+          <p className="text-base font-medium">Brand Images</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="relative group">
@@ -173,12 +164,12 @@ const EditProduct = () => {
         <div className="flex flex-col gap-1 max-w-md">
           <label
             className="text-base font-medium"
-            htmlFor="product-description"
+            htmlFor="brand-description"
           >
-            Product Description
+            Brand Description
           </label>
           <textarea
-            id="product-description"
+            id="brand-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
             placeholder="Type here"
@@ -190,86 +181,32 @@ const EditProduct = () => {
 
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="product-price">
-              Product Price
+            <label className="text-base font-medium" htmlFor="brand-id">
+              Brand Id
             </label>
             <input
-              id="product-price"
+              id="brand-id"
               type="number"
-              placeholder="0"
-              className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setPrice(e.target.value)}
-              value={price}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="offer-price">
-              Offer Price
-            </label>
-            <input
-              id="offer-price"
-              type="number"
-              placeholder="0"
-              className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setOfferPrice(e.target.value)}
-              value={offerPrice}
-              required
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-1">
-          <label className="text-base font-medium" htmlFor="views">
-            Views
-          </label>
-          <input
-            id="views"
-            type="number"
-            placeholder="0"
-            className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-            onChange={(e) => setViews(e.target.value)}
-            value={views}
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-5">
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="brand">
-              Brand
-            </label>
-            <select
-              id="brand"
-              className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              placeholder="Type here"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setBrandId(e.target.value)}
               value={brandId}
               required
-            >
-              {brands.map((brand) => (
-                <option key={brand._id} value={brand.brandId}>
-                  {brand.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="category">
-              Category
+            <label className="text-base font-medium" htmlFor="views">
+              Views
             </label>
-            <select
-              id="category"
+            <input
+              id="views"
+              type="number"
+              placeholder="0"
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setCateId(e.target.value)}
-              value={cateId}
+              onChange={(e) => setViews(e.target.value)}
+              value={views}
               required
-            >
-              {categories.map((category) => (
-                <option key={category._id} value={category.cateId}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
+            />
           </div>
         </div>
 
@@ -284,4 +221,4 @@ const EditProduct = () => {
   );
 };
 
-export default EditProduct;
+export default EditBrand;

@@ -22,6 +22,13 @@ const ProductCard = ({ product }) => {
           width={800}
           height={800}
         />
+        {product.price > product.offerPrice && (
+          <div className="absolute top-2 left-2 z-10">
+            <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-medium rounded-lg">
+              -{Math.round(((product.price - product.offerPrice) / product.price) * 100)}%
+            </span>
+          </div>
+        )}
         <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
           <Image className="h-3 w-3" src={assets.heart_icon} alt="heart_icon" />
         </button>
@@ -48,16 +55,46 @@ const ProductCard = ({ product }) => {
           ))}
         </div>
       </div>
+      <p className="text-sm">
+        {product.views} views
+      </p>
 
-      <div className="flex items-end justify-between w-full mt-1">
+      <div className="flex flex-col mt-1 w-full">
+        <div className="flex items-center gap-3">
+          {/* Giá khuyến mãi */}
+          <div className="flex items-baseline">
+            <span className="text-xl font-semibold text-gray-900">
+              {currency}{product.offerPrice.toLocaleString()}
+            </span>
+          </div>
+
+          {/* Giá gốc */}
+          {product.price > product.offerPrice && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500 line-through">
+                {currency}{product.price.toLocaleString()}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Thông tin thêm và nút mua */}
+        <div className="flex items-center justify-between mt-2">
+          <button className="w-full max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
+            Buy now
+          </button>
+        </div>
+      </div>
+
+      {/* <div className="flex items-end justify-between w-full mt-1">
         <p className="text-base font-medium">
           {currency}
           {product.offerPrice}
         </p>
-        <button className=" max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
+        <button className="max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
           Buy now
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };

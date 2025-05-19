@@ -66,7 +66,7 @@ const ProductList = () => {
   };
 
   return (
-    <div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
         <h1 className="text-2xl font-semibold mb-6">All Product</h1>
         <div className="flex flex-col items-center w-full overflow-hidden rounded-md bg-white border border-gray-500/20">

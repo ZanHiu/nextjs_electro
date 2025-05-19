@@ -100,7 +100,7 @@ const DashBoard = () => {
   };
 
   return (
-    <div className="w-full md:p-10 p-4">
+    <div className="w-full md:p-10 p-4 flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       <h1 className="text-2xl font-semibold mb-6">Dashboard</h1>
       
       {/* Stats Grid */}
