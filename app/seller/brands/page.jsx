@@ -16,11 +16,11 @@ const BrandList = () => {
 
   const fetchSellerBrand = async () => {
     try {
-      // const token = await getToken();
+      const token = await getToken();
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/seller-list`, {
-        // headers: {
-        //   Authorization: `Bearer ${token}`,
-        // }
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
       })
       if (data.success) {
         setBrands(data.brands)
@@ -33,16 +33,11 @@ const BrandList = () => {
     }
   }
 
-  // useEffect(() => {
-  //   if (user) {
-  //     fetchSellerBrand();
-  //   }
-  // }, [user])
-
   useEffect(() => {
-    fetchSellerBrand();
-  }, [])
-
+    if (user) {
+      fetchSellerBrand();
+    }
+  }, [user])
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this brand?')) {
       try {
