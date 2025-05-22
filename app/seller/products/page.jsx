@@ -16,11 +16,11 @@ const ProductList = () => {
 
   const fetchSellerProduct = async () => {
     try {
-      const token = await getToken();
+      // const token = await getToken();
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/seller-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // }
       })
       if (data.success) {
         setProducts(data.products)
@@ -33,11 +33,15 @@ const ProductList = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchSellerProduct();
+  //   }
+  // }, [user])
+
   useEffect(() => {
-    if (user) {
-      fetchSellerProduct();
-    }
-  }, [user])
+    fetchSellerProduct();
+  },[])
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this product?')) {

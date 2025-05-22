@@ -16,11 +16,11 @@ const CategoryList = () => {
 
   const fetchSellerCategory = async () => {
     try {
-      const token = await getToken();
+      // const token = await getToken();
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories/seller-list`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
+        // headers: {
+        //   Authorization: `Bearer ${token}`,
+        // }
       })
       if (data.success) {
         setCategories(data.categories)
@@ -33,11 +33,16 @@ const CategoryList = () => {
     }
   }
 
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchSellerCategory();
+  //   }
+  // }, [user])
+
   useEffect(() => {
-    if (user) {
-      fetchSellerCategory();
-    }
-  }, [user])
+    fetchSellerCategory();
+  }, [])
+  
 
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this category?')) {
