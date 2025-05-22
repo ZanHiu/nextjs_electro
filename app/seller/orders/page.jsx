@@ -18,14 +18,14 @@ const Orders = () => {
 
   const fetchSellerOrders = async () => {
     try {
-      const token = await getToken();
+      // const token = await getToken();
 
       const { data } = await axios.get(
         `${process.env.NEXT_PUBLIC_API_URL}/orders/seller-orders`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          // headers: {
+          //   Authorization: `Bearer ${token}`,
+          // },
         }
       );
 
@@ -62,16 +62,25 @@ const Orders = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchSellerOrders();
-      const interval = setInterval(() => {
-        fetchSellerOrders();
-      }, 5000);
+  // useEffect(() => {
+  //   if (user) {
+  //     fetchSellerOrders();
+  //     const interval = setInterval(() => {
+  //       fetchSellerOrders();
+  //     }, 5000);
 
-      return () => clearInterval(interval);
-    }
-  }, [user]);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [user]);
+
+  useEffect(() => {
+    fetchSellerOrders();
+    const interval = setInterval(() => {
+      fetchSellerOrders();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
