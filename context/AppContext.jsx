@@ -30,6 +30,8 @@ export const AppContextProvider = (props) => {
   const [cartItems, setCartItems] = useState({});
   const [blogs, setBlogs] = useState([]);
   const [homeBlogs, setHomeBlogs] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchProductData = async () => {
     try {
@@ -132,6 +134,11 @@ export const AppContextProvider = (props) => {
   const getCategoryName = (cateId) => {
     const category = categories.find(c => c.cateId === cateId);
     return category ? category.name : "Unknown Category";
+  };
+
+  const getUserAvatar = (userId) => {
+    const user = users.find(u => u._id === userId);
+    return user ? user.avatar : assets.default_avatar;
   };
 
   const fetchUserData = async () => {
@@ -240,6 +247,46 @@ export const AppContextProvider = (props) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+  const fetchReviews = async (targetId, type = 'product') => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${type}/${targetId}`);
+      if (data.success) {
+        setReviews(data.reviews);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getReviewCount = (reviews) => {
+    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
+    return reviewsWithRating.length;
+  };
+
+  const getReviewAmount = (reviews) => {
+    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
+    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
+    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
+  };
+
+  const postReview = async (targetId, type = 'product', content, ratingValue, token) => {
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews/${type}`,
+        { targetId, content, ratingValue },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      fetchReviews(targetId, type);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
   useEffect(() => {
     fetchProductData();
     fetchCategoryData();
@@ -270,6 +317,7 @@ export const AppContextProvider = (props) => {
     setIsSeller,
     userData,
     fetchUserData,
+    getUserAvatar,
     products,
     fetchProductData,
     saleProducts,
@@ -294,6 +342,12 @@ export const AppContextProvider = (props) => {
     updateCartQuantity,
     getCartCount,
     getCartAmount,
+    reviews,
+    loading,
+    fetchReviews,
+    postReview,
+    getReviewCount,
+    getReviewAmount,
   };
 
   return (

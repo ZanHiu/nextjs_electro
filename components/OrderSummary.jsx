@@ -3,9 +3,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import PaymentMethod from "./PaymentMethod";
+import { formatPrice } from "@/utils/format";
 
 const OrderSummary = () => {
-
   const { 
     currency, 
     router, 
@@ -123,7 +123,7 @@ const OrderSummary = () => {
             `${process.env.NEXT_PUBLIC_API_URL}/payments/create-vnpay-payment`,
             {
               orderId: data.order._id,
-              amount: Math.round((getCartAmount() + Math.floor(getCartAmount() * 0.02)) * 23000)
+              amount: Math.round(getCartAmount() + Math.floor(getCartAmount() * 0.02))
             },
             {
               headers: { Authorization: `Bearer ${token}` }
@@ -211,7 +211,7 @@ const OrderSummary = () => {
 
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-            Promo Code
+            Coupon Code
           </label>
           <div className="flex flex-col items-start gap-3">
             <input
@@ -230,7 +230,7 @@ const OrderSummary = () => {
         <div className="space-y-4">
           <div className="flex justify-between text-base font-medium">
             <p className="uppercase text-gray-600">Items {getCartCount()}</p>
-            <p className="text-gray-800">{currency}{getCartAmount()}</p>
+            <p className="text-gray-800">{formatPrice(getCartAmount())}{currency}</p>
           </div>
           <div className="flex justify-between">
             <p className="text-gray-600">Shipping Fee</p>
@@ -238,11 +238,11 @@ const OrderSummary = () => {
           </div>
           <div className="flex justify-between">
             <p className="text-gray-600">Tax (2%)</p>
-            <p className="font-medium text-gray-800">{currency}{Math.floor(getCartAmount() * 0.02)}</p>
+            <p className="font-medium text-gray-800">{formatPrice(Math.floor(getCartAmount() * 0.02))}{currency}</p>
           </div>
           <div className="flex justify-between text-lg md:text-xl font-medium border-t pt-3">
             <p>Total</p>
-            <p>{currency}{getCartAmount() + Math.floor(getCartAmount() * 0.02)}</p>
+            <p>{formatPrice(getCartAmount() + Math.floor(getCartAmount() * 0.02))}{currency}</p>
           </div>
         </div>
       </div>

@@ -4,17 +4,16 @@ import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ProductReview from "@/components/ProductReview";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
-import React from "react";
+import { formatPrice } from "@/utils/format";
 
 const Product = () => {
   const { id } = useParams();
-
-  const { products, router, addToCart, getBrandName, getCategoryName } = useAppContext();
-
+  const { currency, router, products, addToCart, getBrandName, getCategoryName, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
   const [mainImage, setMainImage] = useState(null);
   const [productData, setProductData] = useState(null);
 
@@ -25,6 +24,7 @@ const Product = () => {
 
   useEffect(() => {
     fetchProductData();
+    fetchReviews(id, "product");
   }, [id, products.length]);
 
   return productData ? (
@@ -63,44 +63,29 @@ const Product = () => {
           </div>
 
           <div className="flex flex-col">
-            <h1 className="text-3xl font-medium text-gray-800/90 mb-4">
+            <h1 className="text-3xl font-medium text-gray-800/90 mb-2">
               {productData.name}
             </h1>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 mb-2">
               <div className="flex items-center gap-0.5">
-                <Image
-                  className="h-4 w-4"
-                  src={assets.star_icon}
-                  alt="star_icon"
-                />
-                <Image
-                  className="h-4 w-4"
-                  src={assets.star_icon}
-                  alt="star_icon"
-                />
-                <Image
-                  className="h-4 w-4"
-                  src={assets.star_icon}
-                  alt="star_icon"
-                />
-                <Image
-                  className="h-4 w-4"
-                  src={assets.star_icon}
-                  alt="star_icon"
-                />
-                <Image
-                  className="h-4 w-4"
-                  src={assets.star_dull_icon}
-                  alt="star_dull_icon"
-                />
+                {[1,2,3,4,5].map((star) => (
+                  <Image
+                    key={star}
+                    src={star <= Math.round(getReviewAmount(reviews)) ? assets.star_icon : assets.star_dull_icon}
+                    alt="star"
+                    className="h-4 w-4"
+                    width={16}
+                    height={16}
+                  />
+                ))}
               </div>
-              <p>(4.5)</p>
+              <span className="text-gray-600 text-sm">{(getReviewAmount(reviews)).toFixed(1)} / 5 ({getReviewCount(reviews)} lượt đánh giá)</span>
             </div>
             <p className="text-gray-600 mt-3">{productData.description}</p>
             <p className="text-3xl font-medium mt-6">
-              ${productData.offerPrice}
+              {formatPrice(productData.offerPrice)}{currency}
               <span className="text-base font-normal text-gray-800/60 line-through ml-2">
-                ${productData.price}
+                {formatPrice(productData.price)}{currency}
               </span>
             </p>
             <hr className="bg-gray-600 my-6" />
@@ -142,6 +127,7 @@ const Product = () => {
             </div>
           </div>
         </div>
+        <ProductReview productId={productData._id} />
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center mb-4 mt-16">
             <p className="text-3xl font-medium">
