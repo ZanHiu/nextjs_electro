@@ -9,6 +9,7 @@ import Navbar from "@/components/Navbar";
 import Loading from "@/components/Loading";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { formatPrice } from "@/utils/format";
 
 const MyOrders = () => {
   const { currency, getToken, user, addToCart, router } = useAppContext();
@@ -129,8 +130,7 @@ const MyOrders = () => {
 
                   <div className="col-span-3 text-sm">
                     <p className="font-medium">
-                      {currency}
-                      {order.amount}
+                      {formatPrice(order.amount)}{currency}
                     </p>
                     <p className={getPaymentStatusColor(order.paymentStatus)}>
                       Payment: {order.paymentStatus}

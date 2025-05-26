@@ -1,16 +1,17 @@
 "use client";
 import { useEffect, useState } from "react";
+import { assets } from "@/assets/assets";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BlogReview from "@/components/BlogReview";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
-import { assets } from "@/assets/assets";
 
 const BlogDetail = () => {
 	const { id } = useParams();
-	const { blogs, router } = useAppContext();
+	const { blogs, router, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
 	const [blogData, setBlogData] = useState(null);
 
 	const fetchBlogData = async () => {
@@ -20,6 +21,7 @@ const BlogDetail = () => {
 
 	useEffect(() => {
 		fetchBlogData();
+		fetchReviews(id, "blog");
 	}, [id, blogs.length]);
 
 	return blogData ? (
@@ -72,7 +74,7 @@ const BlogDetail = () => {
 					</div>
 
 					{/* Tags Section */}
-					<div className="mt-8 flex flex-wrap gap-2">
+					{/* <div className="mt-8 flex flex-wrap gap-2">
 						{blogData.tags?.map((tag, index) => (
 							<span
 								key={index}
@@ -81,7 +83,9 @@ const BlogDetail = () => {
 								#{tag}
 							</span>
 						))}
-					</div>
+					</div> */}
+
+					<BlogReview blogId={id} />
 
 					{/* Share Section */}
 					<div className="mt-12 border-t border-gray-200 pt-8">

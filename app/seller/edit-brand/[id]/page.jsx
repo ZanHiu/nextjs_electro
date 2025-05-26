@@ -181,20 +181,6 @@ const EditBrand = () => {
 
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="brand-id">
-              Brand Id
-            </label>
-            <input
-              id="brand-id"
-              type="number"
-              placeholder="Type here"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setBrandId(e.target.value)}
-              value={brandId}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="views">
               Views
             </label>
@@ -205,6 +191,20 @@ const EditBrand = () => {
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setViews(e.target.value)}
               value={views}
+              required
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="text-base font-medium" htmlFor="brand-id">
+              Brand Id
+            </label>
+            <input
+              id="brand-id"
+              type="number"
+              placeholder="Type here"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setBrandId(e.target.value)}
+              value={brandId}
               required
             />
           </div>

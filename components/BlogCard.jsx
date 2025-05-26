@@ -34,7 +34,7 @@ const BlogCard = ({ blog }) => {
 							width={16}
 							height={16}
 						/>
-						<span>{new Date(blog.createdAt).toLocaleDateString()}</span>
+						<span>{new Date(blog.date).toLocaleDateString()}</span>
 					</div>
 					<div className="flex items-center gap-1">
 						<Image
@@ -53,9 +53,10 @@ const BlogCard = ({ blog }) => {
 				</h3>
 
 				{/* Blog Excerpt */}
-				<p className="text-gray-600 text-sm mb-4 line-clamp-3">
-					{blog.content.substring(0, 100)}...
-				</p>
+				{/* <p
+					className="text-gray-600 text-sm mb-4 line-clamp-3"
+					dangerouslySetInnerHTML={{ __html: blog.content }}
+				/> */}
 
 				{/* Read More Link */}
 				<button className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group">

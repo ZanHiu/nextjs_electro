@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import Editor from "react-simple-wysiwyg";
 
 const AddBlog = () => {
   const { fetchHomeBlogs, router } = useAppContext();
@@ -32,6 +33,13 @@ const AddBlog = () => {
       setFormData(prev => ({ ...prev, image: file }));
       setPreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleContentChange = (e) => {
+    setFormData(prev => ({
+      ...prev,
+      content: e.target.value
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -84,12 +92,10 @@ const AddBlog = () => {
 
         <div>
           <label className="block mb-2">Content</label>
-          <textarea
-            name="content"
+          <Editor
             value={formData.content}
-            onChange={handleChange}
-            className="w-full p-2 border rounded h-40"
-            required
+            onChange={handleContentChange}
+            className="h-60 overflow-y-auto"
           />
         </div>
 

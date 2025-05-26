@@ -19,8 +19,8 @@ const AddProduct = () => {
   const [views, setViews] = useState('');
 
   useEffect(() => {
-    if (brands.length > 0) setBrandId(brands[0]._id);
-    if (categories.length > 0) setCateId(categories[0]._id);
+    if (brands.length > 0) setBrandId(brands[0].brandId);
+    if (categories.length > 0) setCateId(categories[0].cateId);
   }, [brands, categories]);
 
   const handleSubmit = async (e) => {

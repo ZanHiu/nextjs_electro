@@ -2,6 +2,7 @@ import React from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
+import { formatPrice } from "@/utils/format";
 
 const ProductCard = ({ product }) => {
   const { currency, router } = useAppContext();
@@ -18,7 +19,7 @@ const ProductCard = ({ product }) => {
         <Image
           src={product.image[0]}
           alt={product.name}
-          className="group-hover:scale-105 transition object-cover w-4/5 h-4/5 md:w-full md:h-full"
+          className="group-hover:scale-105 transition object-contain w-4/5 h-4/5 md:w-full md:h-full mix-blend-multiply"
           width={800}
           height={800}
         />
@@ -64,7 +65,7 @@ const ProductCard = ({ product }) => {
           {/* Giá khuyến mãi */}
           <div className="flex items-baseline">
             <span className="text-xl font-semibold text-gray-900">
-              {currency}{product.offerPrice.toLocaleString()}
+              {formatPrice(product.offerPrice)}{currency}
             </span>
           </div>
 
@@ -72,7 +73,7 @@ const ProductCard = ({ product }) => {
           {product.price > product.offerPrice && (
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 line-through">
-                {currency}{product.price.toLocaleString()}
+                {formatPrice(product.price)}{currency}
               </span>
             </div>
           )}

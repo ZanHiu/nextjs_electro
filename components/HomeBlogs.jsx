@@ -29,9 +29,6 @@ const HomeBlogs = () => {
               <h3 className="font-semibold text-xl mb-3 line-clamp-2 hover:text-orange-600 transition">
                 {blog.name}
               </h3>
-              <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                {blog.content.substring(0, 100)}...
-              </p>
               <button 
                 className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group"
               >
