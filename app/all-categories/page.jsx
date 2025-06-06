@@ -19,10 +19,10 @@ const AllCategories = () => {
           </div>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 flex-col items-center gap-6 mt-12 pb-14 w-full">
-          {categories.map((category, index) => (
+          {categories.map((category) => (
             <div
-              key={category._id || index}
-              onClick={() => router.push(`/products/category/${category.cateId}`)}
+              key={category._id}
+              onClick={() => router.push(`/products/category/${category._id}`)}
               className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300"
             >
               <div className="relative overflow-hidden aspect-w-16 aspect-h-9">

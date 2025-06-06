@@ -15,8 +15,8 @@ const EditProduct = () => {
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [brandId, setBrandId] = useState("");
-  const [cateId, setCateId] = useState("");
+  const [brand, setBrand] = useState("");
+  const [category, setCategory] = useState("");
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
   const [existingImages, setExistingImages] = useState([]);
@@ -30,8 +30,8 @@ const EditProduct = () => {
         if (product) {
           setName(product.name);
           setDescription(product.description);
-          setBrandId(product.brandId);
-          setCateId(product.cateId);
+          setBrand(product.brand);
+          setCategory(product.category);
           setPrice(product.price);
           setOfferPrice(product.offerPrice);
           setExistingImages(product.image);
@@ -41,7 +41,7 @@ const EditProduct = () => {
     };
 
     fetchData();
-  }, [id, products.length]);
+  }, [id, products.length, getToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,8 +50,8 @@ const EditProduct = () => {
 
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("brandId", Number(brandId));
-    formData.append("cateId", Number(cateId));
+    formData.append("brand", brand);
+    formData.append("category", category);
     formData.append("price", Number(price));
     formData.append("offerPrice", Number(offerPrice));
     formData.append("views", Number(views));
@@ -242,12 +242,12 @@ const EditProduct = () => {
             <select
               id="brand"
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setBrandId(e.target.value)}
-              value={brandId}
+              onChange={(e) => setBrand(e.target.value)}
+              value={brand}
               required
             >
               {brands.map((brand) => (
-                <option key={brand._id} value={brand.brandId}>
+                <option key={brand._id} value={brand._id}>
                   {brand.name}
                 </option>
               ))}
@@ -260,12 +260,12 @@ const EditProduct = () => {
             <select
               id="category"
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setCateId(e.target.value)}
-              value={cateId}
+              onChange={(e) => setCategory(e.target.value)}
+              value={category}
               required
             >
               {categories.map((category) => (
-                <option key={category._id} value={category.cateId}>
+                <option key={category._id} value={category._id}>
                   {category.name}
                 </option>
               ))}

@@ -37,7 +37,7 @@ const BrandList = () => {
     if (user) {
       fetchSellerBrand();
     }
-  }, [user])
+  }, [user, getToken])
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this brand?')) {
       try {

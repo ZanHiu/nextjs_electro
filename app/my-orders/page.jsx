@@ -42,11 +42,6 @@ const MyOrders = () => {
   useEffect(() => {
     if (user) {
       fetchOrders();
-      const interval = setInterval(() => {
-        fetchOrders();
-      }, 5000);
-
-      return () => clearInterval(interval);
     }
   }, [user]);
 

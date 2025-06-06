@@ -13,8 +13,8 @@ const AllProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedBrand, setSelectedBrand] = useState('all');
   const [filteredProducts, setFilteredProducts] = useState(products);
-  const [isOpenCategory, setIsOpenCategory] = useState(true);
-  const [isOpenBrand, setIsOpenBrand] = useState(true);
+  const [isOpenCategory, setIsOpenCategory] = useState(false);
+  const [isOpenBrand, setIsOpenBrand] = useState(false);
 
   const fetchFilteredProducts = async () => {
     try {
@@ -84,16 +84,16 @@ const AllProducts = () => {
                     <label htmlFor="all-categories">All Categories</label>
                   </div>
                   {categories.map((category) => (
-                    <div key={category.cateId} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                    <div key={category._id} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
                       <input
                         type="radio"
-                        id={`category-${category.cateId}`}
+                        id={`category-${category._id}`}
                         name="category"
-                        checked={selectedCategory === category.cateId}
-                        onChange={() => setSelectedCategory(category.cateId)}
+                        checked={selectedCategory === category._id}
+                        onChange={() => setSelectedCategory(category._id)}
                         className="mr-2"
                       />
-                      <label htmlFor={`category-${category.cateId}`}>{category.name}</label>
+                      <label htmlFor={`category-${category._id}`}>{category.name}</label>
                     </div>
                   ))}
                 </div>
@@ -128,16 +128,16 @@ const AllProducts = () => {
                     <label htmlFor="all-brands">All Brands</label>
                   </div>
                   {brands.map((brand) => (
-                    <div key={brand.brandId} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
+                    <div key={brand._id} className="flex items-center px-2 py-1.5 hover:bg-gray-50 rounded">
                       <input
                         type="radio"
-                        id={`brand-${brand.brandId}`}
+                        id={`brand-${brand._id}`}
                         name="brand"
-                        checked={selectedBrand === brand.brandId}
-                        onChange={() => setSelectedBrand(brand.brandId)}
+                        checked={selectedBrand === brand._id}
+                        onChange={() => setSelectedBrand(brand._id)}
                         className="mr-2"
                       />
-                      <label htmlFor={`brand-${brand.brandId}`}>{brand.name}</label>
+                      <label htmlFor={`brand-${brand._id}`}>{brand.name}</label>
                     </div>
                   ))}
                 </div>
