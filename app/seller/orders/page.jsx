@@ -14,7 +14,6 @@ const Orders = () => {
   const { currency, getToken, user } = useAppContext();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedStatus, setSelectedStatus] = useState("");
 
   const fetchSellerOrders = async () => {
     try {
@@ -65,13 +64,8 @@ const Orders = () => {
   useEffect(() => {
     if (user) {
       fetchSellerOrders();
-      const interval = setInterval(() => {
-        fetchSellerOrders();
-      }, 5000);
-
-      return () => clearInterval(interval);
     }
-  }, [user]);
+  }, [user, getToken]);
 
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
@@ -79,8 +73,8 @@ const Orders = () => {
         <Loading />
       ) : (
         <div className="md:p-10 p-4 space-y-5">
-          <h1 className="text-2xl font-semibold mb-6">Orders</h1>
-          <div className="w-full rounded-md bg-white">
+          <h1 className="text-2xl font-semibold mb-6">Orders Management</h1>
+          <div className="w-full rounded-md bg-white shadow-sm">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium text-gray-700 border-b">
               <div className="col-span-4">Product Details</div>
               <div className="col-span-4">Customer Info</div>
@@ -90,7 +84,7 @@ const Orders = () => {
             {orders.map((order, index) => (
               <div
                 key={index}
-                className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center hover:bg-gray-50 transition-colors"
               >
                 <div className="col-span-4 flex gap-3">
                   <Image

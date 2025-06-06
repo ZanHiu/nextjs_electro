@@ -13,7 +13,6 @@ const AddBrand = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [views, setViews] = useState('');
-  const [brandId, setBrandId] = useState(0);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -23,8 +22,6 @@ const AddBrand = () => {
     formData.append("name", name);
     formData.append("description", description);
     formData.append("views", views);
-    formData.append("brandId", brandId);
-
 
     for (let i = 0; i < files.length; i++) {
       formData.append(`images`, files[i]);
@@ -43,7 +40,6 @@ const AddBrand = () => {
         setName('');
         setDescription('');
         setViews('');
-        setBrandId(0);
       } else {
         toast.error(data.message);
       }
@@ -73,7 +69,6 @@ const AddBrand = () => {
         <div>
           <p className="text-base font-medium">Brand Image</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
-
             {[...Array(4)].map((_, index) => (
               <label key={index} htmlFor={`image${index}`}>
                 <input onChange={(e) => {
@@ -91,7 +86,6 @@ const AddBrand = () => {
                 />
               </label>
             ))}
-
           </div>
         </div>
         <div className="flex flex-col gap-1 max-w-md">
@@ -111,35 +105,19 @@ const AddBrand = () => {
             required
           ></textarea>
         </div>
-        <div className="grid grid-cols-2 gap-5">
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="views">
-              Views
-            </label>
-            <input
-              id="views"
-              type="number"
-              placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setViews(e.target.value)}
-              value={views}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="brand-id">
-              Brand Id
-            </label>
-            <input
-              id="brand-id"
-              type="number"
-              placeholder="Type here"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setBrandId(e.target.value)}
-              value={brandId}
-              required
-            />
-          </div>
+        <div className="flex flex-col gap-1">
+          <label className="text-base font-medium" htmlFor="views">
+            Views
+          </label>
+          <input
+            id="views"
+            type="number"
+            placeholder="0"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            onChange={(e) => setViews(e.target.value)}
+            value={views}
+            required
+          />
         </div>
         <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
           ADD

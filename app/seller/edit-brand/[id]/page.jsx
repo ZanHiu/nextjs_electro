@@ -35,7 +35,7 @@ const EditBrand = () => {
     };
 
     fetchData();
-  }, [id, brands.length]);
+  }, [id, brands.length, getToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -35,7 +35,7 @@ const EditCategory = () => {
     };
 
     fetchData();
-  }, [id, categories.length]);
+  }, [id, categories.length, getToken]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

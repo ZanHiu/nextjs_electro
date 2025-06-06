@@ -18,10 +18,10 @@ const AllBrands = () => {
           </div>
         </div>
         <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-4 mt-12 pb-14 w-full">
-          {brands.map((brand, index) => (
+          {brands.map((brand) => (
             <div
-              key={brand._id || index}
-              onClick={() => router.push(`/products/brand/${brand.brandId}`)}
+              key={brand._id}
+              onClick={() => router.push(`/products/brand/${brand._id}`)}
               className="bg-white rounded border hover:border-orange-600 cursor-pointer transition-all duration-300 p-3 flex items-center justify-center"
             >
               <div className="relative w-full aspect-[3/2]">
