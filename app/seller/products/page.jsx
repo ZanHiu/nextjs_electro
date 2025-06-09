@@ -82,8 +82,8 @@ const ProductList = () => {
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
-              {products.map((product, index) => (
-                <tr key={index} className="border-t border-gray-500/20">
+              {products.map((product) => (
+                <tr key={product._id} className="border-t border-gray-500/20">
                   <td className="md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 truncate">
                     <div className="bg-gray-500/10 rounded p-2">
                       <Image
@@ -98,7 +98,7 @@ const ProductList = () => {
                       {product.name}
                     </span>
                   </td>
-                  <td className="px-4 py-3 max-sm:hidden">{product.category}</td>
+                  <td className="px-4 py-3 max-sm:hidden">{product.category.name}</td>
                   <td className="px-4 py-3">${product.offerPrice}</td>
                   <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
