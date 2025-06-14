@@ -8,6 +8,7 @@ import payment_icon from "./payment_icon.svg";
 import user_icon from "./user_icon.svg";
 import cart_icon from "./cart_icon.svg";
 import add_icon from "./add_icon.svg";
+import edit_icon from "./edit_icon.svg";
 import delete_icon from "./delete_icon.svg";
 import order_icon from "./order_icon.svg";
 import instagram_icon from "./instagram_icon.svg";
@@ -73,6 +74,7 @@ export const assets = {
   user_icon,
   cart_icon,
   add_icon,
+  edit_icon,
   delete_icon,
   order_icon,
   instagram_icon,

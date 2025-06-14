@@ -4,7 +4,8 @@ import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ProductReview from "@/components/ProductReview";
+import ReviewSection from "@/components/ReviewSection";
+import CommentSection from "@/components/CommentSection";
 import Image from "next/image";
 import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
@@ -16,6 +17,7 @@ const Product = () => {
   const { currency, router, products, addToCart, getBrandName, getCategoryName, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
   const [mainImage, setMainImage] = useState(null);
   const [productData, setProductData] = useState(null);
+  const [activeTab, setActiveTab] = useState('reviews');
 
   const fetchProductData = async () => {
     const product = products.find((product) => product._id === id);
@@ -127,7 +129,39 @@ const Product = () => {
             </div>
           </div>
         </div>
-        <ProductReview productId={productData._id} />
+        <div className="mt-10">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+              <button
+                onClick={() => setActiveTab('reviews')}
+                className={`${
+                  activeTab === 'reviews'
+                    ? 'border-orange-500 text-orange-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Đánh giá sản phẩm
+              </button>
+              <button
+                onClick={() => setActiveTab('comments')}
+                className={`${
+                  activeTab === 'comments'
+                    ? 'border-orange-500 text-orange-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+              >
+                Bình luận
+              </button>
+            </nav>
+          </div>
+          <div className="mt-6">
+            {activeTab === 'reviews' ? (
+              <ReviewSection productId={productData._id} />
+            ) : (
+              <CommentSection targetId={productData._id} type="product" />
+            )}
+          </div>
+        </div>
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center mb-4 mt-16">
             <p className="text-3xl font-medium">

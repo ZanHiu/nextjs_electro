@@ -15,7 +15,7 @@ const TopBrands = () => {
         {topBrands.map((brand, index) => (
           <div
             key={brand._id || index}
-            onClick={() => router.push(`/products/brand/${brand.brandId}`)}
+            onClick={() => router.push(`/products/brand/${brand._id}`)}
             className="bg-white rounded border hover:border-orange-600 cursor-pointer transition-all duration-300 p-3 flex items-center justify-center"
           >
             <div className="relative w-full aspect-[5/2]">

@@ -127,9 +127,7 @@ const Orders = () => {
                   >
                     <option value={OrderStatus.PENDING}>Pending</option>
                     <option value={OrderStatus.PROCESSING}>Processing</option>
-                    <option value={OrderStatus.SHIPPING}>Shipping</option>
                     <option value={OrderStatus.DELIVERED}>Delivered</option>
-                    <option value={OrderStatus.COMPLETED}>Completed</option>
                     <option value={OrderStatus.CANCELLED}>Cancelled</option>
                   </select>
                   <p className="text-gray-500">

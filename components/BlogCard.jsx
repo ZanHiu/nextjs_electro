@@ -2,6 +2,7 @@ import React from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
+import { formatDate } from "@/utils/format";
 
 const BlogCard = ({ blog }) => {
 	const { router } = useAppContext();
@@ -34,7 +35,7 @@ const BlogCard = ({ blog }) => {
 							width={16}
 							height={16}
 						/>
-						<span>{new Date(blog.date).toLocaleDateString()}</span>
+						<span>{formatDate(blog.date)}</span>
 					</div>
 					<div className="flex items-center gap-1">
 						<Image
