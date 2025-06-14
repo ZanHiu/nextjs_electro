@@ -209,15 +209,23 @@ const Navbar = () => {
             </div>
           )}
         </div>
+
+        <button
+          onClick={() => router.push('/cart')}
+          className="hover:text-gray-900 transition"
+        >
+          <Image className="w-4 h-4" src={assets.cart_icon} alt="cart icon" />
+        </button>
+
         {user ? (
           <UserButton>
-            <UserButton.MenuItems>
+            {/* <UserButton.MenuItems>
               <UserButton.Action 
                 label="Cart" 
                 labelIcon={<CartIcon />} 
                 onClick={() => router.push('/cart')} 
               />
-            </UserButton.MenuItems>
+            </UserButton.MenuItems> */}
             <UserButton.MenuItems>
               <UserButton.Action 
                 label="My Orders" 

@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
-import { getOrderStatusColor, getPaymentStatusColor } from "@/utils/helpers";
+import { getOrderStatusColor, getPaymentStatusColor, genOrderCode } from "@/utils/helpers";
+import { formatDate } from "@/utils/format";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/Footer";
@@ -15,6 +16,7 @@ const MyOrders = () => {
   const { currency, getToken, user, addToCart, router } = useAppContext();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [productReviews, setProductReviews] = useState({});
 
   const fetchOrders = async () => {
     try {
@@ -36,6 +38,22 @@ const MyOrders = () => {
       }
     } catch (error) {
       toast.error(error.message);
+    }
+  };
+
+  const fetchProductReviews = async (productId) => {
+    try {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews/product/${productId}`
+      );
+      if (data.success) {
+        setProductReviews(prev => ({
+          ...prev,
+          [productId]: data.reviews
+        }));
+      }
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
     }
   };
 
@@ -70,96 +88,197 @@ const MyOrders = () => {
 
   const handleReorder = async (order) => {
     try {
-      // Add all items from the order back to cart
       for (const item of order.items) {
         await addToCart(item.product._id, item.quantity);
       }
-      
       router.push('/cart');
     } catch (error) {
       toast.error("Failed to add items to cart");
     }
   };
 
+  const handleReviewClick = (productId, orderId) => {
+    router.push(`/product/${productId}?orderId=${orderId}#review`);
+  };
+
+  const hasUserReviewed = (productId, orderId) => {
+    const reviews = productReviews[productId] || [];
+    return reviews.some(review => review.orderId === orderId);
+  };
+
   return (
     <>
       <Navbar />
-      <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-screen">
-        <div className="space-y-5">
-          <h2 className="text-lg font-medium mt-6">My Orders</h2>
+      <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto w-full space-y-8">
+          {/* Header Section */}
+          <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-800">Đơn hàng của tôi</h2>
+                <p className="text-gray-500 mt-1">Theo dõi và quản lý đơn hàng của bạn</p>
+              </div>
+              <button
+                onClick={() => router.push('/all-products')}
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center gap-2"
+              >
+                <Image src={assets.arrow_icon_white} alt="shop" className="w-5 h-5 rotate-180" />
+                Tiếp tục mua sắm
+              </button>
+            </div>
+          </div>
+
+          {/* Orders List */}
           {loading ? (
             <Loading />
+          ) : orders.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+              {/* <Image
+                src={assets.empty_order}
+                alt="No orders"
+                className="w-32 h-32 mx-auto mb-4"
+              /> */}
+              <h3 className="text-xl font-medium text-gray-800 mb-2">Bạn chưa có đơn hàng nào</h3>
+              <p className="text-gray-500 mb-6">Hãy bắt đầu mua sắm để xem đơn hàng của bạn ở đây</p>
+              <button
+                onClick={() => router.push('/all-products')}
+                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
+              >
+                Mua sắm ngay
+              </button>
+            </div>
           ) : (
-            <div className="max-w-5xl border-t border-gray-300 text-sm">
+            <div className="space-y-4">
               {orders.map((order, index) => (
                 <div
                   key={index}
-                  className="grid grid-cols-12 gap-4 p-4 border-b border-gray-200 items-center"
+                  className="bg-white rounded-lg shadow-sm overflow-hidden"
                 >
-                  <div className="col-span-4 flex gap-3">
-                    <Image
-                      className="w-16 h-16 object-cover"
-                      src={assets.box_icon}
-                      alt="box_icon"
-                    />
-                    <div className="flex flex-col">
-                      <span className="font-medium line-clamp-2">
-                        {order.items
-                          .map(
-                            (item) => item.product.name + ` x ${item.quantity}`
-                          )
-                          .join(", ")}
-                      </span>
-                      <span className="text-gray-500">
-                        Items: {order.items.length}
+                  {/* Order Header */}
+                  <div className="p-4 border-b border-gray-100 bg-gray-50">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4">
+                        <span className="text-sm text-gray-500">Mã đơn hàng: {genOrderCode(order._id)}</span>
+                        <span className="text-sm text-gray-500">
+                          Ngày đặt: {formatDate(order.date)}
+                        </span>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${getOrderStatusColor(order.status)}`}>
+                        {order.status}
                       </span>
                     </div>
                   </div>
 
-                  <div className="col-span-3 text-sm">
-                    <p className="font-medium">{order.address.fullName}</p>
-                    <p className="text-gray-500">{order.address.area}</p>
-                    <p className="text-gray-500">{`${order.address.city}, ${order.address.state}`}</p>
-                    <p className="text-gray-500">{order.address.phoneNumber}</p>
-                  </div>
+                  {/* Order Content */}
+                  <div className="p-6">
+                    <div className="grid grid-cols-12 gap-6">
+                      {/* Products */}
+                      <div className="col-span-12 lg:col-span-6">
+                        <h4 className="font-medium text-gray-800 mb-3">Sản phẩm</h4>
+                        <div className="space-y-4">
+                          {order.items.map((item, idx) => (
+                            <div key={idx} className="flex gap-4">
+                              <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                                <Image
+                                  src={item.product.image[0]}
+                                  alt={item.product.name}
+                                  className="w-full h-full object-cover"
+                                  width={80}
+                                  height={80}
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <h5 className="font-medium text-gray-800 line-clamp-1">{item.product.name}</h5>
+                                <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                                <p className="text-sm font-medium text-orange-500">
+                                  {formatPrice(item.product.offerPrice)}{currency}
+                                </p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
 
-                  <div className="col-span-3 text-sm">
-                    <p className="font-medium">
-                      {formatPrice(order.amount)}{currency}
-                    </p>
-                    <p className={getPaymentStatusColor(order.paymentStatus)}>
-                      Payment: {order.paymentStatus}
-                    </p>
-                    <p className="text-gray-500">
-                      Method: {order.paymentMethod}
-                    </p>
-                    <p className="text-gray-500">
-                      Date: {new Date(order.date).toLocaleDateString()}
-                    </p>
-                  </div>
+                      {/* Order Details */}
+                      <div className="col-span-12 lg:col-span-6">
+                        <div className="grid grid-cols-2 gap-6">
+                          <div>
+                            <h4 className="font-medium text-gray-800 mb-3">Thông tin giao hàng</h4>
+                            <div className="space-y-2 text-sm">
+                              <p className="font-medium">{order.address.fullName}</p>
+                              <p className="text-gray-600">{order.address.area}</p>
+                              <p className="text-gray-600">{`${order.address.city}, ${order.address.state}`}</p>
+                              <p className="text-gray-600">{order.address.phoneNumber}</p>
+                            </div>
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-gray-800 mb-3">Thông tin thanh toán</h4>
+                            <div className="space-y-2 text-sm">
+                              <p className="font-medium">
+                                Tổng tiền: {formatPrice(order.amount)}{currency}
+                              </p>
+                              <p className="text-gray-600">
+                                Phương thức: {order.paymentMethod}
+                              </p>
+                              <p className={`${getPaymentStatusColor(order.paymentStatus)} font-bold`}>
+                                Trạng thái: {order.paymentStatus}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="col-span-2 text-sm text-right space-y-2">
-                    <p className={`font-medium ${getOrderStatusColor(order.status)}`}>
-                      {order.status}
-                    </p>
+                    {/* Actions */}
+                    <div className="mt-6 pt-6 border-t border-gray-100 flex items-center justify-end gap-4">
+                      {order.status !== "DELIVERED" && order.status !== "CANCELLED" && (
+                        <button
+                          onClick={() => handleCancelOrder(order._id)}
+                          className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                        >
+                          Hủy đơn hàng
+                        </button>
+                      )}
 
-                    {order.status !== "COMPLETED" && order.status !== "CANCELLED" && (
-                      <button
-                        onClick={() => handleCancelOrder(order._id)}
-                        className="text-red-600 hover:text-red-800 text-sm font-medium"
-                      >
-                        Cancel Order
-                      </button>
-                    )}
+                      {(order.status === "DELIVERED" || order.status === "CANCELLED") && (
+                        <button
+                          onClick={() => handleReorder(order)}
+                          className="px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                        >
+                          Mua lại
+                        </button>
+                      )}
 
-                    {order.status === "COMPLETED" && (
-                      <button
-                        onClick={() => handleReorder(order)}
-                        className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                      >
-                        Order Again
-                      </button>
-                    )}
+                      {order.status === "DELIVERED" && (
+                        <>
+                          {order.items.map((item) => {
+                            const productId = item.product._id;
+                            if (!productReviews[productId]) {
+                              fetchProductReviews(productId);
+                            }
+                            return (
+                              <div key={productId}>
+                                {hasUserReviewed(productId, order._id) ? (
+                                  <button
+                                    onClick={() => handleReviewClick(productId, order._id)}
+                                    className="px-4 py-2 text-orange-600 hover:bg-orange-50 rounded-lg transition"
+                                  >
+                                    Xem đánh giá
+                                  </button>
+                                ) : (
+                                  <button
+                                    onClick={() => handleReviewClick(productId, order._id)}
+                                    className="px-4 py-2 bg-orange-500 text-white hover:bg-orange-600 rounded-lg transition"
+                                  >
+                                    Đánh giá ngay
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

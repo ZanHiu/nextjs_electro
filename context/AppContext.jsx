@@ -31,7 +31,9 @@ export const AppContextProvider = (props) => {
   const [blogs, setBlogs] = useState([]);
   const [homeBlogs, setHomeBlogs] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [hasUserPurchasedProduct, setHasUserPurchasedProduct] = useState(false);
 
   const fetchProductData = async () => {
     try {
@@ -274,14 +276,108 @@ export const AppContextProvider = (props) => {
     return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
   };
 
-  const postReview = async (targetId, type = 'product', content, ratingValue, token) => {
+  const postReview = async (targetId, type = 'product', content, ratingValue, token, orderId) => {
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reviews/${type}`,
-        { targetId, content, ratingValue },
+        { targetId, content, ratingValue, orderId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       fetchReviews(targetId, type);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const checkUserProductPurchaseStatus = async (productId, token) => {
+    if (!token) {
+      setHasUserPurchasedProduct(false);
+      return;
+    }
+    try {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/check-purchase/${productId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setHasUserPurchasedProduct(data.hasPurchased);
+    } catch (err) {
+      console.error("Error checking purchase status:", err);
+      setHasUserPurchasedProduct(false);
+    }
+  };
+
+  const fetchComments = async (targetId, type = 'product') => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comments/${type}/${targetId}`);
+      if (data.success) {
+        setComments(data.comments);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const postComment = async (targetId, type, content, token, parentId = null) => {
+    try {
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/comments`,
+        { targetId, type, content, parentId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        toast.success(parentId ? "Trả lời thành công!" : "Bình luận thành công!");
+        fetchComments(targetId, type);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const updateComment = async (commentId, content, token) => {
+    try {
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
+        { content },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        toast.success("Cập nhật bình luận thành công!");
+        // Refresh comments after update
+        const comment = comments.find(c => c._id === commentId);
+        if (comment) {
+          fetchComments(comment.targetId, comment.type);
+        }
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
+  const deleteComment = async (commentId, token) => {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (data.success) {
+        toast.success("Xóa bình luận thành công!");
+        // Refresh comments after delete
+        const comment = comments.find(c => c._id === commentId);
+        if (comment) {
+          fetchComments(comment.targetId, comment.type);
+        }
+      } else {
+        toast.error(data.message);
+      }
     } catch (err) {
       toast.error(err.message);
     }
@@ -348,6 +444,13 @@ export const AppContextProvider = (props) => {
     postReview,
     getReviewCount,
     getReviewAmount,
+    hasUserPurchasedProduct,
+    checkUserProductPurchaseStatus,
+    comments,
+    fetchComments,
+    postComment,
+    updateComment,
+    deleteComment,
   };
 
   return (
