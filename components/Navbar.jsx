@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon } from "@/assets/assets";
+import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, BlogIcon } from "@/assets/assets";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
@@ -139,12 +139,12 @@ const Navbar = () => {
             onClick={() => router.push("/seller")}
             className="text-xs border px-4 py-1.5 rounded-full"
           >
-            Seller Dashboard
+            Dashboard
           </button>
         )}
       </div>
 
-      <ul className="hidden md:flex items-center gap-4 ">
+      <ul className="hidden md:flex items-center gap-4 lg:gap-6">
         {/* <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" /> */}
         <div className="relative" ref={searchRef}>
           <button
@@ -275,6 +275,13 @@ const Navbar = () => {
                 label="Products" 
                 labelIcon={<BoxIcon />} 
                 onClick={() => router.push('/all-products')} 
+              />
+            </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="Blogs" 
+                labelIcon={<BlogIcon />} 
+                onClick={() => router.push('/all-blogs')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>

@@ -9,6 +9,7 @@ import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { formatPrice } from "@/utils/format";
 
 const Orders = () => {
   const { currency, getToken, user } = useAppContext();
@@ -112,8 +113,8 @@ const Orders = () => {
                 </div>
 
                 <div className="col-span-2 text-sm">
-                  <p className="font-medium">{currency}{order.amount}</p>
-                  <p className={getPaymentStatusColor(order.paymentStatus)}>
+                  <p className="font-medium">{formatPrice(order.amount)}{currency}</p>
+                  <p className={`font-bold ${getPaymentStatusColor(order.paymentStatus)}`}>
                     Payment: {order.paymentStatus}
                   </p>
                   <p className="text-gray-500">Method: {order.paymentMethod}</p>

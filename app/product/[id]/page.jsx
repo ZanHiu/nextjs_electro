@@ -11,23 +11,35 @@ import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const Product = () => {
   const { id } = useParams();
-  const { currency, router, products, addToCart, getBrandName, getCategoryName, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
+  const { currency, router, products, addToCart, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
   const [mainImage, setMainImage] = useState(null);
   const [productData, setProductData] = useState(null);
   const [activeTab, setActiveTab] = useState('reviews');
 
   const fetchProductData = async () => {
-    const product = products.find((product) => product._id === id);
-    setProductData(product);
+    try {
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/products/${id}`
+      );
+      if (data.success) {
+        setProductData(data.product);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
     fetchProductData();
     fetchReviews(id, "product");
-  }, [id, products.length]);
+  }, [id]);
 
   return productData ? (
     <>
@@ -100,11 +112,11 @@ const Product = () => {
                   </tr>
                   <tr>
                     <td className="text-gray-600 font-medium">Brand</td>
-                    <td className="text-gray-800/50 ">{getBrandName(productData.brandId)}</td>
+                    <td className="text-gray-800/50 ">{productData.brand?.name}</td>
                   </tr>
                   <tr>
                     <td className="text-gray-600 font-medium">Category</td>
-                    <td className="text-gray-800/50">{getCategoryName(productData.cateId)}</td>
+                    <td className="text-gray-800/50">{productData.category?.name}</td>
                   </tr>
                 </tbody>
               </table>
