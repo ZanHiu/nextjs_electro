@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, BlogIcon } from "@/assets/assets";
+import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, BlogIcon, HeartIcon } from "@/assets/assets";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
@@ -228,6 +228,13 @@ const Navbar = () => {
             </UserButton.MenuItems> */}
             <UserButton.MenuItems>
               <UserButton.Action 
+                label="My Favorites" 
+                labelIcon={<HeartIcon />} 
+                onClick={() => router.push('/my-favorites')} 
+              />
+            </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
                 label="My Orders" 
                 labelIcon={<BagIcon />} 
                 onClick={() => router.push('/my-orders')} 
@@ -289,6 +296,13 @@ const Navbar = () => {
                 label="Cart" 
                 labelIcon={<CartIcon />} 
                 onClick={() => router.push('/cart')} 
+              />
+            </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="My Favorites" 
+                labelIcon={<HeartIcon />} 
+                onClick={() => router.push('/my-favorites')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>

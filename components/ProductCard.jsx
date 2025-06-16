@@ -1,18 +1,100 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const ProductCard = ({ product }) => {
-  const { currency, router } = useAppContext();
+const ProductCard = ({ product, onFavoriteRemoved }) => {
+  const { currency, router, user, getToken } = useAppContext();
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    const checkFavoriteStatus = async () => {
+      if (!user) return;
+
+      try {
+        const token = await getToken();
+        const { data } = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites/check/${product._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        setIsFavorite(data.isFavorite);
+      } catch (error) {
+        toast.error("Không thể kiểm tra trạng thái yêu thích");
+      }
+    };
+
+    checkFavoriteStatus();
+  }, [product._id, user, getToken]);
+
+  const handleFavoriteClick = async (e) => {
+    e.preventDefault(); // Ngăn chặn hành vi mặc định
+    e.stopPropagation(); // Ngăn chặn sự kiện click lan ra ngoài
+
+    if (!user) {
+      toast.error("Vui lòng đăng nhập để thêm vào yêu thích");
+      return;
+    }
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        toast.error('Vui lòng đăng nhập lại để thực hiện thao tác này');
+        return;
+      }
+
+      if (isFavorite) {
+        await axios.delete(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites/remove/${product._id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        toast.success("Đã xóa khỏi danh sách yêu thích");
+        setIsFavorite(false);
+        if (onFavoriteRemoved) {
+          onFavoriteRemoved();
+        }
+      } else {
+        await axios.post(
+          `${process.env.NEXT_PUBLIC_API_URL}/favorites/add`,
+          { productId: product._id },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            withCredentials: true,
+          }
+        );
+        toast.success("Đã thêm vào danh sách yêu thích");
+        setIsFavorite(true);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra");
+    }
+  };
+
+  const handleProductClick = (e) => {
+    // Chỉ điều hướng nếu click KHÔNG phải trên nút yêu thích
+    if (!e.target.closest('.favorite-button')) {
+      router.push("/product/" + product._id);
+      window.scrollTo(0, 0);
+    }
+  };
 
   return (
     <div
-      onClick={() => {
-        router.push("/product/" + product._id);
-        scrollTo(0, 0);
-      }}
+      onClick={handleProductClick}
       className="flex flex-col items-start gap-0.5 w-full cursor-pointer"
     >
       <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center">
@@ -30,8 +112,17 @@ const ProductCard = ({ product }) => {
             </span>
           </div>
         )}
-        <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
-          <Image className="h-3 w-3" src={assets.heart_icon} alt="heart_icon" />
+        <button
+          onClick={handleFavoriteClick}
+          className={`absolute top-2 right-2 bg-white p-2 rounded-full shadow-md transition-colors favorite-button ${
+            isFavorite ? 'text-red-500' : 'text-gray-500'
+          }`}
+        >
+          <Image
+            className="h-3 w-3"
+            src={isFavorite ? assets.heart_filled_icon : assets.heart_icon}
+            alt="heart_icon"
+          />
         </button>
       </div>
 
@@ -86,16 +177,6 @@ const ProductCard = ({ product }) => {
           </button>
         </div>
       </div>
-
-      {/* <div className="flex items-end justify-between w-full mt-1">
-        <p className="text-base font-medium">
-          {currency}
-          {product.offerPrice}
-        </p>
-        <button className="max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
-          Buy now
-        </button>
-      </div> */}
     </div>
   );
 };

@@ -30,11 +30,12 @@ import arrow_right_icon_colored from "./arrow_right_icon_colored.svg";
 import my_location_image from "./my_location_image.svg";
 import arrow_icon_white from "./arrow_icon_white.svg";
 import heart_icon from "./heart_icon.svg";
+import heart_filled_icon from "./heart_filled_icon.svg";
 import star_icon from "./star_icon.svg";
+import star_dull_icon from "./star_dull_icon.svg";
 import stat_icon from "./stat_icon.svg";
 import gear_icon from "./gear_icon.svg";
 import redirect_icon from "./redirect_icon.svg";
-import star_dull_icon from "./star_dull_icon.svg";
 import header_headphone_image from "./header_headphone_image.png";
 import header_playstation_image from "./header_playstation_image.png";
 import header_macbook_image from "./header_macbook_image.png";
@@ -98,11 +99,12 @@ export const assets = {
   my_location_image,
   arrow_icon_white,
   heart_icon,
+  heart_filled_icon,
   star_icon,
+  star_dull_icon,
   stat_icon,
   gear_icon,
   redirect_icon,
-  star_dull_icon,
   header_headphone_image,
   header_playstation_image,
   header_macbook_image,
@@ -175,6 +177,12 @@ export const HomeIcon = () => (
 export const BlogIcon = () => (
   <svg className="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3l-4 4Z" />
+  </svg>
+);
+
+export const HeartIcon = () => (
+  <svg className="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
   </svg>
 );
 
