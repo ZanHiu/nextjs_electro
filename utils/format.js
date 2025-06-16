@@ -16,8 +16,3 @@ export const formatDateTime = (date) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
   return new Date(date).toLocaleString('vi-VN', options);
 };
-
-export const truncateText = (text, maxLength) => {
-  if (text.length <= maxLength) return text;
-  return text.substr(0, maxLength) + '...';
-};

@@ -20,6 +20,7 @@ import product_icon from "./product_icon.svg";
 import tag_icon from "./tag_icon.svg";
 import cate_icon from "./cate_icon.svg";
 import menu_icon from "./menu_icon.svg";
+import blog_icon from "./blog_icon.svg";
 import money_icon from "./money_icon.svg";
 import arrow_icon from "./arrow_icon.svg";
 import increase_arrow from "./increase_arrow.svg";
@@ -31,6 +32,7 @@ import arrow_icon_white from "./arrow_icon_white.svg";
 import heart_icon from "./heart_icon.svg";
 import star_icon from "./star_icon.svg";
 import stat_icon from "./stat_icon.svg";
+import gear_icon from "./gear_icon.svg";
 import redirect_icon from "./redirect_icon.svg";
 import star_dull_icon from "./star_dull_icon.svg";
 import header_headphone_image from "./header_headphone_image.png";
@@ -86,6 +88,7 @@ export const assets = {
   tag_icon,
   cate_icon,
   menu_icon,
+  blog_icon,
   money_icon,
   arrow_icon,
   increase_arrow,
@@ -97,6 +100,7 @@ export const assets = {
   heart_icon,
   star_icon,
   stat_icon,
+  gear_icon,
   redirect_icon,
   star_dull_icon,
   header_headphone_image,
@@ -136,7 +140,7 @@ export const BagIcon = () => {
       <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 10V6a3 3 0 0 1 3-3v0a3 3 0 0 1 3 3v4m3-2 .917 11.923A1 1 0 0 1 17.92 21H6.08a1 1 0 0 1-.997-1.077L6 8h12Z" />
     </svg>
   )
-}
+};
 
 export const CartIcon = () => {
   return (
@@ -146,9 +150,8 @@ export const CartIcon = () => {
         <rect width="18" height="18" fill="white" />
       </defs>
     </svg>
-
   )
-}
+};
 
 export const BoxIcon = () => (
   <svg className="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -166,6 +169,12 @@ export const AddressIcon = () => (
 export const HomeIcon = () => (
   <svg className="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
+  </svg>
+);
+
+export const BlogIcon = () => (
+  <svg className="w-5 h-5 text-gray-800" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-3l-4 4Z" />
   </svg>
 );
 

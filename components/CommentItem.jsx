@@ -17,10 +17,12 @@ const CommentItem = ({
   return (
     <div className={`${isReply ? 'ml-12 mt-2' : 'mb-4'}`}>
       <div className="flex items-start gap-3">
-        <img
+        <Image
           src={avatarUrl}
           alt="avatar"
           className="w-8 h-8 rounded-full object-cover border"
+          width={32}
+          height={32}
         />
         <div className="flex-1">
           <div className="bg-gray-50 rounded-lg p-3">
