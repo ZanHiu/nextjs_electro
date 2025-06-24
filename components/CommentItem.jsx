@@ -1,6 +1,7 @@
 import Image from "next/image";
-import { assets } from "@/assets/assets";
 import { formatDateTime } from "@/utils/format";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 const CommentItem = ({
   comment,
@@ -49,13 +50,13 @@ const CommentItem = ({
                   onClick={() => onEdit(comment)}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  <Image src={assets.edit_icon} alt="edit" className="h-4 w-4" width={16} height={16} />
+                  <EditOutlinedIcon sx={{ fontSize: 20 }} />
                 </button>
                 <button
                   onClick={() => onDelete(comment._id)}
                   className="text-sm text-red-500 hover:text-red-700"
                 >
-                  <Image src={assets.delete_icon} alt="delete" className="h-4 w-4" width={16} height={16} />
+                  <DeleteOutlinedIcon sx={{ fontSize: 20 }} />
                 </button>
               </>
             )}

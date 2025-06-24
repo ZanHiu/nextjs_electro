@@ -6,6 +6,7 @@ import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
+import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
 
 const EditCategory = () => {
   const { id } = useParams();
@@ -148,12 +149,7 @@ const EditCategory = () => {
                     }}
                     className="absolute -top-2 -right-2 p-1.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-gray-500 hover:text-red-500 hover:border-red-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-sm"
                   >
-                    <Image
-                      src={assets.delete_icon}
-                      alt=""
-                      width={10}
-                      height={10}
-                    />
+                    <ClearOutlinedIcon sx={{ fontSize: 10 }} />
                   </button>
                 )}
               </div>

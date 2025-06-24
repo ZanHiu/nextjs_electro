@@ -5,6 +5,7 @@ import { useAppContext } from "@/context/AppContext";
 import toast from "react-hot-toast";
 import { formatDateTime } from "@/utils/format";
 import { useSearchParams } from "next/navigation";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 const ReviewSection = ({ productId }) => {
   const searchParams = useSearchParams();
@@ -107,7 +108,7 @@ const ReviewSection = ({ productId }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg w-full mx-auto">
+    <div ref={reviewRef} id="review" className="bg-white rounded-lg w-full mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-800">
           Đánh giá sản phẩm
@@ -256,7 +257,7 @@ const ReviewSection = ({ productId }) => {
                             onClick={() => handleEditClick(c)}
                             className="text-sm text-orange-500 hover:text-orange-600"
                           >
-                            <Image src={assets.edit_icon} alt="edit_icon" className="h-4 w-4" width={16} height={16} />
+                            <EditOutlinedIcon sx={{ fontSize: 16 }} />
                           </button>
                         )}
                       </div>

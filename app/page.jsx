@@ -11,6 +11,7 @@ import HotProducts from '@/components/HotProducts';
 import Services from "@/components/Services";
 import NewsLetter from "@/components/NewsLetter";
 import FeaturedProduct from "@/components/FeaturedProduct";
+import HomeVouchers from "@/components/HomeVouchers";
 import HomeBlogs from "@/components/HomeBlogs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -28,6 +29,7 @@ const Home = () => {
         <SaleProducts />
         <Services />
         <HotProducts />
+        <HomeVouchers />
         <HomeBlogs />
         <FeaturedProduct />
         <Banner />

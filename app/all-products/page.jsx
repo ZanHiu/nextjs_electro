@@ -1,12 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
-import { assets } from "@/assets/assets";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const AllProducts = () => {
   const { products, categories, brands } = useAppContext();
@@ -63,10 +62,9 @@ const AllProducts = () => {
                 className="w-full p-4 flex items-center justify-between font-semibold text-lg hover:bg-gray-50"
               >
                 <span>Categories</span>
-                <Image
-                  className={`h-2.5 w-4 transition-transform ${isOpenCategory ? 'rotate-180' : ''}`}
-                  src={assets.dropdown_arrow}
-                  alt="dropdown_arrow"
+                <ArrowDropDownIcon 
+                  sx={{ fontSize: 24 }} 
+                  className={`transition-transform ${isOpenCategory ? 'rotate-180' : ''}`}
                 />
               </button>
               
@@ -107,10 +105,9 @@ const AllProducts = () => {
                 className="w-full p-4 flex items-center justify-between font-semibold text-lg hover:bg-gray-50"
               >
                 <span>Brands</span>
-                <Image
-                  className={`h-2.5 w-4 transition-transform ${isOpenBrand ? 'rotate-180' : ''}`}
-                  src={assets.dropdown_arrow}
-                  alt="dropdown_arrow"
+                <ArrowDropDownIcon
+                  sx={{ fontSize: 24 }}
+                  className={`transition-transform ${isOpenBrand ? 'rotate-180' : ''}`}
                 />
               </button>
               

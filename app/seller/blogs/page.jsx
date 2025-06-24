@@ -6,6 +6,7 @@ import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { formatDate } from "@/utils/format";
 
 const BlogList = () => {
   const { router, getToken, user } = useAppContext();
@@ -69,8 +70,8 @@ const BlogList = () => {
                       {blog.name}
                     </span>
                   </td>
-                  <td className="px-4 py-3 max-sm:hidden">{blog.userId}</td>
-                  <td className="px-4 py-3">{new Date(blog.date).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 max-sm:hidden">{blog.userId?.name}</td>
+                  <td className="px-4 py-3">{formatDate(blog.date)}</td>
                   <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
                       <button 

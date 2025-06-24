@@ -11,6 +11,9 @@ import { useAppContext } from "@/context/AppContext";
 import { countTimeFromNow } from "@/utils/helpers";
 import axios from "axios";
 import toast from "react-hot-toast";
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 const Blog = () => {
 	const { id } = useParams();
@@ -32,23 +35,23 @@ const Blog = () => {
 	}, []);
 
 	const fetchBlogData = async () => {
-    try {
-      const { data } = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/blogs/${id}`
-      );
-      if (data.success) {
-        setBlogData(data.blog);
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.message);
-    }
-  };
+		try {
+			const { data } = await axios.get(
+				`${process.env.NEXT_PUBLIC_API_URL}/blogs/${id}`
+			);
+			if (data.success) {
+				setBlogData(data.blog);
+			} else {
+				toast.error(data.message);
+			}
+		} catch (error) {
+			toast.error(error.message);
+		}
+	};
 
-  useEffect(() => {
-    fetchBlogData();
-  }, [id]);
+	useEffect(() => {
+		fetchBlogData();
+	}, [id]);
 
 	const handleDelete = async () => {
 		if (window.confirm('Bạn có chắc chắn muốn xóa blog này?')) {
@@ -85,38 +88,20 @@ const Blog = () => {
 					</h1>
 					<div className="flex items-center gap-4 text-sm text-gray-500 mb-6">
 						<div className="flex items-center gap-2">
-							<Image
-								src={assets.user_icon}
-								alt="user"
-								className="w-5 h-5"
-								width={20}
-								height={20}
-							/>
+							<PersonOutlineOutlinedIcon sx={{ fontSize: 24 }} />
 							<span>{blogData.userId?.name}</span>
 						</div>
 						<div className="flex items-center gap-2">
-							<Image
-								src={assets.calendar_icon}
-								alt="calendar"
-								className="w-5 h-5"
-								width={20}
-								height={20}
-							/>
+							<CalendarMonthOutlinedIcon sx={{ fontSize: 24 }} />
 							<span>{countTimeFromNow(blogData.date)}</span>
 						</div>
-{blogData.userId?._id === user?.id && (
+						{blogData.userId?._id === user?.id && (
 							<div className="relative" ref={dropdownRef}>
-								<button 
+								<button
 									onClick={() => setShowDropdown(!showDropdown)}
 									className="flex items-center"
 								>
-									<Image
-										src={assets.gear_icon}
-										alt="gear"
-										className="w-5 h-5 cursor-pointer"
-										width={20}
-										height={20}
-									/>
+									<SettingsIcon sx={{ fontSize: 24 }} />
 								</button>
 								{showDropdown && (
 									<div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
@@ -157,21 +142,19 @@ const Blog = () => {
 						<nav className="-mb-px flex space-x-8" aria-label="Tabs">
 							<button
 								onClick={() => setActiveTab('content')}
-								className={`${
-									activeTab === 'content'
+								className={`${activeTab === 'content'
 										? 'border-orange-500 text-orange-600'
 										: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-								} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+									} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
 							>
 								Nội dung
 							</button>
 							<button
 								onClick={() => setActiveTab('comments')}
-								className={`${
-									activeTab === 'comments'
+								className={`${activeTab === 'comments'
 										? 'border-orange-500 text-orange-600'
 										: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-								} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+									} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
 							>
 								Bình luận
 							</button>

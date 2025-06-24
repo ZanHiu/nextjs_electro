@@ -1,7 +1,9 @@
 'use client'
 import React from "react";
-import Image from "next/image";
-import { assets } from "@/assets/assets";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -30,10 +32,10 @@ ChartJS.register(
 
 const DashBoard = () => {
   const stats = [
-    { title: "Total Sales", value: "$12,345", icon: assets.money_icon },
-    { title: "Total Orders", value: "234", icon: assets.order_icon },
-    { title: "Total Products", value: "89", icon: assets.product_list_icon },
-    { title: "Total Customers", value: "156", icon: assets.user_icon },
+    { title: "Total Sales", value: "$12,345", icon: <AttachMoneyOutlinedIcon sx={{ fontSize: 48 }} /> },
+    { title: "Total Orders", value: "234", icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 48 }} /> },
+    { title: "Total Products", value: "89", icon: <Inventory2OutlinedIcon sx={{ fontSize: 48 }} /> },
+    { title: "Total Customers", value: "156", icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 48 }} /> },
   ];
 
   const recentOrders = [
@@ -112,7 +114,7 @@ const DashBoard = () => {
                 <p className="text-gray-500">{stat.title}</p>
                 <p className="text-2xl font-semibold mt-2">{stat.value}</p>
               </div>
-              <Image src={stat.icon} alt={stat.title} width={40} height={40} />
+              {stat.icon}
             </div>
           </div>
         ))}

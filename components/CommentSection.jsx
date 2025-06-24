@@ -1,9 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import Image from "next/image";
-import { assets } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import toast from "react-hot-toast";
-import { formatDateTime } from "@/utils/format";
 import CommentItem from "./CommentItem";
 
 const CommentSection = ({ targetId, type = 'product' }) => {
@@ -80,7 +77,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg w-full mx-auto">
+    <div ref={commentRef} id="comment" className="bg-white rounded-lg w-full mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-800">
           Bình luận ({comments.length})
@@ -106,7 +103,6 @@ const CommentSection = ({ targetId, type = 'product' }) => {
             </div>
           )}
           <textarea
-            ref={commentRef}
             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
             value={content}
             onChange={e => setContent(e.target.value)}

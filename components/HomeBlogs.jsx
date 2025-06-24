@@ -1,7 +1,7 @@
 import React from "react";
 import { useAppContext } from "@/context/AppContext";
-import { assets } from "@/assets/assets";
 import Image from "next/image";
+import LaunchIcon from '@mui/icons-material/Launch';
 
 const HomeBlogs = () => {
   const { homeBlogs, blogs, router } = useAppContext();
@@ -33,11 +33,7 @@ const HomeBlogs = () => {
                 className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group"
               >
                 Read more 
-                <Image 
-                  className="h-3 w-3 group-hover:translate-x-1 transition-transform" 
-                  src={assets.redirect_icon} 
-                  alt="Redirect Icon" 
-                />
+                <LaunchIcon sx={{ fontSize: 16 }} />
               </button>
             </div>
           </div>

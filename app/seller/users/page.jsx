@@ -1,12 +1,12 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { formatDate } from "@/utils/format";
 
 const Users = () => {
   const { getToken, user } = useAppContext();
@@ -162,7 +162,7 @@ const Users = () => {
                   <div className="flex flex-col">
                     <span className="font-medium">{user.name}</span>
                     {/* <span className="text-gray-500 text-xs">ID: {user._id.slice(0, 8)}...</span> */}
-                    <p className="text-gray-500 text-xs">Member since: {new Date(user.createdAt).toLocaleDateString()}</p>
+                    <p className="text-gray-500 text-xs">Member since: {formatDate(user.createdAt)}</p>
                   </div>
                 </div>
 

@@ -1,8 +1,8 @@
 import React from "react";
-import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import { formatDate } from "@/utils/format";
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 const BlogCard = ({ blog }) => {
 	const { router } = useAppContext();
@@ -26,47 +26,19 @@ const BlogCard = ({ blog }) => {
 			</div>
 
 			<div className="p-6">
-				{/* Blog Meta Info */}
-				{/* <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-					<div className="flex items-center gap-1">
-						<Image
-							src={assets.user_icon}
-							alt="Author"
-							width={16}
-							height={16}
-						/>
-						<span>{blog.userId?.name}</span>
-					</div>
-				</div> */}
-
 				{/* Blog Title */}
 				<h3 className="font-semibold text-xl mb-3 line-clamp-2 hover:text-orange-600 transition">
 					{blog.name}
 				</h3>
 
 				{/* Blog Excerpt */}
-				{/* <p
-					className="text-gray-600 text-sm mb-4 line-clamp-3"
-					dangerouslySetInnerHTML={{ __html: blog.content }}
-				/> */}
-
 				<div className="flex items-center justify-between">
 					{/* Read More Link */}
 					<button className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group">
 						Read more
-						<Image
-							className="h-3 w-3 group-hover:translate-x-1 transition-transform"
-							src={assets.redirect_icon}
-							alt="Redirect Icon"
-						/>
 					</button>
 					<div className="flex items-center gap-1 text-sm text-gray-500">
-						<Image
-							src={assets.calendar_icon}
-							alt="Date"
-							width={16}
-							height={16}
-						/>
+						<CalendarMonthOutlinedIcon sx={{ fontSize: 20 }} />
 						<span>{formatDate(blog.date)}</span>
 					</div>
 				</div>

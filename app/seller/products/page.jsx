@@ -104,30 +104,15 @@ const ProductList = () => {
                     <div className="flex gap-2">
                     <button onClick={() => router.push(`/product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
                       <span className="hidden md:block">Visit</span>
-                      {/* <Image
-                        className="h-3.5"
-                        src={assets.redirect_icon}
-                        alt="redirect_icon"
-                      /> */}
                     </button>
                     <button onClick={() => router.push(`/seller/edit-product/${product._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
                       <span className="hidden md:block">Edit</span>
-                      {/* <Image
-                        className="h-3.5"
-                        src={assets.redirect_icon}
-                        alt="redirect_icon"
-                      /> */}
                     </button>
                     <button 
                       onClick={() => handleDelete(product._id)} 
                       className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
                     >
                       <span className="hidden md:block">Delete</span>
-                      {/* <Image
-                        className="h-3.5"
-                        src={assets.redirect_icon}
-                        alt="redirect_icon"
-                      /> */}
                     </button>
                     </div>
                   </td>
