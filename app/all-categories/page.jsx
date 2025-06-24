@@ -3,7 +3,6 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
-import { assets } from "@/assets/assets";
 
 const AllCategories = () => {
   const { categories, router } = useAppContext();
@@ -38,16 +37,8 @@ const AllCategories = () => {
                 <h3 className="font-semibold text-xl mb-3 line-clamp-2 hover:text-orange-600 transition">
                   {category.name}
                 </h3>
-                {/* <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                  {category.description}
-                </p> */}
                 <button className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group">
                   Show more
-                  <Image
-                    className="h-3 w-3 group-hover:translate-x-1 transition-transform"
-                    src={assets.redirect_icon}
-                    alt="Redirect Icon"
-                  />
                 </button>
               </div>
             </div>

@@ -1,15 +1,13 @@
 'use client'
 import React, { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
-import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Image from "next/image";
 import Editor from "react-simple-wysiwyg";
 
 const AddBlog = () => {
-  const { fetchHomeBlogs, router } = useAppContext();
-  const { getToken } = useAuth();
+  const { fetchHomeBlogs, router, getToken } = useAppContext();
   const [formData, setFormData] = useState({
     name: "",
     content: "",

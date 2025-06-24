@@ -10,9 +10,14 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.12.5",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.1.2",
+    "@mui/material": "^7.1.2",
     "axios": "^1.8.3",
     "chart.js": "^4.4.8",
     "cloudinary": "^2.6.0",
+    "copy-to-clipboard": "^3.3.3",
     "i18next": "^25.2.1",
     "i18next-browser-languagedetector": "^8.1.0",
     "inngest": "^3.32.7",
@@ -24,7 +29,8 @@
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.1",
     "react-i18next": "^15.5.2",
-    "react-simple-wysiwyg": "^3.2.2"
+    "react-simple-wysiwyg": "^3.2.2",
+    "react-tooltip": "^5.29.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

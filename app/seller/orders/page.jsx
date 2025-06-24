@@ -9,7 +9,7 @@ import Footer from "@/components/seller/Footer";
 import Loading from "@/components/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { formatPrice } from "@/utils/format";
+import { formatPrice, formatDate } from "@/utils/format";
 
 const Orders = () => {
   const { currency, getToken, user } = useAppContext();
@@ -132,7 +132,7 @@ const Orders = () => {
                     <option value={OrderStatus.CANCELLED}>Cancelled</option>
                   </select>
                   <p className="text-gray-500">
-                    Date: {new Date(order.date).toLocaleDateString()}
+                    Date: {formatDate(order.date)}
                   </p>
                 </div>
               </div>

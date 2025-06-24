@@ -118,12 +118,13 @@ const MyOrders = () => {
                 <h2 className="text-2xl font-semibold text-gray-800">Đơn hàng của tôi</h2>
                 <p className="text-gray-500 mt-1">Theo dõi và quản lý đơn hàng của bạn</p>
               </div>
-              <button
-                onClick={() => router.push('/all-products')}
-                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition flex items-center gap-2"
-              >
-                <Image src={assets.arrow_icon_white} alt="shop" className="w-5 h-5 rotate-180" />
-                Tiếp tục mua sắm
+              <button onClick={()=> router.push('/all-products')} className="group flex items-center mt-6 gap-2 text-orange-600">
+                <Image
+                  className="group-hover:-translate-x-1 transition"
+                  src={assets.arrow_right_icon_colored}
+                  alt="arrow_right_icon_colored"
+                />
+                Continue Shopping
               </button>
             </div>
           </div>
@@ -215,7 +216,16 @@ const MyOrders = () => {
                             <h4 className="font-medium text-gray-800 mb-3">Thông tin thanh toán</h4>
                             <div className="space-y-2 text-sm">
                               <p className="font-medium">
-                                Tổng tiền: {formatPrice(order.amount)}{currency}
+                                Tổng tiền: {order.coupon && order.coupon.discountAmount ? (
+                                  <>
+                                    <span className="line-through text-gray-400 mr-2">{formatPrice(order.amount + order.coupon.discountAmount)}{currency}</span>
+                                    <span>{formatPrice(order.amount)}{currency}</span>
+                                    <br />
+                                    <span className="text-green-600">Giảm giá: -{formatPrice(order.coupon.discountAmount)}{currency}</span>
+                                  </>
+                                ) : (
+                                  <span>{formatPrice(order.amount)}{currency}</span>
+                                )}
                               </p>
                               <p className="text-gray-600">
                                 Phương thức: {order.paymentMethod}

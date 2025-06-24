@@ -1,21 +1,29 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { assets } from "../../assets/assets";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
+import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
+import CategoryOutlinedIcon from '@mui/icons-material/CategoryOutlined';
+import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
+import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 
 const SideBar = () => {
   const pathname = usePathname();
   const [openMenus, setOpenMenus] = useState({});
 
   const menuItems = [
-    { name: "Dashboard", path: "/seller", icon: assets.stat_icon },
-    { name: "Users", path: "/seller/users", icon: assets.user_icon },
-    { name: "Orders", path: "/seller/orders", icon: assets.order_icon },
-    { name: "Blogs", path: "/seller/blogs", icon: assets.blog_icon },
+    { name: "Dashboard", path: "/seller", icon: <BarChartOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Users", path: "/seller/users", icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Orders", path: "/seller/orders", icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Blogs", path: "/seller/blogs", icon: <ArticleOutlinedIcon sx={{ fontSize: 28 }} /> },
     {
       name: "Products",
-      icon: assets.product_icon,
+      icon: <Inventory2OutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
         { name: "Product List", path: "/seller/products" },
         { name: "Add Product", path: "/seller/add-product" },
@@ -23,7 +31,7 @@ const SideBar = () => {
     },
     {
       name: "Categories",
-      icon: assets.cate_icon,
+      icon: <CategoryOutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
         { name: "Category List", path: "/seller/categories" },
         { name: "Add Category", path: "/seller/add-category" },
@@ -31,11 +39,19 @@ const SideBar = () => {
     },
     {
       name: "Brands",
-      icon: assets.tag_icon,
+      icon: <LocalOfferOutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
         { name: "Brand List", path: "/seller/brands" },
         { name: "Add Brand", path: "/seller/add-brand" },
       ],
+    },
+    { 
+      name: "Coupons", 
+      icon: <ConfirmationNumberOutlinedIcon sx={{ fontSize: 28 }} />, 
+      children: [
+        { name: "Coupon List", path: "/seller/coupons" },
+        { name: "Add Coupon", path: "/seller/add-coupon" },
+      ]
     },
   ];
 
@@ -59,11 +75,10 @@ const SideBar = () => {
         }`}
         onClick={() => hasChildren && toggleMenu(item.name)}
       >
-        <Image
-          src={item.icon}
-          alt={`${item.name.toLowerCase()}_icon`}
-          className="w-7 h-7"
-        />
+        {/* Render icon component trực tiếp */}
+        <span className="w-7 h-7 flex items-center justify-center">
+          {item.icon}
+        </span>
         <p className="md:block hidden">{item.name}</p>
         {hasChildren && (
           <span
@@ -71,11 +86,7 @@ const SideBar = () => {
               openMenus[item.name] ? "rotate-180" : ""
             }`}
           >
-            <Image
-              src={assets.dropdown_arrow}
-              alt={`${item.name.toLowerCase()}_icon`}
-              className="w-3 h-3"
-            />
+            <KeyboardArrowDownOutlinedIcon sx={{ fontSize: 20 }} />
           </span>
         )}
       </div>
@@ -100,11 +111,7 @@ const SideBar = () => {
                       : "hover:text-orange-500"
                   }`}
                 >
-                  <Image
-                    src={assets.add_icon}
-                    alt={`${child.name.toLowerCase()}_icon`}
-                    className="w-2 h-2"
-                  />
+                  <AddCircleOutlineOutlinedIcon sx={{ fontSize: 18 }} />
                   <p className="md:block hidden">{child.name}</p>
                 </div>
               </Link>

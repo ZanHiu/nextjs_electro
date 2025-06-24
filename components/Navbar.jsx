@@ -1,13 +1,17 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, BlogIcon, HeartIcon } from "@/assets/assets";
+import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, VoucherIcon, BlogIcon, HeartIcon } from "@/assets/assets";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import { useClerk, UserButton } from "@clerk/nextjs";
 import axios from "axios";
 import { debounce } from "lodash";
-// import { debounce } from "@/utils/helpers";
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const Navbar = () => {
   const { isSeller, router, user } = useAppContext();
@@ -89,10 +93,9 @@ const Navbar = () => {
             onClick={() => setIsShopOpen(!isShopOpen)}
           >
             Shop
-            <Image
-              className={`h-2.5 w-[100%] transition-transform ${isShopOpen ? 'rotate-180' : ''}`}
-              src={assets.dropdown_arrow}
-              alt="dropdown_arrow"
+            <ArrowDropDownIcon 
+              sx={{ fontSize: 16 }} 
+              className={`transition-transform ${isShopOpen ? 'rotate-180' : ''}`}
             />
           </button>
           
@@ -145,13 +148,12 @@ const Navbar = () => {
       </div>
 
       <ul className="hidden md:flex items-center gap-4 lg:gap-6">
-        {/* <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" /> */}
         <div className="relative" ref={searchRef}>
           <button
             onClick={() => setIsSearchOpen(!isSearchOpen)}
             className="hover:text-gray-900 transition"
           >
-            <Image className="w-4 h-4" src={assets.search_icon} alt="search icon" />
+            <SearchOutlinedIcon sx={{ fontSize: 20 }} />
           </button>
 
           {isSearchOpen && (
@@ -214,7 +216,14 @@ const Navbar = () => {
           onClick={() => router.push('/cart')}
           className="hover:text-gray-900 transition"
         >
-          <Image className="w-4 h-4" src={assets.cart_icon} alt="cart icon" />
+          <ShoppingCartOutlinedIcon sx={{ fontSize: 20 }} />
+        </button>
+
+        <button
+          onClick={() => router.push('/notification')}
+          className="hover:text-gray-900 transition"
+        >
+          <NotificationsNoneOutlinedIcon sx={{ fontSize: 20 }} />
         </button>
 
         {user ? (
@@ -247,13 +256,20 @@ const Navbar = () => {
                 onClick={() => router.push('/my-addresses')} 
               />
             </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="My Vouchers" 
+                labelIcon={<VoucherIcon />} 
+                onClick={() => router.push('/my-vouchers')}  
+              />
+            </UserButton.MenuItems>
           </UserButton>
         ) : (
           <button
             onClick={openSignIn}
             className="flex items-center gap-2 hover:text-gray-900 transition"
           >
-            <Image src={assets.user_icon} alt="user icon" />
+            <PersonOutlineOutlinedIcon sx={{ fontSize: 20 }} />
             Account
           </button>
         )}
@@ -318,7 +334,7 @@ const Navbar = () => {
             onClick={openSignIn}
             className="flex items-center gap-2 hover:text-gray-900 transition"
           >
-            <Image src={assets.user_icon} alt="user icon" />
+            <PersonOutlineOutlinedIcon sx={{ fontSize: 20 }} />
             Account
           </button>
         )}

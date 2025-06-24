@@ -6,6 +6,8 @@ import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
+import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
+import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const Cart = () => {
 
@@ -80,19 +82,11 @@ const Cart = () => {
                       <td className="py-4 md:px-4 px-1">
                         <div className="flex items-center md:gap-2 gap-1">
                           <button onClick={() => updateCartQuantity(product._id, cartItems[itemId] - 1)}>
-                            <Image
-                              src={assets.decrease_arrow}
-                              alt="decrease_arrow"
-                              className="w-4 h-4"
-                            />
+                            <ArrowLeftIcon sx={{ fontSize: 20 }} />
                           </button>
                           <input onChange={e => updateCartQuantity(product._id, Number(e.target.value))} type="number" value={cartItems[itemId]} className="w-8 border text-center appearance-none"></input>
                           <button onClick={() => addToCart(product._id)}>
-                            <Image
-                              src={assets.increase_arrow}
-                              alt="increase_arrow"
-                              className="w-4 h-4"
-                            />
+                            <ArrowRightIcon sx={{ fontSize: 20 }} />
                           </button>
                         </div>
                       </td>
