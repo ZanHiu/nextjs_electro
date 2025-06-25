@@ -7,7 +7,7 @@ import { formatDate, formatPrice } from "@/utils/format";
 import Loading from "@/components/Loading";
 import { Tooltip } from "react-tooltip";
 
-const Coupons = () => {
+const CouponList = () => {
   const { getToken, currency } = useAppContext();
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,7 +97,7 @@ const Coupons = () => {
               <tr>
                 <th className="px-4 py-2 font-medium truncate w-20">Mã</th>
                 <th className="px-4 py-2 font-medium truncate w-24">Loại</th>
-<th className="px-4 py-2 font-medium truncate w-24">Giá trị</th>
+                <th className="px-4 py-2 font-medium truncate w-24">Giá trị</th>
                 <th className="px-4 py-2 font-medium truncate w-28">Thời gian</th>
                 <th className="px-4 py-2 font-medium truncate w-20">Sử dụng</th>
                 <th className="px-4 py-2 font-medium truncate w-32">Điều kiện sử dụng</th>
@@ -125,7 +125,7 @@ const Coupons = () => {
                         onClick={() => handleToggleStatus(coupon._id, coupon.isActive)}
                         className="flex items-center gap-1 px-2 py-2 bg-orange-600 text-white rounded-md whitespace-nowrap"
                       >
-{coupon.isActive ? "Vô hiệu hóa" : "Kích hoạt"}
+                        {coupon.isActive ? "Vô hiệu hóa" : "Kích hoạt"}
                       </button>
                       <button
                         onClick={() => handleDelete(coupon._id)}
@@ -146,4 +146,4 @@ const Coupons = () => {
   );
 };
 
-export default Coupons;
+export default CouponList;
