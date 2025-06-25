@@ -69,7 +69,6 @@ const OrderSummary = () => {
     setIsDropdownOpen(false);
   };
 
-  // Khi chọn voucher từ select
   const handleVoucherSelect = async (voucher) => {
     setSelectedVoucher(voucher);
     setVoucherDropdownOpen(false);
@@ -78,7 +77,6 @@ const OrderSummary = () => {
       setCouponCode('');
       return;
     }
-    // Validate lại với backend để lấy thông tin giảm giá
     try {
       setIsValidatingCoupon(true);
       const token = await getToken();
