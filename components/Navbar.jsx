@@ -7,6 +7,8 @@ import Image from "next/image";
 import { useClerk, UserButton } from "@clerk/nextjs";
 import axios from "axios";
 import { debounce } from "lodash";
+import { formatPrice } from "@/utils/format";
+
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
@@ -14,7 +16,7 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const Navbar = () => {
-  const { isSeller, router, user } = useAppContext();
+  const { isSeller, router, user, currency } = useAppContext();
   const { openSignIn } = useClerk();
   const [isShopOpen, setIsShopOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -198,7 +200,7 @@ const Navbar = () => {
                         <div>
                           <p className="font-medium">{product.name}</p>
                           <p className="text-sm text-gray-500">
-                            ${product.price.toLocaleString()}
+                            {formatPrice(product.price)}{currency}
                           </p>
                         </div>
                       </div>

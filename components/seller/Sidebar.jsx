@@ -101,7 +101,7 @@ const SideBar = () => {
         )}
 
         {hasChildren && openMenus[item.name] && (
-          <div className="ml-8 md:ml-12">
+          <div className="ml-4 md:ml-8">
             {item.children.map((child) => (
               <Link href={child.path} key={child.name} passHref>
                 <div

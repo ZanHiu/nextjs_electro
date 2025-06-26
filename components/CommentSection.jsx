@@ -16,8 +16,8 @@ const CommentSection = ({ targetId, type = 'product' }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return toast.error("Bạn cần đăng nhập!");
-    if (!content.trim()) return toast.error("Vui lòng nhập nội dung bình luận!");
+    if (!user) return toast.error("You need to login!");
+    if (!content.trim()) return toast.error("Please enter comment content!");
 
     try {
       const token = await getToken();
@@ -25,12 +25,12 @@ const CommentSection = ({ targetId, type = 'product' }) => {
       setContent("");
       setReplyingTo(null);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error("Something went wrong!");
     }
   };
 
   const handleUpdate = async (commentId) => {
-    if (!content.trim()) return toast.error("Vui lòng nhập nội dung bình luận!");
+    if (!content.trim()) return toast.error("Please enter comment content!");
 
     try {
       const token = await getToken();
@@ -38,18 +38,18 @@ const CommentSection = ({ targetId, type = 'product' }) => {
       setContent("");
       setEditingComment(null);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error("Something went wrong!");
     }
   };
 
   const handleDelete = async (commentId) => {
-    if (!confirm("Bạn có chắc chắn muốn xóa bình luận này?")) return;
+    if (!confirm("Are you sure you want to delete this comment?")) return;
 
     try {
       const token = await getToken();
       await deleteComment(commentId, token);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error("Something went wrong!");
     }
   };
 
@@ -80,7 +80,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
     <div ref={commentRef} id="comment" className="bg-white rounded-lg w-full mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-800">
-          Bình luận ({comments.length})
+          Comments ({comments.length})
         </h3>
       </div>
 
@@ -90,14 +90,14 @@ const CommentSection = ({ targetId, type = 'product' }) => {
             <div className="mb-3 p-2 bg-orange-50 rounded-lg">
               <div className="flex items-center justify-between">
                 <span className="text-sm text-orange-600">
-                  {editingComment ? "Chỉnh sửa bình luận" : `Trả lời ${replyingTo?.userId?.name}`}
+                  {editingComment ? "Edit comment" : `Replying to ${replyingTo?.userId?.name}`}
                 </span>
                 <button
                   type="button"
                   onClick={handleCancel}
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  Hủy
+                  Cancel
                 </button>
               </div>
             </div>
@@ -106,7 +106,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder={replyingTo ? "Nhập trả lời của bạn..." : "Nhập bình luận của bạn..."}
+            placeholder={replyingTo ? "Enter your reply..." : "Enter your comment..."}
             rows={3}
           />
           <button
@@ -114,11 +114,11 @@ const CommentSection = ({ targetId, type = 'product' }) => {
             type="submit"
             disabled={!content.trim()}
           >
-            {editingComment ? "Cập nhật" : replyingTo ? "Trả lời" : "Bình luận"}
+            {editingComment ? "Edit" : replyingTo ? "Reply" : "Comment"}
           </button>
         </form>
       ) : (
-        <p className="text-center text-gray-500 mb-6">Bạn cần đăng nhập để bình luận.</p>
+        <p className="text-center text-gray-500 mb-6">Please login to leave a comment.</p>
       )}
 
       <div className="space-y-4">

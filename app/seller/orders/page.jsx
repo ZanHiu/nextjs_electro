@@ -90,8 +90,8 @@ const Orders = () => {
                 <div className="col-span-4 flex gap-3">
                   <Image
                     className="w-16 h-16 object-cover"
-                    src={assets.box_icon}
-                    alt="box_icon"
+                    src={assets.box_image}
+                    alt="box_image"
                   />
                   <div className="flex flex-col">
                     <span className="font-medium line-clamp-2">

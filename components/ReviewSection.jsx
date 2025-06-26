@@ -76,11 +76,11 @@ const ReviewSection = ({ productId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return toast.error("Bạn cần đăng nhập!");
-    if (!orderId) return toast.error("Không tìm thấy thông tin đơn hàng!");
+    if (!user) return toast.error("You need to login!");
+    if (!orderId) return toast.error("You need to place an order!");
 
     if (value === 0 || !content.trim()) {
-      toast("Vui lòng chọn sao và nhập đánh giá.");
+      toast("Please enter review content.");
       return;
     }
 
@@ -111,7 +111,7 @@ const ReviewSection = ({ productId }) => {
     <div ref={reviewRef} id="review" className="bg-white rounded-lg w-full mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-800">
-          Đánh giá sản phẩm
+          Review product
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-orange-500 font-bold text-lg">{getReviewAmount(reviews).toFixed(1)} / 5</span>
@@ -127,7 +127,7 @@ const ReviewSection = ({ productId }) => {
               />
             ))}
           </div>
-          <span className="text-gray-500 text-sm">({getReviewCount(reviews)} lượt đánh giá)</span>
+          <span className="text-gray-500 text-sm">({getReviewCount(reviews)} reviews)</span>
         </div>
       </div>
       {user && hasUserPurchasedProduct && !editingReviewId && (
@@ -156,7 +156,7 @@ const ReviewSection = ({ productId }) => {
             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder="Nhập đánh giá của bạn..."
+            placeholder="Enter your review..."
             rows={3}
           />
           <button
@@ -164,7 +164,7 @@ const ReviewSection = ({ productId }) => {
             type="submit"
             disabled={value === 0 && !content.trim()}
           >
-            Gửi đánh giá
+            Review
           </button>
         </form>
       )}
