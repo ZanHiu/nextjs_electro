@@ -95,7 +95,7 @@ const OrderSummary = () => {
       if (data.success) {
         setAppliedCoupon(data.coupon);
         setCouponCode(data.coupon.code);
-        toast.success('Đã áp dụng voucher!');
+        toast.success('Coupon applied!');
       } else {
         setAppliedCoupon(null);
         setCouponCode('');
@@ -112,7 +112,7 @@ const OrderSummary = () => {
 
   const validateCoupon = async () => {
     if (!couponCode.trim()) {
-      return toast.error('Vui lòng nhập mã giảm giá');
+      return toast.error('Please enter a coupon code');
     }
 
     try {
@@ -286,7 +286,7 @@ const OrderSummary = () => {
         {/* Voucher select UI */}
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-            Chọn voucher của bạn
+            Select Voucher
           </label>
           <div className="relative inline-block w-full text-sm border">
             <button
@@ -298,8 +298,8 @@ const OrderSummary = () => {
                 {selectedVoucher
                   ? `${selectedVoucher.couponId?.code} - ${selectedVoucher.couponId?.type === 'PERCENTAGE' ? `Giảm ${selectedVoucher.couponId?.value}%` : `Giảm ${selectedVoucher.couponId?.value?.toLocaleString()}${currency}`}`
                   : userVouchers.length === 0
-                  ? "Bạn chưa có voucher khả dụng"
-                  : "Chọn voucher để áp dụng"}
+                  ? "Voucher not available"
+                  : "Select Voucher"}
               </span>
               <svg className={`w-5 h-5 inline float-right transition-transform duration-200 ${voucherDropdownOpen ? "rotate-0" : "-rotate-90"}`}
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6B7280"
@@ -318,12 +318,12 @@ const OrderSummary = () => {
                     <span className="font-medium text-orange-600">{voucher.couponId?.code}</span>
                     <span className="text-xs text-gray-500">
                       {voucher.couponId?.type === 'PERCENTAGE'
-                        ? `Giảm ${voucher.couponId?.value}%`
-                        : `Giảm ${voucher.couponId?.value?.toLocaleString()}${currency}`}
-                      {voucher.couponId?.minOrderAmount > 0 && ` | Đơn tối thiểu: ${voucher.couponId?.minOrderAmount?.toLocaleString()}${currency}`}
+                        ? `Discount ${voucher.couponId?.value}%`
+                        : `Discount ${voucher.couponId?.value?.toLocaleString()}${currency}`}
+                      {voucher.couponId?.minOrderAmount > 0 && ` | Minimum Order: ${voucher.couponId?.minOrderAmount?.toLocaleString()}${currency}`}
                     </span>
                     <span className="text-xs text-gray-400">
-                      Hiệu lực: {new Date(voucher.couponId?.startDate).toLocaleDateString()} - {new Date(voucher.couponId?.endDate).toLocaleDateString()}
+                      Valid: {new Date(voucher.couponId?.startDate).toLocaleDateString()} - {new Date(voucher.couponId?.endDate).toLocaleDateString()}
                     </span>
                   </li>
                 ))}
@@ -331,7 +331,7 @@ const OrderSummary = () => {
                   onClick={() => handleVoucherSelect(null)}
                   className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-center text-red-500"
                 >
-                  x Bỏ chọn voucher
+                  x Clear
                 </li>
               </ul>
             )}

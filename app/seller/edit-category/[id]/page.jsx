@@ -16,7 +16,6 @@ const EditCategory = () => {
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [cateId, setCateId] = useState("");
   const [existingImages, setExistingImages] = useState([]);
   const [views, setViews] = useState("");
 
@@ -28,7 +27,6 @@ const EditCategory = () => {
         if (category) {
           setName(category.name);
           setDescription(category.description);
-          setCateId(category.cateId);
           setExistingImages(category.image);
           setViews(category.views);
         }
@@ -45,7 +43,6 @@ const EditCategory = () => {
 
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("cateId", Number(cateId));
     formData.append("views", Number(views));
 
     // Append new images if any
@@ -187,20 +184,6 @@ const EditCategory = () => {
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setViews(e.target.value)}
               value={views}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="category-id">
-              Category Id
-            </label>
-            <input
-              id="category-id"
-              type="number"
-              placeholder="Type here"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setCateId(e.target.value)}
-              value={cateId}
               required
             />
           </div>

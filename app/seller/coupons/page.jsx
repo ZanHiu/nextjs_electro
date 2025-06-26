@@ -95,14 +95,14 @@ const CouponList = () => {
           <table className="table-fixed w-full overflow-hidden">
             <thead className="text-gray-900 text-sm text-left">
               <tr>
-                <th className="px-4 py-2 font-medium truncate w-20">Mã</th>
-                <th className="px-4 py-2 font-medium truncate w-24">Loại</th>
-                <th className="px-4 py-2 font-medium truncate w-24">Giá trị</th>
-                <th className="px-4 py-2 font-medium truncate w-28">Thời gian</th>
-                <th className="px-4 py-2 font-medium truncate w-20">Sử dụng</th>
-                <th className="px-4 py-2 font-medium truncate w-32">Điều kiện sử dụng</th>
-                <th className="px-4 py-2 font-medium truncate w-32">Trạng thái</th>
-                <th className="px-4 py-2 font-medium truncate w-40">Thao tác</th>
+                <th className="px-4 py-2 font-medium truncate w-20">Code</th>
+                <th className="px-4 py-2 font-medium truncate w-24">Type</th>
+                <th className="px-4 py-2 font-medium truncate w-24">Value</th>
+                <th className="px-4 py-2 font-medium truncate w-28">Create at</th>
+                <th className="px-4 py-2 font-medium truncate w-20">Usage</th>
+                <th className="px-4 py-2 font-medium truncate w-32">Term of use</th>
+                <th className="px-4 py-2 font-medium truncate w-32">Status</th>
+                <th className="px-4 py-2 font-medium truncate w-40">Action</th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -116,7 +116,7 @@ const CouponList = () => {
                   <td className="px-4 py-2 truncate" data-tooltip-id="coupon-tooltip" data-tooltip-content={`Đơn tối thiểu: ${formatPrice(coupon.minOrderAmount)}${currency}`}>Tối thiểu {formatPrice(coupon.minOrderAmount)}{currency}</td>
                   <td className="px-4 py-2 truncate">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${coupon.isActive ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>
-                      {coupon.isActive ? "Đang hoạt động" : "Không hoạt động"}
+                      {coupon.isActive ? "Inactive" : "Active"}
                     </span>
                   </td>
                   <td className="px-4 py-2 truncate">
@@ -125,13 +125,13 @@ const CouponList = () => {
                         onClick={() => handleToggleStatus(coupon._id, coupon.isActive)}
                         className="flex items-center gap-1 px-2 py-2 bg-orange-600 text-white rounded-md whitespace-nowrap"
                       >
-                        {coupon.isActive ? "Vô hiệu hóa" : "Kích hoạt"}
+                        {coupon.isActive ? "Disable" : "Enable"}
                       </button>
                       <button
                         onClick={() => handleDelete(coupon._id)}
                         className="flex items-center gap-1 px-2 py-2 bg-red-500 text-white rounded-md whitespace-nowrap"
                       >
-                        Xóa
+                        Delete
                       </button>
                     </div>
                   </td>

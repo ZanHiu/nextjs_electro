@@ -89,7 +89,7 @@ const AddProduct = () => {
           <div className="flex flex-wrap items-center gap-3 mt-2">
 
             {[...Array(4)].map((_, index) => (
-<label key={index} htmlFor={`image${index}`}>
+              <label key={index} htmlFor={`image${index}`}>
                 <input onChange={(e) => {
                   const updatedFiles = [...files];
                   updatedFiles[index] = e.target.files[0];
@@ -175,7 +175,7 @@ const AddProduct = () => {
 
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
-<label className="text-base font-medium" htmlFor="brand">
+            <label className="text-base font-medium" htmlFor="brand">
               Brand
             </label>
             <select

@@ -16,7 +16,6 @@ const EditBrand = () => {
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [brandId, setBrandId] = useState("");
   const [existingImages, setExistingImages] = useState([]);
   const [views, setViews] = useState("");
 
@@ -28,7 +27,6 @@ const EditBrand = () => {
         if (brand) {
           setName(brand.name);
           setDescription(brand.description);
-          setBrandId(brand.brandId);
           setExistingImages(brand.image);
           setViews(brand.views);
         }
@@ -45,7 +43,6 @@ const EditBrand = () => {
 
     formData.append("name", name);
     formData.append("description", description);
-    formData.append("brandId", Number(brandId));
     formData.append("views", Number(views));
 
     // Append new images if any
@@ -98,7 +95,7 @@ const EditBrand = () => {
           </label>
           <input
             id="brand-name"
-type="text"
+            type="text"
             placeholder="Type here"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
             onChange={(e) => setName(e.target.value)}
@@ -176,7 +173,7 @@ type="text"
         </div>
 
         <div className="grid grid-cols-2 gap-5">
-<div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="views">
               Views
             </label>
@@ -187,20 +184,6 @@ type="text"
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setViews(e.target.value)}
               value={views}
-              required
-            />
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="brand-id">
-              Brand Id
-            </label>
-            <input
-              id="brand-id"
-              type="number"
-              placeholder="Type here"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setBrandId(e.target.value)}
-              value={brandId}
               required
             />
           </div>
