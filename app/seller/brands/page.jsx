@@ -39,7 +39,7 @@ const BrandList = () => {
     }
   }, [user, getToken])
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this brand?')) {
+    if (window.confirm('Bạn có chắc chắn muốn xóa thương hiệu này không?')) {
       try {
         const token = await getToken();
         const { data } = await axios.delete(
@@ -67,14 +67,14 @@ const BrandList = () => {
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
-        <h1 className="text-2xl font-semibold mb-6">All Brand</h1>
+        <h1 className="text-2xl font-semibold mb-6">Quản lý thương hiệu</h1>
         <div className="flex flex-col items-center w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
           <table className=" table-fixed w-full overflow-hidden">
             <thead className="text-gray-900 text-sm text-left">
               <tr>
-                <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">Brand</th>
+                <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">Thương hiệu</th>
                 <th className="px-4 py-3 font-medium truncate max-sm:hidden">Id</th>
-                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Action</th>
+                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Hành động</th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -84,7 +84,7 @@ const BrandList = () => {
                     <div className="bg-gray-500/10 rounded p-2">
                       <Image
                         src={brand.image[0]}
-alt="product Image"
+                        alt="product Image"
                         className="w-16"
                         width={1280}
                         height={720}
@@ -97,15 +97,15 @@ alt="product Image"
                   <td className="px-4 py-3 max-sm:hidden">{brand.brandId}</td>
                   <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
-                    <button onClick={() => router.push(`/brands/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
-                      <span className="hidden md:block">Visit</span>
-                    </button>
-                    <button onClick={() => router.push(`/seller/edit-brand/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
-                      <span className="hidden md:block">Edit</span>
-                    </button>
-                    <button onClick={() => handleDelete(brand._id)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
-                      <span className="hidden md:block">Delete</span>
-                    </button>
+                      <button onClick={() => router.push(`/brands/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
+                        <span className="hidden md:block">Xem</span>
+                      </button>
+                      <button onClick={() => router.push(`/seller/edit-brand/${brand._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
+                        <span className="hidden md:block">Sửa</span>
+                      </button>
+                      <button onClick={() => handleDelete(brand._id)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
+                        <span className="hidden md:block">Xóa</span>
+                      </button>
                     </div>
                   </td>
                 </tr>

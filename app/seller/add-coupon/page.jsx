@@ -16,7 +16,7 @@ const AddCoupon = () => {
     endDate: "",
     maxUses: "",
     minOrderAmount: "0",
-    prefix: "COUPON", // Prefix mặc định cho mã giảm giá
+    prefix: "COUPON",
   });
 
   const generateCode = () => {
@@ -67,13 +67,13 @@ const AddCoupon = () => {
 
   return (
     <div className="p-5">
-      <h1 className="text-2xl font-semibold mb-5">Add New Coupon</h1>
+      <h1 className="text-2xl font-semibold mb-5">Thêm mã giảm giá</h1>
 
       <form onSubmit={handleSubmit} className="max-w-2xl bg-white p-6 rounded-lg shadow">
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Coupon Prefix
+              Tiền tố mã giảm giá
             </label>
             <input
               type="text"
@@ -81,7 +81,7 @@ const AddCoupon = () => {
               value={formData.prefix}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="E.g.: COUPON, WELCOME, SUMMER, etc."
+              placeholder="Ví dụ: COUPON, WELCOME, SUMMER, etc."
             />
             <p className="text-sm text-gray-500 mt-1">
               Coupon code will be generated automatically with format: {formData.prefix}XXXX
@@ -90,7 +90,7 @@ const AddCoupon = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Coupon Type
+              Loại mã giảm giá
             </label>
             <select
               name="type"
@@ -98,14 +98,14 @@ const AddCoupon = () => {
               onChange={handleChange}
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
-              <option value="PERCENTAGE">Percentage</option>
-              <option value="FIXED_AMOUNT">Fixed Amount</option>
+              <option value="PERCENTAGE">Phần trăm</option>
+              <option value="FIXED_AMOUNT">Số tiền cố định</option>
             </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Discount Value
+              Giá trị giảm giá
             </label>
             <input
               type="number"
@@ -113,21 +113,21 @@ const AddCoupon = () => {
               value={formData.value}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder={formData.type === "PERCENTAGE" ? "E.g.: 10" : "E.g.: 100000"}
+              placeholder={formData.type === "PERCENTAGE" ? "Ví dụ: 10" : "Ví dụ: 100000"}
               min="0"
               max={formData.type === "PERCENTAGE" ? "100" : undefined}
               required
             />
             <p className="text-sm text-gray-500 mt-1">
               {formData.type === "PERCENTAGE"
-                ? "Enter discount percentage (0-100)"
-                : "Enter discount amount (VND)"}
+                ? "Nhập phần trăm giảm giá (0-100)"
+                : "Nhập số tiền giảm giá (VND)"}
             </p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Validity Period
+              Thời gian hiệu lực
             </label>
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -139,7 +139,7 @@ const AddCoupon = () => {
                   className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
-                <p className="text-sm text-gray-500 mt-1">Start date</p>
+                <p className="text-sm text-gray-500 mt-1">Ngày bắt đầu</p>
               </div>
               <div>
                 <input
@@ -150,14 +150,14 @@ const AddCoupon = () => {
                   className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
                   required
                 />
-                <p className="text-sm text-gray-500 mt-1">End date</p>
+                <p className="text-sm text-gray-500 mt-1">Ngày kết thúc</p>
               </div>
             </div>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Maximum Uses
+              Số lượng sử dụng tối đa
             </label>
             <input
               type="number"
@@ -165,7 +165,7 @@ const AddCoupon = () => {
               value={formData.maxUses}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="E.g.: 10"
+              placeholder="Ví dụ: 10"
               min="1"
               required
             />
@@ -173,7 +173,7 @@ const AddCoupon = () => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Minimum Order Value (VND)
+              Giá trị đơn hàng tối thiểu (VND)
             </label>
             <input
               type="number"
@@ -181,7 +181,7 @@ const AddCoupon = () => {
               value={formData.minOrderAmount}
               onChange={handleChange}
               className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-500"
-              placeholder="E.g.: 1000000"
+              placeholder="Ví dụ: 1000000"
               min="0"
               required
             />
@@ -193,7 +193,7 @@ const AddCoupon = () => {
               disabled={loading}
               className="w-full bg-orange-600 text-white py-2 px-4 rounded hover:bg-orange-700 disabled:bg-gray-400"
             >
-              {loading ? "Creating..." : "Create Coupon"}
+              {loading ? "Đang tạo..." : "Thêm"}
             </button>
           </div>
         </div>

@@ -148,7 +148,7 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
         </div>
       </div>
       <p className="text-sm">
-        {product.views} views
+        {product.views} lượt xem
       </p>
 
       <div className="flex flex-col mt-1 w-full">
@@ -173,7 +173,7 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
         {/* Thông tin thêm và nút mua */}
         <div className="flex items-center justify-between mt-2">
           <button className="w-full max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
-            Buy now
+            Mua ngay
           </button>
         </div>
       </div>

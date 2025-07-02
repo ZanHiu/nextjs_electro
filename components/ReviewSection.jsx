@@ -76,11 +76,11 @@ const ReviewSection = ({ productId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return toast.error("You need to login!");
-    if (!orderId) return toast.error("You need to place an order!");
+    if (!user) return toast.error("Bạn cần đăng nhập để đánh giá!");
+    if (!orderId) return toast.error("Bạn cần đặt hàng để đánh giá!");
 
     if (value === 0 || !content.trim()) {
-      toast("Please enter review content.");
+      toast("Vui lòng nhập nội dung đánh giá!");
       return;
     }
 
@@ -111,7 +111,7 @@ const ReviewSection = ({ productId }) => {
     <div ref={reviewRef} id="review" className="bg-white rounded-lg w-full mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-xl font-semibold text-gray-800">
-          Review product
+          Đánh giá sản phẩm
         </h3>
         <div className="flex items-center gap-2">
           <span className="text-orange-500 font-bold text-lg">{getReviewAmount(reviews).toFixed(1)} / 5</span>
@@ -127,7 +127,7 @@ const ReviewSection = ({ productId }) => {
               />
             ))}
           </div>
-          <span className="text-gray-500 text-sm">({getReviewCount(reviews)} reviews)</span>
+          <span className="text-gray-500 text-sm">({getReviewCount(reviews)} đánh giá)</span>
         </div>
       </div>
       {user && hasUserPurchasedProduct && !editingReviewId && (
@@ -156,7 +156,7 @@ const ReviewSection = ({ productId }) => {
             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
             value={content}
             onChange={e => setContent(e.target.value)}
-            placeholder="Enter your review..."
+            placeholder="Nhập đánh giá của bạn..."
             rows={3}
           />
           <button
@@ -164,14 +164,14 @@ const ReviewSection = ({ productId }) => {
             type="submit"
             disabled={value === 0 && !content.trim()}
           >
-            Review
+            Đánh giá
           </button>
         </form>
       )}
       {editingReviewId && (
         <form onSubmit={handleSubmit} className="mb-6 bg-orange-50 p-4 rounded-lg">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-medium text-orange-600">Chỉnh sửa đánh giá</h4>
+            <h4 className="font-medium text-orange-600">Sửa đánh giá</h4>
             <button
               type="button"
               onClick={handleCancelEdit}

@@ -107,15 +107,15 @@ const Product = () => {
               <table className="table-auto border-collapse w-full max-w-72">
                 <tbody>
                   <tr>
-                    <td className="text-gray-600 font-medium">Color</td>
+                    <td className="text-gray-600 font-medium">Màu sắc</td>
                     <td className="text-gray-800/50 ">Multi</td>
                   </tr>
                   <tr>
-                    <td className="text-gray-600 font-medium">Brand</td>
+                    <td className="text-gray-600 font-medium">Thương hiệu</td>
                     <td className="text-gray-800/50 ">{productData.brand?.name}</td>
                   </tr>
                   <tr>
-                    <td className="text-gray-600 font-medium">Category</td>
+                    <td className="text-gray-600 font-medium">Danh mục</td>
                     <td className="text-gray-800/50">{productData.category?.name}</td>
                   </tr>
                 </tbody>
@@ -127,7 +127,7 @@ const Product = () => {
                 onClick={() => addToCart(productData._id)}
                 className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
               >
-                Add to Cart
+                Thêm vào giỏ hàng
               </button>
               <button
                 onClick={() => {
@@ -136,7 +136,7 @@ const Product = () => {
                 }}
                 className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition"
               >
-                Buy now
+                Mua ngay
               </button>
             </div>
           </div>
@@ -152,7 +152,7 @@ const Product = () => {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Review product
+                Đánh giá sản phẩm
               </button>
               <button
                 onClick={() => setActiveTab('comments')}
@@ -162,7 +162,7 @@ const Product = () => {
                     : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                 } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
               >
-                Comment
+                Bình luận
               </button>
             </nav>
           </div>
@@ -177,8 +177,7 @@ const Product = () => {
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center mb-4 mt-16">
             <p className="text-3xl font-medium">
-              Featured{" "}
-              <span className="font-medium text-orange-600">Products</span>
+              <span className="font-medium text-orange-600">Sản phẩm</span> nổi bật {" "}
             </p>
             <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
           </div>
@@ -188,7 +187,7 @@ const Product = () => {
             ))}
           </div>
           <button className="px-8 py-2 mb-16 border rounded text-gray-500/70 hover:bg-slate-50/90 transition">
-            See more
+            Xem thêm
           </button>
         </div>
       </div>

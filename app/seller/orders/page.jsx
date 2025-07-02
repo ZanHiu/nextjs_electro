@@ -74,13 +74,13 @@ const Orders = () => {
         <Loading />
       ) : (
         <div className="md:p-10 p-4 space-y-5">
-          <h1 className="text-2xl font-semibold mb-6">Orders Management</h1>
+          <h1 className="text-2xl font-semibold mb-6">Quản lý đơn hàng</h1>
           <div className="w-full rounded-md bg-white shadow-sm">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium text-gray-700 border-b">
-              <div className="col-span-4">Product Details</div>
-              <div className="col-span-4">Customer Info</div>
-              <div className="col-span-2">Payment Details</div>
-              <div className="col-span-2">Order Status</div>
+              <div className="col-span-4">Chi tiết sản phẩm</div>
+              <div className="col-span-4">Thông tin khách hàng</div>
+              <div className="col-span-2">Thông tin thanh toán</div>
+              <div className="col-span-2">Trạng thái đơn hàng</div>
             </div>
             {orders.map((order, index) => (
               <div
@@ -101,7 +101,7 @@ const Orders = () => {
                         )
                         .join(", ")}
                     </span>
-                    <span className="text-gray-500">Items: {order.items.length}</span>
+                    <span className="text-gray-500">Sản phẩm: {order.items.length}</span>
                   </div>
                 </div>
 
@@ -115,9 +115,9 @@ const Orders = () => {
                 <div className="col-span-2 text-sm">
                   <p className="font-medium">{formatPrice(order.amount)}{currency}</p>
                   <p className={`font-bold ${getPaymentStatusColor(order.paymentStatus)}`}>
-                    Payment: {order.paymentStatus}
+                    Thanh toán: {order.paymentStatus}
                   </p>
-                  <p className="text-gray-500">Method: {order.paymentMethod}</p>
+                  <p className="text-gray-500">Phương thức: {order.paymentMethod}</p>
                 </div>
 
                 <div className="col-span-2 text-sm">
@@ -126,13 +126,13 @@ const Orders = () => {
                     value={order.status}
                     onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                   >
-                    <option value={OrderStatus.PENDING}>Pending</option>
-                    <option value={OrderStatus.PROCESSING}>Processing</option>
-                    <option value={OrderStatus.DELIVERED}>Delivered</option>
-                    <option value={OrderStatus.CANCELLED}>Cancelled</option>
+                    <option value={OrderStatus.PENDING}>Chờ xử lý</option>
+                    <option value={OrderStatus.PROCESSING}>Đang xử lý</option>
+                    <option value={OrderStatus.DELIVERED}>Đã giao</option>
+                    <option value={OrderStatus.CANCELLED}>Đã hủy</option>
                   </select>
                   <p className="text-gray-500">
-                    Date: {formatDate(order.date)}
+                    Ngày: {formatDate(order.date)}
                   </p>
                 </div>
               </div>

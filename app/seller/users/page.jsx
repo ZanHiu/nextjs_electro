@@ -108,11 +108,11 @@ const Users = () => {
       ) : (
         <div className="md:p-10 p-4 space-y-5">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold">Users Management</h1>
+            <h1 className="text-2xl font-semibold">Quản lý người dùng</h1>
             <div className="flex gap-4">
               <input
                 type="text"
-                placeholder="Search users..."
+                placeholder="Tìm kiếm người dùng..."
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -122,29 +122,29 @@ const Users = () => {
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
               >
-                <option value="all">All Roles</option>
-                <option value="user">Users</option>
-                <option value="seller">Sellers</option>
+                <option value="all">Tất cả vai trò</option>
+                <option value="user">Người dùng</option>
+                <option value="seller">Người bán</option>
               </select>
               <select
                 className="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="blocked">Blocked</option>
+                <option value="all">Tất cả trạng thái</option>
+                <option value="active">Hoạt động</option>
+                <option value="blocked">Bị khóa</option>
               </select>
             </div>
           </div>
 
           <div className="w-full rounded-md bg-white shadow-sm">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium text-gray-700 border-b">
-              <div className="col-span-3">User Info</div>
-              <div className="col-span-3">Contact Details</div>
-              <div className="col-span-2">Account Status</div>
-              <div className="col-span-2">Role</div>
-              <div className="col-span-2">Actions</div>
+              <div className="col-span-3">Thông tin người dùng</div>
+              <div className="col-span-3">Thông tin liên hệ</div>
+              <div className="col-span-2">Trạng thái tài khoản</div>
+              <div className="col-span-2">Vai trò</div>
+              <div className="col-span-2">Hành động</div>
             </div>
             {filteredUsers.map((user) => (
               <div
@@ -162,7 +162,7 @@ const Users = () => {
                   <div className="flex flex-col">
                     <span className="font-medium">{user.name}</span>
                     {/* <span className="text-gray-500 text-xs">ID: {user._id.slice(0, 8)}...</span> */}
-                    <p className="text-gray-500 text-xs">Member since: {formatDate(user.createdAt)}</p>
+                    <p className="text-gray-500 text-xs">Thành viên từ: {formatDate(user.createdAt)}</p>
                   </div>
                 </div>
 
@@ -174,7 +174,7 @@ const Users = () => {
                 <div className="col-span-2 text-sm">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.isBlocked ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
                     }`}>
-                    {user.isBlocked ? 'Blocked' : 'Active'}
+                    {user.isBlocked ? 'Bị khóa' : 'Hoạt động'}
                   </span>
                 </div>
 
@@ -184,8 +184,8 @@ const Users = () => {
                     value={user.role}
                     onChange={(e) => updateUserRole(user._id, e.target.value)}
                   >
-                    <option value="user">User</option>
-                    <option value="seller">Seller</option>
+                    <option value="user">Người dùng</option>
+                    <option value="seller">Người bán</option>
                   </select>
                 </div>
 
@@ -197,13 +197,13 @@ const Users = () => {
                         : 'bg-red-100 text-red-800 hover:bg-red-200'
                     }`}
                     disabled={user.role === 'seller'}
-                  >{user.isBlocked ? 'Unblock' : 'Block'}</button>
+                  >{user.isBlocked ? 'Mở khóa' : 'Khóa'}</button>
                 </div>
               </div>
             ))}
             {filteredUsers.length === 0 && (
               <div className="p-8 text-center text-gray-500">
-                No users found matching your criteria
+                Không tìm thấy người dùng phù hợp
               </div>
             )}
           </div>

@@ -68,15 +68,15 @@ const AddProduct = () => {
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <h1 className="text-2xl font-semibold mb-6">Add Product</h1>
+        <h1 className="text-2xl font-semibold mb-6">Thêm sản phẩm</h1>
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="product-name">
-            Product Name
+            Tên sản phẩm
           </label>
           <input
             id="product-name"
             type="text"
-            placeholder="Type here"
+            placeholder="Nhập tên sản phẩm"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -85,7 +85,7 @@ const AddProduct = () => {
         </div>
 
         <div>
-          <p className="text-base font-medium">Product Image</p>
+          <p className="text-base font-medium">Ảnh sản phẩm</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
 
             {[...Array(4)].map((_, index) => (
@@ -114,13 +114,13 @@ const AddProduct = () => {
             className="text-base font-medium"
             htmlFor="product-description"
           >
-            Product Description
+            Mô tả sản phẩm
           </label>
           <textarea
             id="product-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
-            placeholder="Type here"
+            placeholder="Nhập mô tả sản phẩm"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             required
@@ -129,7 +129,7 @@ const AddProduct = () => {
 
         <div className="flex flex-col gap-1">
           <label className="text-base font-medium" htmlFor="views">
-            Views
+            Lượt xem
           </label>
           <input
             id="views"
@@ -145,7 +145,7 @@ const AddProduct = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="product-price">
-              Product Price
+              Giá sản phẩm
             </label>
             <input
               id="product-price"
@@ -159,7 +159,7 @@ const AddProduct = () => {
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="offer-price">
-              Offer Price
+              Giá khuyến mãi
             </label>
             <input
               id="offer-price"
@@ -176,7 +176,7 @@ const AddProduct = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="brand">
-              Brand
+              Thương hiệu
             </label>
             <select
               id="brand"
@@ -194,7 +194,7 @@ const AddProduct = () => {
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="category">
-              Category
+              Danh mục
             </label>
             <select
               id="category"
@@ -213,7 +213,7 @@ const AddProduct = () => {
         </div>
 
         <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+          Thêm
         </button>
       </form>
       {/* <Footer /> */}

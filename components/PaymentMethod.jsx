@@ -17,7 +17,7 @@ const PaymentMethod = ({ selectedMethod, onSelectMethod }) => {
             onChange={() => onSelectMethod('COD')}
             className="accent-orange-500"
           />
-          <span>Cash on Delivery (COD)</span>
+          <span>Tiền mặt (COD)</span>
         </div>
 
         <div

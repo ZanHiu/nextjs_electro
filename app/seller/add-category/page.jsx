@@ -51,15 +51,15 @@ const AddCategory = () => {
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <h1 className="text-2xl font-semibold mb-6">Add Category</h1>
+        <h1 className="text-2xl font-semibold mb-6">Thêm danh mục</h1>
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="category-name">
-            Category Name
+            Tên danh mục
           </label>
           <input
             id="category-name"
             type="text"
-            placeholder="Type here"
+            placeholder="Nhập tên danh mục"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -67,7 +67,7 @@ const AddCategory = () => {
           />
         </div>
         <div>
-          <p className="text-base font-medium">Category Image</p>
+          <p className="text-base font-medium">Ảnh danh mục</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {[...Array(4)].map((_, index) => (
               <label key={index} htmlFor={`image${index}`}>
@@ -93,13 +93,13 @@ const AddCategory = () => {
             className="text-base font-medium"
             htmlFor="category-description"
           >
-            Category Description
+            Mô tả danh mục
           </label>
           <textarea
             id="category-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
-            placeholder="Type here"
+            placeholder="Nhập mô tả danh mục"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             required
@@ -107,7 +107,7 @@ const AddCategory = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-base font-medium" htmlFor="views">
-            Views
+            Lượt xem
           </label>
           <input
             id="views"
@@ -120,7 +120,7 @@ const AddCategory = () => {
           />
         </div>
         <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+          Thêm
         </button>
       </form>
       {/* <Footer /> */}

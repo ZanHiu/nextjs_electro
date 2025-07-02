@@ -9,7 +9,7 @@ const SaleProducts = () => {
     <>
       <div className="mt-12">
         <div className="flex flex-col items-start mb-8">
-          <p className="text-3xl font-medium">On Sale</p>
+          <p className="text-3xl font-medium">Đang giảm giá</p>
           <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
         </div>
         <div className="flex flex-col items-center">

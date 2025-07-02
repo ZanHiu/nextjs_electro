@@ -9,7 +9,7 @@ const HomeBlogs = () => {
   return (
     <div className="mt-14 pb-14">
       <div className="flex flex-col items-center mb-8">
-        <p className="text-3xl font-medium">Latest Blogs</p>
+        <p className="text-3xl font-medium">Bài viết mới nhất</p>
         <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
       </div>
 
@@ -32,7 +32,7 @@ const HomeBlogs = () => {
               <button 
                 className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group"
               >
-                Read more 
+                Đọc ngay
                 <LaunchIcon sx={{ fontSize: 16 }} />
               </button>
             </div>
@@ -46,7 +46,7 @@ const HomeBlogs = () => {
             onClick={() => router.push('/all-blogs')} 
             className="px-6 py-2 border-2 border-orange-600 text-orange-600 rounded-lg hover:bg-orange-600 hover:text-white transition-colors duration-300"
           >
-            View All Blogs
+            Xem thêm
           </button>
         </div>
       )}

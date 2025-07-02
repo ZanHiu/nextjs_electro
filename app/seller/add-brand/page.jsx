@@ -51,15 +51,15 @@ const AddBrand = () => {
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <h1 className="text-2xl font-semibold mb-6">Add Brand</h1>
+        <h1 className="text-2xl font-semibold mb-6">Thêm thương hiệu</h1>
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="brand-name">
-            Brand Name
+            Tên thương hiệu
           </label>
           <input
             id="brand-name"
             type="text"
-            placeholder="Type here"
+            placeholder="Nhập tên thương hiệu"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -67,7 +67,7 @@ const AddBrand = () => {
           />
         </div>
         <div>
-          <p className="text-base font-medium">Brand Image</p>
+          <p className="text-base font-medium">Ảnh thương hiệu</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {[...Array(4)].map((_, index) => (
               <label key={index} htmlFor={`image${index}`}>
@@ -88,18 +88,18 @@ const AddBrand = () => {
             ))}
           </div>
         </div>
-<div className="flex flex-col gap-1 max-w-md">
+        <div className="flex flex-col gap-1 max-w-md">
           <label
             className="text-base font-medium"
             htmlFor="brand-description"
           >
-            Brand Description
+            Mô tả thương hiệu
           </label>
           <textarea
             id="brand-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
-            placeholder="Type here"
+            placeholder="Nhập mô tả thương hiệu"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             required
@@ -107,7 +107,7 @@ const AddBrand = () => {
         </div>
         <div className="flex flex-col gap-1">
           <label className="text-base font-medium" htmlFor="views">
-            Views
+            Lượt xem
           </label>
           <input
             id="views"
@@ -120,7 +120,7 @@ const AddBrand = () => {
           />
         </div>
         <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+          Thêm
         </button>
       </form>
       {/* <Footer /> */}

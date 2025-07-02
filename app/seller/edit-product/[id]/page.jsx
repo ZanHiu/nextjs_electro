@@ -98,17 +98,17 @@ const EditProduct = () => {
   };
 
   return (
-<div className="flex-1 min-h-screen flex flex-col justify-between">
+    <div className="flex-1 min-h-screen flex flex-col justify-between">
       <form onSubmit={handleSubmit} className="md:p-10 p-4 space-y-5 max-w-lg">
-        <h1 className="text-2xl font-semibold mb-6">Edit Product</h1>
+        <h1 className="text-2xl font-semibold mb-6">Sửa sản phẩm</h1>
         <div className="flex flex-col gap-1 max-w-md">
           <label className="text-base font-medium" htmlFor="product-name">
-            Product Name
+            Tên sản phẩm
           </label>
           <input
             id="product-name"
             type="text"
-            placeholder="Type here"
+            placeholder="Nhập tên sản phẩm"
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
             onChange={(e) => setName(e.target.value)}
             value={name}
@@ -117,7 +117,7 @@ const EditProduct = () => {
         </div>
 
         <div>
-          <p className="text-base font-medium">Product Images</p>
+          <p className="text-base font-medium">Ảnh sản phẩm</p>
           <div className="flex flex-wrap items-center gap-3 mt-2">
             {[...Array(4)].map((_, index) => (
               <div key={index} className="relative group">
@@ -171,13 +171,13 @@ const EditProduct = () => {
             className="text-base font-medium"
             htmlFor="product-description"
           >
-            Product Description
-</label>
+            Mô tả sản phẩm
+          </label>
           <textarea
             id="product-description"
             rows={4}
             className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
-            placeholder="Type here"
+            placeholder="Nhập mô tả sản phẩm"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
             required
@@ -186,7 +186,7 @@ const EditProduct = () => {
 
         <div className="flex flex-col gap-1">
           <label className="text-base font-medium" htmlFor="views">
-            Views
+            Lượt xem
           </label>
           <input
             id="views"
@@ -202,7 +202,7 @@ const EditProduct = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="product-price">
-              Product Price
+              Giá sản phẩm
             </label>
             <input
               id="product-price"
@@ -216,7 +216,7 @@ const EditProduct = () => {
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="offer-price">
-              Offer Price
+              Giá khuyến mãi
             </label>
             <input
               id="offer-price"
@@ -233,7 +233,7 @@ const EditProduct = () => {
         <div className="grid grid-cols-2 gap-5">
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="brand">
-              Brand
+              Thương hiệu
             </label>
             <select
               id="brand"
@@ -251,12 +251,12 @@ const EditProduct = () => {
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-base font-medium" htmlFor="category">
-              Category
+              Danh mục
             </label>
             <select
               id="category"
               className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => setCategory(e.target.value)}
               value={category}
               required
             >
@@ -273,7 +273,7 @@ onChange={(e) => setCategory(e.target.value)}
           type="submit"
           className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded"
         >
-          UPDATE
+          Cập nhật
         </button>
       </form>
     </div>

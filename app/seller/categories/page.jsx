@@ -68,14 +68,14 @@ const CategoryList = () => {
   return (
     <div className="flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
       {loading ? <Loading /> : <div className="w-full md:p-10 p-4">
-        <h1 className="text-2xl font-semibold mb-6">All Category</h1>
+        <h1 className="text-2xl font-semibold mb-6">Quản lý danh mục</h1>
         <div className="flex flex-col items-center w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
           <table className=" table-fixed w-full overflow-hidden">
             <thead className="text-gray-900 text-sm text-left">
               <tr>
-                <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">Category</th>
+                <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">Danh mục</th>
                 <th className="px-4 py-3 font-medium truncate max-sm:hidden">Id</th>
-                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Action</th>
+                <th className="px-4 py-3 font-medium truncate max-sm:hidden">Hành động</th>
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -99,13 +99,13 @@ const CategoryList = () => {
                   <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
                     <button onClick={() => router.push(`/categories/${category._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md">
-                      <span className="hidden md:block">Visit</span>
+                      <span className="hidden md:block">Xem</span>
                     </button>
                     <button onClick={() => router.push(`/seller/edit-category/${category._id}`)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-green-600 text-white rounded-md">
-                      <span className="hidden md:block">Edit</span>
+                      <span className="hidden md:block">Sửa</span>
                     </button>
                     <button onClick={() => handleDelete(category._id)} className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-red-600 text-white rounded-md">
-                      <span className="hidden md:block">Delete</span>
+                      <span className="hidden md:block">Xóa</span>
                     </button>
                     </div>
                   </td>

@@ -48,20 +48,20 @@ const BlogList = () => {
         <Loading />
       ) : (
         <div className="w-full md:p-10 p-4">
-          <h1 className="text-2xl font-semibold mb-6">Blogs Management</h1>
+          <h1 className="text-2xl font-semibold mb-6">Quản lý bài viết</h1>
           <div className="flex flex-col items-center w-full overflow-hidden rounded-md bg-white border border-gray-500/20">
             <table className="table-fixed w-full overflow-hidden">
               <thead className="text-gray-900 text-sm text-left">
                 <tr>
                   <th className="w-2/3 md:w-2/5 px-4 py-3 font-medium truncate">
-                    Blog
+                    Bài viết
                   </th>
                   <th className="px-4 py-3 font-medium truncate max-sm:hidden">
-                    Author
+                    Tác giả
                   </th>
-                  <th className="px-4 py-3 font-medium truncate">Date</th>
+                  <th className="px-4 py-3 font-medium truncate">Ngày</th>
                   <th className="px-4 py-3 font-medium truncate max-sm:hidden">
-                    Action
+                    Hành động
                   </th>
                 </tr>
               </thead>
@@ -90,7 +90,7 @@ const BlogList = () => {
                           onClick={() => router.push(`/blog/${blog._id}`)}
                           className="flex items-center gap-1 px-1.5 md:px-3.5 py-2 bg-orange-600 text-white rounded-md"
                         >
-                          <span className="hidden md:block">View</span>
+                          <span className="hidden md:block">Xem</span>
                         </button>
                       </div>
                     </td>
