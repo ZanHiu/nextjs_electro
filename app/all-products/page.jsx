@@ -6,20 +6,19 @@ import Footer from "@/components/Footer";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import Filter from "@/components/Filter";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import ProductToolbar from "@/components/ProductToolbar";
 import { SortOptions } from "@/utils/constants";
+
+const getInitialFilter = (key, defaultValue = 'all') => {
+  if (typeof window === "undefined") return defaultValue;
+  const params = new URLSearchParams(window.location.search);
+  return params.get(key) || defaultValue;
+};
 
 const AllProducts = () => {
   const { products, categories, brands, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Đọc filter từ URL khi mount
-  const getInitialFilter = (key, defaultValue = 'all') => {
-    const value = searchParams.get(key);
-    return value || defaultValue;
-  };
 
   const [selectedCategory, setSelectedCategory] = useState(() => getInitialFilter('category', 'all'));
   const [selectedBrand, setSelectedBrand] = useState(() => getInitialFilter('brand', 'all'));
@@ -64,11 +63,15 @@ const AllProducts = () => {
     fetchFilteredProducts();
   }, [selectedCategory, selectedBrand, products]);
 
-  // Khi URL thay đổi (user nhập tay hoặc reload), đồng bộ lại state filter
+  // Khi URL thay đổi (user nhập tay hoặc reload/back/forward), đồng bộ lại state filter
   useEffect(() => {
-    setSelectedCategory(getInitialFilter('category', 'all'));
-    setSelectedBrand(getInitialFilter('brand', 'all'));
-  }, [searchParams]);
+    const syncFilterFromUrl = () => {
+      setSelectedCategory(getInitialFilter('category', 'all'));
+      setSelectedBrand(getInitialFilter('brand', 'all'));
+    };
+    window.addEventListener('popstate', syncFilterFromUrl);
+    return () => window.removeEventListener('popstate', syncFilterFromUrl);
+  }, []);
 
   const toNumber = (val) => Number(String(val).replace(/\./g, ''));
 
