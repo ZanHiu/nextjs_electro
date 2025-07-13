@@ -46,7 +46,7 @@ const FeaturedProduct = () => {
                 {description}
               </p>
               <button className="flex items-center gap-1.5 bg-orange-600 px-4 py-2 rounded">
-                Buy now 
+                Xem ngay
                 <LaunchIcon sx={{ fontSize: 16 }} />
               </button>
             </div>

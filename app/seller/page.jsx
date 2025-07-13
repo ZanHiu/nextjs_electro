@@ -17,6 +17,7 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
+import Footer from "@/components/seller/Footer";
 
 ChartJS.register(
   CategoryScale,
@@ -102,133 +103,136 @@ const DashBoard = () => {
   };
 
   return (
-    <div className="w-full md:p-10 p-4 flex-1 h-screen overflow-scroll flex flex-col justify-between text-sm">
-      <h1 className="text-2xl font-semibold mb-6">Bảng điều khiển</h1>
-      
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {stats.map((stat, index) => (
-          <div key={index} className="bg-white p-6 rounded-lg shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-500">{stat.title}</p>
-                <p className="text-2xl font-semibold mt-2">{stat.value}</p>
+    <div className="flex-1 h-screen flex flex-col overflow-scroll justify-between text-sm">
+      <div className="w-full md:p-10 p-4">
+        <h1 className="text-2xl font-semibold mb-6">Bảng điều khiển</h1>
+        
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          {stats.map((stat, index) => (
+            <div key={index} className="bg-white p-6 rounded-lg shadow-md">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-500">{stat.title}</p>
+                  <p className="text-2xl font-semibold mt-2">{stat.value}</p>
+                </div>
+                {stat.icon}
               </div>
-              {stat.icon}
+            </div>
+          ))}
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Sales Trend */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Doanh thu hàng tháng</h2>
+            <Line 
+              data={salesData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: 'top' },
+                }
+              }}
+            />
+          </div>
+
+          {/* Monthly Orders */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Đơn hàng hàng tháng</h2>
+            <Bar 
+              data={ordersData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: 'top' },
+                }
+              }}
+            />
+          </div>
+
+          {/* Order Status Chart */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Trạng thái đơn hàng</h2>
+            <div className="w-full max-w-[300px] mx-auto">
+              <Doughnut 
+                data={orderStatusData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { 
+                      position: 'top',
+                      labels: {
+                        padding: 20
+                      }
+                    },
+                  }
+                }}
+              />
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Charts Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        {/* Sales Trend */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Doanh thu hàng tháng</h2>
-          <Line 
-            data={salesData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { position: 'top' },
-              }
-            }}
-          />
-        </div>
-
-        {/* Monthly Orders */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Đơn hàng hàng tháng</h2>
-          <Bar 
-            data={ordersData}
-            options={{
-              responsive: true,
-              plugins: {
-                legend: { position: 'top' },
-              }
-            }}
-          />
-        </div>
-
-        {/* Order Status Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Trạng thái đơn hàng</h2>
-          <div className="w-full max-w-[300px] mx-auto">
-            <Doughnut 
-              data={orderStatusData}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: { 
-                    position: 'top',
-                    labels: {
-                      padding: 20
-                    }
-                  },
-                }
-              }}
-            />
+          {/* Product Categories Chart */}
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">Sản phẩm theo danh mục</h2>
+            <div className="w-full max-w-[300px] mx-auto">
+              <Doughnut 
+                data={productCategoryData}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { 
+                      position: 'top',
+                      labels: {
+                        padding: 20
+                      }
+                    },
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Product Categories Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h2 className="text-xl font-semibold mb-4">Sản phẩm theo danh mục</h2>
-          <div className="w-full max-w-[300px] mx-auto">
-            <Doughnut 
-              data={productCategoryData}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: { 
-                    position: 'top',
-                    labels: {
-                      padding: 20
-                    }
-                  },
-                }
-              }}
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Orders */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4">Đơn hàng gần đây</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b">
-                <th className="text-left py-3 px-4">Mã đơn hàng</th>
-                <th className="text-left py-3 px-4">Khách hàng</th>
-                <th className="text-left py-3 px-4">Ngày</th>
-                <th className="text-left py-3 px-4">Trạng thái</th>
-                <th className="text-left py-3 px-4">Số tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentOrders.map((order, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{order.id}</td>
-                  <td className="py-3 px-4">{order.customer}</td>
-                  <td className="py-3 px-4">{order.date}</td>
-                  <td className="py-3 px-4">
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                      order.status === 'Processing' ? 'bg-blue-100 text-blue-800' :
-                      'bg-yellow-100 text-yellow-800'
-                    }`}>
-                      {order.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-4">{order.amount}</td>
+        {/* Recent Orders */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4">Đơn hàng gần đây</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-3 px-4">Mã đơn hàng</th>
+                  <th className="text-left py-3 px-4">Khách hàng</th>
+                  <th className="text-left py-3 px-4">Ngày</th>
+                  <th className="text-left py-3 px-4">Trạng thái</th>
+                  <th className="text-left py-3 px-4">Số tiền</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {recentOrders.map((order, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">{order.id}</td>
+                    <td className="py-3 px-4">{order.customer}</td>
+                    <td className="py-3 px-4">{order.date}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-sm ${
+                        order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
+                        order.status === 'Processing' ? 'bg-blue-100 text-blue-800' :
+                        'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {order.status}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4">{order.amount}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

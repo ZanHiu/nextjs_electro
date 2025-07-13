@@ -8,7 +8,7 @@ const Navbar = () => {
   const { router } = useAppContext()
 
   return (
-    <div className='flex items-center px-4 md:px-8 py-3 justify-between border-b'>
+    <div className='sticky top-0 z-50 bg-white flex items-center px-4 md:px-8 py-3 justify-between border-b'>
       <Image onClick={()=>router.push('/')} className='w-28 lg:w-32 cursor-pointer' src={assets.logo} alt="" />
       <div className='flex items-center gap-4'>
         <p className='text-sm font-medium'>Xin chào Admin</p>

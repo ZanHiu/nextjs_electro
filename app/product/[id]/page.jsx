@@ -13,6 +13,7 @@ import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Tabs from "@/components/Tabs";
 
 const Product = () => {
   const { id } = useParams();
@@ -142,30 +143,14 @@ const Product = () => {
           </div>
         </div>
         <div className="mt-10">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-              <button
-                onClick={() => setActiveTab('reviews')}
-                className={`${
-                  activeTab === 'reviews'
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                Đánh giá sản phẩm
-              </button>
-              <button
-                onClick={() => setActiveTab('comments')}
-                className={`${
-                  activeTab === 'comments'
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                Bình luận
-              </button>
-            </nav>
-          </div>
+          <Tabs
+            tabs={[
+              { key: "reviews", label: "Đánh giá sản phẩm" },
+              { key: "comments", label: "Bình luận" }
+            ]}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
           <div className="mt-6">
             {activeTab === 'reviews' ? (
               <ReviewSection productId={productData._id} />

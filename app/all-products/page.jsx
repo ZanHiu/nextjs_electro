@@ -7,9 +7,11 @@ import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import Filter from "@/components/Filter";
 import { useRouter, useSearchParams } from "next/navigation";
+import ProductToolbar from "@/components/ProductToolbar";
+import { SortOptions } from "@/utils/constants";
 
 const AllProducts = () => {
-  const { products, categories, brands } = useAppContext();
+  const { products, categories, brands, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -22,6 +24,8 @@ const AllProducts = () => {
   const [selectedCategory, setSelectedCategory] = useState(() => getInitialFilter('category', 'all'));
   const [selectedBrand, setSelectedBrand] = useState(() => getInitialFilter('brand', 'all'));
   const [filteredProducts, setFilteredProducts] = useState(products);
+  const [sortType, setSortType] = useState("default");
+  const [sortedProducts, setSortedProducts] = useState(filteredProducts);
 
   // Cập nhật URL khi filter thay đổi
   useEffect(() => {
@@ -66,6 +70,19 @@ const AllProducts = () => {
     setSelectedBrand(getInitialFilter('brand', 'all'));
   }, [searchParams]);
 
+  const toNumber = (val) => Number(String(val).replace(/\./g, ''));
+
+  // Sắp xếp sản phẩm khi filteredProducts hoặc sortType thay đổi
+  useEffect(() => {
+    let sorted = [...filteredProducts];
+    if (sortType === "price-asc") {
+      sorted.sort((a, b) => toNumber(a.offerPrice) - toNumber(b.offerPrice));
+    } else if (sortType === "price-desc") {
+      sorted.sort((a, b) => toNumber(b.offerPrice) - toNumber(a.offerPrice));
+    }
+    setSortedProducts(sorted);
+  }, [filteredProducts, sortType]);
+
   return (
     <>
       <Navbar />
@@ -74,7 +91,7 @@ const AllProducts = () => {
           <p className="text-2xl font-medium">Tất cả sản phẩm</p>
           <div className="w-16 h-0.5 bg-orange-600 rounded-full"></div>
         </div>
-        <div className="flex gap-8 w-full mt-12">
+        <div className="flex gap-8 w-full mt-4">
           {/* Filter Sidebar */}
           <div className="hidden md:block w-64 flex-shrink-0 space-y-4">
             <Filter
@@ -90,11 +107,25 @@ const AllProducts = () => {
               }}
             />
           </div>
-          {/* Products Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-14 w-full">
-            {filteredProducts.map((product, index) => (
-              <ProductCard key={index} product={product} />
-            ))}
+          <div className="w-full flex flex-col gap-4">
+            {/* Count & Sort */}
+            <ProductToolbar
+              total={sortedProducts.length}
+              sortType={sortType}
+              setSortType={setSortType}
+              sortOptions={SortOptions}
+            />
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 pb-14 w-full">
+              {sortedProducts.map((product, index) => (
+                <ProductCard 
+                  key={index} 
+                  product={product} 
+                  favoriteProductIds={favoriteProductIds}
+                  onFavoriteRemoved={refreshFavoriteProducts}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

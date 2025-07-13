@@ -101,7 +101,7 @@ const SideBar = () => {
         )}
 
         {hasChildren && openMenus[item.name] && (
-          <div className="ml-4 md:ml-8">
+          <div className="ml-2 md:ml-4">
             {item.children.map((child) => (
               <Link href={child.path} key={child.name} passHref>
                 <div
@@ -123,7 +123,7 @@ const SideBar = () => {
   };
 
   return (
-    <div className="md:w-64 w-16 border-r min-h-screen text-base border-gray-300 py-2 flex flex-col">
+    <div className="sticky top-0 left-0 overflow-y-auto md:w-64 w-16 border-r h-screen text-base border-gray-300 py-2 flex flex-col">
       {menuItems.map(renderMenuItem)}
     </div>
   );
