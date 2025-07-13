@@ -6,33 +6,13 @@ import { formatPrice } from "@/utils/format";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const ProductCard = ({ product, onFavoriteRemoved }) => {
-  const { currency, router, user, getToken } = useAppContext();
-  const [isFavorite, setIsFavorite] = useState(false);
+const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavoriteProductIds }) => {
+  const { currency, router, user, getToken, getProductReviewCount, getProductReviewAmount, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
+  const [isFavorite, setIsFavorite] = useState(favoriteProductIds.includes(product._id));
 
   useEffect(() => {
-    const checkFavoriteStatus = async () => {
-      if (!user) return;
-
-      try {
-        const token = await getToken();
-        const { data } = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/favorites/check/${product._id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-            withCredentials: true,
-          }
-        );
-        setIsFavorite(data.isFavorite);
-      } catch (error) {
-        toast.error("Không thể kiểm tra trạng thái yêu thích");
-      }
-    };
-
-    checkFavoriteStatus();
-  }, [product._id, user, getToken]);
+    setIsFavorite(favoriteProductIds.includes(product._id));
+  }, [favoriteProductIds, product._id]);
 
   const handleFavoriteClick = async (e) => {
     e.preventDefault(); // Ngăn chặn hành vi mặc định
@@ -65,6 +45,7 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
         if (onFavoriteRemoved) {
           onFavoriteRemoved();
         }
+        if (refreshFavoriteProducts) refreshFavoriteProducts();
       } else {
         await axios.post(
           `${process.env.NEXT_PUBLIC_API_URL}/favorites/add`,
@@ -78,6 +59,7 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
         );
         toast.success("Đã thêm vào danh sách yêu thích");
         setIsFavorite(true);
+        if (refreshFavoriteProducts) refreshFavoriteProducts();
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Có lỗi xảy ra");
@@ -132,30 +114,36 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
       <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">
         {product.description}
       </p>
-      <div className="flex items-center gap-2">
-        <p className="text-xs">{4.5}</p>
-        <div className="flex items-center gap-0.5">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <Image
-              key={index}
-              className="h-3 w-3"
-              src={
-                index < Math.floor(4) ? assets.star_icon : assets.star_dull_icon
-              }
-              alt="star_icon"
-            />
-          ))}
-        </div>
-      </div>
+      {getProductReviewCount(product._id) > 0 ? (
+        <>
+          <div className="flex items-center gap-2">
+            <p className="text-xs">{getProductReviewAmount(product._id).toFixed(1)}</p>
+            <div className="flex items-center gap-0.5">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Image
+                  key={index}
+                  className="h-3 w-3"
+                  src={
+                    index < Math.floor(getProductReviewAmount(product._id)) ? assets.star_icon : assets.star_dull_icon
+                  }
+                  alt="star_icon"
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : (
+        <p className="text-sm text-gray-500">Chưa đánh giá</p>
+      )}
       <p className="text-sm">
-        {product.views} views
+        {product.views} lượt xem
       </p>
 
       <div className="flex flex-col mt-1 w-full">
         <div className="flex items-center gap-3">
           {/* Giá khuyến mãi */}
           <div className="flex items-baseline">
-            <span className="text-xl font-semibold text-gray-900">
+            <span className="text-xl font-semibold text-orange-500">
               {formatPrice(product.offerPrice)}{currency}
             </span>
           </div>
@@ -173,7 +161,7 @@ const ProductCard = ({ product, onFavoriteRemoved }) => {
         {/* Thông tin thêm và nút mua */}
         <div className="flex items-center justify-between mt-2">
           <button className="w-full max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
-            Buy now
+            Mua ngay
           </button>
         </div>
       </div>

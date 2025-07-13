@@ -8,17 +8,17 @@ const copyToClipboard = (text) => {
   if (!text) return;
   const success = copy(text);
   if (success) {
-    toast.success("Coupon code copied!");
+    toast.success("Đã sao chép mã giảm giá!");
   } else {
-    toast.error("Failed to copy code!");
+    toast.error("Lỗi khi sao chép mã giảm giá!");
   }
 };
 
 const VoucherTicket = ({ item, currency, small }) => {
   const statusMap = {
-    USED: { label: "Used", color: "bg-gray-300 text-gray-600" },
-    EXPIRED: { label: "Expired", color: "bg-red-200 text-red-700" },
-    DEFAULT: { label: "Unused", color: "bg-green-100 text-green-800" },
+    USED: { label: "Đã sử dụng", color: "bg-gray-300 text-gray-600" },
+    EXPIRED: { label: "Hết hạn", color: "bg-red-200 text-red-700" },
+    DEFAULT: { label: "Chưa sử dụng", color: "bg-green-100 text-green-800" },
   };
   const status = statusMap[item.status] || statusMap.DEFAULT;
 
@@ -49,17 +49,17 @@ const VoucherTicket = ({ item, currency, small }) => {
           </span>
           <span className="inline-block px-2 py-0.5 rounded bg-orange-100 text-orange-700 text-xs font-semibold ml-0 md:ml-2">
             {item.couponId?.type === 'PERCENTAGE'
-              ? `Discount ${item.couponId.value}%`
-              : `Discount ${formatPrice(item.couponId?.value)}${currency}`}
+              ? `Giảm ${item.couponId.value}%`
+              : `Giảm ${formatPrice(item.couponId?.value)}${currency}`}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500">
           <span>
-            Valid: {formatDate(item.couponId?.startDate)} - {formatDate(item.couponId?.endDate)}
+            Hạn sử dụng: {formatDate(item.couponId?.startDate)} - {formatDate(item.couponId?.endDate)}
           </span>
           {item.couponId?.minOrderAmount > 0 && (
             <span>
-              Minimum order: {formatPrice(item.couponId?.minOrderAmount)}{currency}
+              Đơn tối thiểu: {formatPrice(item.couponId?.minOrderAmount)}{currency}
             </span>
           )}
           {item.prizeInfo?.desc && (
@@ -75,7 +75,7 @@ const VoucherTicket = ({ item, currency, small }) => {
           onClick={() => copyToClipboard(item.couponId?.code)}
           disabled={isDisabled}
         >
-          Copy code
+          Sao chép mã
         </button>
       </div>
     </div>

@@ -31,9 +31,37 @@ export const AppContextProvider = (props) => {
   const [blogs, setBlogs] = useState([]);
   const [homeBlogs, setHomeBlogs] = useState([]);
   const [reviews, setReviews] = useState([]);
+  const [allReviews, setAllReviews] = useState({});
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [hasUserPurchasedProduct, setHasUserPurchasedProduct] = useState(false);
+  const [favoriteProductIds, setFavoriteProductIds] = useState([]);
+
+  const refreshFavoriteProducts = async () => {
+    if (!user) {
+      setFavoriteProductIds([]);
+      return;
+    }
+    try {
+      const token = await getToken();
+      const { data } = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/favorites/list`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      if (data.success) {
+        setFavoriteProductIds(data.favorites.map(p => p._id));
+      } else {
+        setFavoriteProductIds([]);
+      }
+    } catch (error) {
+      setFavoriteProductIds([]);
+    }
+  };
 
   const fetchProductData = async () => {
     try {
@@ -166,7 +194,6 @@ export const AppContextProvider = (props) => {
         setTimeout(fetchUserData, 1000);
       }
     } catch (error) {
-      // If error occurs, wait briefly and retry
       setTimeout(fetchUserData, 1000);
     }
   };
@@ -196,7 +223,7 @@ export const AppContextProvider = (props) => {
         );
         toast.success("Item added to cart");
       } catch (error) {
-        toast.error(error.message);
+        toast.error(error.response?.data?.message || error.message);
       }
     }
   };
@@ -223,7 +250,11 @@ export const AppContextProvider = (props) => {
           );
           toast.success("Cart updated");
         } catch (error) {
-          toast.error(error.message);
+          if (error.response?.data?.code === 'TOKEN_EXPIRED') {
+            toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
+            return;
+          }
+          toast.error(error.response?.data?.message || error.message);
         }
       }
   };
@@ -247,6 +278,40 @@ export const AppContextProvider = (props) => {
       }
     }
     return Math.floor(totalAmount * 100) / 100;
+  };
+
+  const fetchAllReviews = async () => {
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/all`);
+      if (data.success) {
+        // Chuyển đổi array thành object với key là productId
+        const reviewsByProduct = {};
+        data.reviews.forEach(review => {
+          if (!reviewsByProduct[review.targetId]) {
+            reviewsByProduct[review.targetId] = [];
+          }
+          reviewsByProduct[review.targetId].push(review);
+        });
+        setAllReviews(reviewsByProduct);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching all reviews:", error);
+    }
+  };
+
+  const getProductReviewCount = (productId) => {
+    const productReviews = allReviews[productId] || [];
+    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
+    return reviewsWithRating.length;
+  };
+
+  const getProductReviewAmount = (productId) => {
+    const productReviews = allReviews[productId] || [];
+    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
+    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
+    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
   };
 
   const fetchReviews = async (targetId, type = 'product') => {
@@ -391,16 +456,19 @@ export const AppContextProvider = (props) => {
     fetchHomeProducts();
     fetchTopBrands();
     fetchHomeBlogs();
+    fetchAllReviews();
   }, []);
 
   useEffect(() => {
     if (user) {
       fetchUserData();
+      refreshFavoriteProducts();
     } else {
       // Reset user data when logged out
       setUserData(false);
       setCartItems({});
       setIsSeller(false);
+      setFavoriteProductIds([]);
     }
   }, [user]);
 
@@ -439,11 +507,15 @@ export const AppContextProvider = (props) => {
     getCartCount,
     getCartAmount,
     reviews,
+    allReviews,
     loading,
     fetchReviews,
+    fetchAllReviews,
     postReview,
     getReviewCount,
     getReviewAmount,
+    getProductReviewCount,
+    getProductReviewAmount,
     hasUserPurchasedProduct,
     checkUserProductPurchaseStatus,
     comments,
@@ -451,6 +523,8 @@ export const AppContextProvider = (props) => {
     postComment,
     updateComment,
     deleteComment,
+    favoriteProductIds,
+    refreshFavoriteProducts,
   };
 
   return (

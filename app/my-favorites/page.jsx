@@ -8,7 +8,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const MyFavorites = () => {
-  const { user, getToken } = useAppContext();
+  const { user, getToken, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
   const [favoriteProducts, setFavoriteProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,7 +66,8 @@ const MyFavorites = () => {
               <ProductCard 
                 key={index} 
                 product={product} 
-                onFavoriteRemoved={handleFavoriteRemoved}
+                favoriteProductIds={favoriteProductIds}
+                onFavoriteRemoved={refreshFavoriteProducts}
               />
             ))}
           </div>

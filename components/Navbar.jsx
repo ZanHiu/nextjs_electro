@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { assets, BagIcon, BoxIcon, CartIcon, HomeIcon, AddressIcon, VoucherIcon, BlogIcon, HeartIcon } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Link from "next/link";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
@@ -12,30 +12,24 @@ import { formatPrice } from "@/utils/format";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
+import LocationOnOutlinedIcon from '@mui/icons-material/LocationOnOutlined';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
 
 const Navbar = () => {
   const { isSeller, router, user, currency } = useAppContext();
   const { openSignIn } = useClerk();
-  const [isShopOpen, setIsShopOpen] = useState(false);
-  const dropdownRef = useRef(null);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const searchRef = useRef(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsShopOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -78,7 +72,7 @@ const Navbar = () => {
   );
 
   return (
-    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700">
+    <nav className="flex items-center justify-between px-6 md:px-16 lg:px-32 py-3 border-b border-gray-300 text-gray-700 relative">
       <Image
         className="cursor-pointer w-28 md:w-32"
         onClick={() => router.push("/")}
@@ -87,56 +81,19 @@ const Navbar = () => {
       />
       <div className="flex items-center gap-4 lg:gap-8 max-md:hidden">
         <Link href="/" className="hover:text-gray-900 transition">
-          Home
+          Trang chủ
         </Link>
-        <div className="relative" ref={dropdownRef}>
-          <button 
-            className="hover:text-gray-900 transition flex items-center gap-1"
-            onClick={() => setIsShopOpen(!isShopOpen)}
-          >
-            Shop
-            <ArrowDropDownIcon 
-              sx={{ fontSize: 16 }} 
-              className={`transition-transform ${isShopOpen ? 'rotate-180' : ''}`}
-            />
-          </button>
-          
-          {isShopOpen && (
-            <div 
-              className="absolute top-full left-0 mt-1 bg-white border rounded-lg shadow-lg py-2 min-w-[160px] z-50"
-            >
-              <Link 
-                href="/all-products" 
-                className="block px-4 py-2 hover:bg-gray-50 hover:text-orange-600 transition"
-                onClick={() => setIsShopOpen(false)}
-              >
-                Products
-              </Link>
-              <Link 
-                href="/all-categories" 
-                className="block px-4 py-2 hover:bg-gray-50 hover:text-orange-600 transition"
-                onClick={() => setIsShopOpen(false)}
-              >
-                Categories
-              </Link>
-              <Link 
-                href="/all-brands" 
-                className="block px-4 py-2 hover:bg-gray-50 hover:text-orange-600 transition"
-                onClick={() => setIsShopOpen(false)}
-              >
-                Brands
-              </Link>
-            </div>
-          )}
-        </div>
+        <Link href="/all-products" className="hover:text-gray-900 transition">
+          Cửa hàng
+        </Link>
         <Link href="/all-blogs" className="hover:text-gray-900 transition">
-          Blog
+          Bài viết
         </Link>
         <Link href="/about" className="hover:text-gray-900 transition">
-          About Us
+          Về chúng tôi
         </Link>
         <Link href="/contact" className="hover:text-gray-900 transition">
-          Contact
+          Liên hệ
         </Link>
 
         {isSeller && (
@@ -144,7 +101,7 @@ const Navbar = () => {
             onClick={() => router.push("/seller")}
             className="text-xs border px-4 py-1.5 rounded-full"
           >
-            Dashboard
+            Quản trị
           </button>
         )}
       </div>
@@ -163,7 +120,7 @@ const Navbar = () => {
               <div className="p-3">
                 <input
                   type="text"
-                  placeholder="Search products..."
+                  placeholder="Tìm kiếm sản phẩm..."
                   value={searchQuery}
                   onChange={(e) => {
                     setSearchQuery(e.target.value);
@@ -175,7 +132,7 @@ const Navbar = () => {
               </div>
 
               {isSearching ? (
-                <div className="p-4 text-center text-gray-500">Searching...</div>
+                <div className="p-4 text-center text-gray-500">Đang tìm...</div>
               ) : searchResults.length > 0 ? (
                 <div className="max-h-96 overflow-y-auto">
                   {searchResults.map((product) => (
@@ -208,7 +165,7 @@ const Navbar = () => {
                   ))}
                 </div>
               ) : searchQuery && !isSearching ? (
-                <div className="p-4 text-center text-gray-500">No products found</div>
+                <div className="p-4 text-center text-gray-500">Không tìm thấy sản phẩm</div>
               ) : null}
             </div>
           )}
@@ -230,38 +187,31 @@ const Navbar = () => {
 
         {user ? (
           <UserButton>
-            {/* <UserButton.MenuItems>
-              <UserButton.Action 
-                label="Cart" 
-                labelIcon={<CartIcon />} 
-                onClick={() => router.push('/cart')} 
-              />
-            </UserButton.MenuItems> */}
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Favorites" 
-                labelIcon={<HeartIcon />} 
+                label="Sản phẩm yêu thích" 
+                labelIcon={<FavoriteBorderOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-favorites')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Orders" 
-                labelIcon={<BagIcon />} 
+                label="Lịch sử đơn hàng" 
+                labelIcon={<ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-orders')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Addresses" 
-                labelIcon={<AddressIcon />} 
+                label="Địa chỉ" 
+                labelIcon={<LocationOnOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-addresses')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Vouchers" 
-                labelIcon={<VoucherIcon />} 
+                label="Mã giảm giá" 
+                labelIcon={<ConfirmationNumberOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-vouchers')}  
               />
             </UserButton.MenuItems>
@@ -272,62 +222,62 @@ const Navbar = () => {
             className="flex items-center gap-2 hover:text-gray-900 transition"
           >
             <PersonOutlineOutlinedIcon sx={{ fontSize: 20 }} />
-            Account
+            Tài khoản
           </button>
         )}
       </ul>
 
       <div className="flex items-center md:hidden gap-3">
+        <button
+          className="hover:text-gray-900 transition"
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Mở menu"
+        >
+          <MenuIcon sx={{ fontSize: 28 }} />
+        </button>
         {isSeller && (
           <button
             onClick={() => router.push("/seller")}
             className="text-xs border px-4 py-1.5 rounded-full"
           >
-            Seller Dashboard
+            Quản trị
           </button>
         )}
         {user ? (
           <UserButton>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="Home" 
-                labelIcon={<HomeIcon />} 
-                onClick={() => router.push('/')} 
-              />
-            </UserButton.MenuItems>
-            <UserButton.MenuItems>
-              <UserButton.Action 
-                label="Products" 
-                labelIcon={<BoxIcon />} 
-                onClick={() => router.push('/all-products')} 
-              />
-            </UserButton.MenuItems>
-            <UserButton.MenuItems>
-              <UserButton.Action 
-                label="Blogs" 
-                labelIcon={<BlogIcon />} 
-                onClick={() => router.push('/all-blogs')} 
-              />
-            </UserButton.MenuItems>
-            <UserButton.MenuItems>
-              <UserButton.Action 
-                label="Cart" 
-                labelIcon={<CartIcon />} 
+                label="Giỏ hàng" 
+                labelIcon={<ShoppingCartOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/cart')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Favorites" 
-                labelIcon={<HeartIcon />} 
+                label="Sản phẩm yêu thích" 
+                labelIcon={<FavoriteBorderOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-favorites')} 
               />
             </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
-                label="My Orders" 
-                labelIcon={<BagIcon />} 
+                label="Lịch sử đơn hàng" 
+                labelIcon={<ShoppingBagOutlinedIcon sx={{ fontSize: 18 }} />} 
                 onClick={() => router.push('/my-orders')} 
+              />
+            </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="Địa chỉ" 
+                labelIcon={<LocationOnOutlinedIcon sx={{ fontSize: 18 }} />} 
+                onClick={() => router.push('/my-addresses')} 
+              />
+            </UserButton.MenuItems>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="Mã giảm giá" 
+                labelIcon={<ConfirmationNumberOutlinedIcon sx={{ fontSize: 18 }} />} 
+                onClick={() => router.push('/my-vouchers')}  
               />
             </UserButton.MenuItems>
           </UserButton>
@@ -337,9 +287,44 @@ const Navbar = () => {
             className="flex items-center gap-2 hover:text-gray-900 transition"
           >
             <PersonOutlineOutlinedIcon sx={{ fontSize: 20 }} />
-            Account
+            Tài khoản
           </button>
         )}
+      </div>
+      {/* Mobile menu overlay */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 z-50 md:hidden" onClick={() => setIsMenuOpen(false)}></div>
+      )}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg z-50 transform transition-transform duration-300 md:hidden ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+        style={{ willChange: 'transform' }}
+      >
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <Image
+            className="w-28 cursor-pointer"
+            onClick={() => { router.push('/'); setIsMenuOpen(false); }}
+            src={assets.logo}
+            alt="logo"
+          />
+          <button onClick={() => setIsMenuOpen(false)} aria-label="Đóng menu">
+            <CloseIcon sx={{ fontSize: 28 }} />
+          </button>
+        </div>
+        <div className="flex flex-col gap-2 px-6 py-4">
+          <Link href="/" className="py-2" onClick={() => setIsMenuOpen(false)}>Trang chủ</Link>
+          <Link href="/all-products" className="py-2" onClick={() => setIsMenuOpen(false)}>Cửa hàng</Link>
+          <Link href="/all-blogs" className="py-2" onClick={() => setIsMenuOpen(false)}>Bài viết</Link>
+          <Link href="/about" className="py-2" onClick={() => setIsMenuOpen(false)}>Về chúng tôi</Link>
+          <Link href="/contact" className="py-2" onClick={() => setIsMenuOpen(false)}>Liên hệ</Link>
+          {isSeller && (
+            <button
+              onClick={() => { router.push('/seller'); setIsMenuOpen(false); }}
+              className="text-xs border px-4 py-1.5 rounded-full mt-2"
+            >
+              Quản trị
+            </button>
+          )}
+        </div>
       </div>
     </nav>
   );

@@ -4,7 +4,7 @@ const NewsLetter = () => {
   return (
     <div className="flex flex-col items-center justify-center text-center space-y-2 pt-8 pb-14">
       <h1 className="md:text-4xl text-2xl font-medium">
-        Subscribe now & get 20% off
+        Đăng ký ngay để được giảm giá 20%
       </h1>
       <p className="md:text-base text-gray-500/80 pb-8">
         Lorem Ipsum is simply dummy text of the printing and typesetting
@@ -14,10 +14,10 @@ const NewsLetter = () => {
         <input
           className="border border-gray-500/30 rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-gray-500"
           type="text"
-          placeholder="Enter your email id"
+          placeholder="Nhập email của bạn"
         />
         <button className="md:px-12 px-8 h-full text-white bg-orange-600 rounded-md rounded-l-none">
-          Subscribe
+          Gửi
         </button>
       </div>
     </div>

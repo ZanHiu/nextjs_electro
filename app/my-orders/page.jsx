@@ -11,6 +11,7 @@ import Loading from "@/components/Loading";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { formatPrice } from "@/utils/format";
+import { OrderStatus, PaymentStatus } from "@/utils/constants";
 
 const MyOrders = () => {
   const { currency, getToken, user, addToCart, router } = useAppContext();
@@ -106,6 +107,29 @@ const MyOrders = () => {
     return reviews.some(review => review.orderId === orderId);
   };
 
+  const handleRepayOrder = async (order) => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/payments/create-vnpay-payment`,
+        {
+          orderId: order._id,
+          amount: order.amount
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` }
+        }
+      );
+      if (data.success) {
+        window.location.href = data.paymentUrl;
+      } else {
+        toast.error(data.message || "Không thể tạo lại thanh toán");
+      }
+    } catch (error) {
+      toast.error(error.message || "Lỗi khi tạo lại thanh toán");
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -124,7 +148,7 @@ const MyOrders = () => {
                   src={assets.arrow_right_icon_colored}
                   alt="arrow_right_icon_colored"
                 />
-                Continue Shopping
+                Tiếp tục mua sắm
               </button>
             </div>
           </div>
@@ -165,7 +189,7 @@ const MyOrders = () => {
                         </span>
                       </div>
                       <span className={`px-3 py-1 rounded-full text-sm font-medium ${getOrderStatusColor(order.status)}`}>
-                        {order.status}
+                        {OrderStatus[order.status]}
                       </span>
                     </div>
                   </div>
@@ -231,7 +255,7 @@ const MyOrders = () => {
                                 Phương thức: {order.paymentMethod}
                               </p>
                               <p className={`${getPaymentStatusColor(order.paymentStatus)} font-bold`}>
-                                Trạng thái: {order.paymentStatus}
+                                Trạng thái: {PaymentStatus[order.paymentStatus]}
                               </p>
                             </div>
                           </div>
@@ -247,6 +271,15 @@ const MyOrders = () => {
                           className="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition"
                         >
                           Hủy đơn hàng
+                        </button>
+                      )}
+
+                      {order.status === "PENDING" && order.paymentMethod === "VNPAY" && order.paymentStatus === "PENDING" && (
+                        <button
+                          onClick={() => handleRepayOrder(order)}
+                          className="px-4 py-2 bg-orange-500 text-white hover:bg-orange-600 rounded-lg transition"
+                        >
+                          Thanh toán lại
                         </button>
                       )}
 

@@ -13,6 +13,7 @@ import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Tabs from "@/components/Tabs";
 
 const Product = () => {
   const { id } = useParams();
@@ -107,15 +108,15 @@ const Product = () => {
               <table className="table-auto border-collapse w-full max-w-72">
                 <tbody>
                   <tr>
-                    <td className="text-gray-600 font-medium">Color</td>
+                    <td className="text-gray-600 font-medium">Màu sắc</td>
                     <td className="text-gray-800/50 ">Multi</td>
                   </tr>
                   <tr>
-                    <td className="text-gray-600 font-medium">Brand</td>
+                    <td className="text-gray-600 font-medium">Thương hiệu</td>
                     <td className="text-gray-800/50 ">{productData.brand?.name}</td>
                   </tr>
                   <tr>
-                    <td className="text-gray-600 font-medium">Category</td>
+                    <td className="text-gray-600 font-medium">Danh mục</td>
                     <td className="text-gray-800/50">{productData.category?.name}</td>
                   </tr>
                 </tbody>
@@ -127,7 +128,7 @@ const Product = () => {
                 onClick={() => addToCart(productData._id)}
                 className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
               >
-                Add to Cart
+                Thêm vào giỏ hàng
               </button>
               <button
                 onClick={() => {
@@ -136,36 +137,20 @@ const Product = () => {
                 }}
                 className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition"
               >
-                Buy now
+                Mua ngay
               </button>
             </div>
           </div>
         </div>
         <div className="mt-10">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8" aria-label="Tabs">
-              <button
-                onClick={() => setActiveTab('reviews')}
-                className={`${
-                  activeTab === 'reviews'
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                Review product
-              </button>
-              <button
-                onClick={() => setActiveTab('comments')}
-                className={`${
-                  activeTab === 'comments'
-                    ? 'border-orange-500 text-orange-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-              >
-                Comment
-              </button>
-            </nav>
-          </div>
+          <Tabs
+            tabs={[
+              { key: "reviews", label: "Đánh giá sản phẩm" },
+              { key: "comments", label: "Bình luận" }
+            ]}
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
           <div className="mt-6">
             {activeTab === 'reviews' ? (
               <ReviewSection productId={productData._id} />
@@ -177,8 +162,7 @@ const Product = () => {
         <div className="flex flex-col items-center">
           <div className="flex flex-col items-center mb-4 mt-16">
             <p className="text-3xl font-medium">
-              Featured{" "}
-              <span className="font-medium text-orange-600">Products</span>
+              <span className="font-medium text-orange-600">Sản phẩm</span> nổi bật {" "}
             </p>
             <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
           </div>
@@ -188,7 +172,7 @@ const Product = () => {
             ))}
           </div>
           <button className="px-8 py-2 mb-16 border rounded text-gray-500/70 hover:bg-slate-50/90 transition">
-            See more
+            Xem thêm
           </button>
         </div>
       </div>

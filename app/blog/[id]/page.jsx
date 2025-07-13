@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
+import Tabs from "@/components/Tabs";
 
 const Blog = () => {
 	const { id } = useParams();
@@ -53,7 +54,7 @@ const Blog = () => {
 	}, [id]);
 
 	const handleDelete = async () => {
-		if (window.confirm('Are you sure you want to delete this blog?')) {
+		if (window.confirm('Bạn có chắc chắn muốn xóa bài viết này không?')) {
 			try {
 				const token = await getToken();
 				const { data } = await axios.delete(
@@ -72,7 +73,7 @@ const Blog = () => {
 					toast.error(data.message);
 				}
 			} catch (error) {
-				toast.error(error.response?.data?.message || 'Something went wrong');
+				toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
 			}
 		}
 	};
@@ -111,7 +112,7 @@ const Blog = () => {
 											}}
 											className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
 										>
-											Edit
+											Sửa
 										</button>
 										<button
 											onClick={() => {
@@ -120,7 +121,7 @@ const Blog = () => {
 											}}
 											className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
 										>
-											Delete
+											Xóa
 										</button>
 									</div>
 								)}
@@ -137,28 +138,14 @@ const Blog = () => {
 						/>
 					</div>
 
-					<div className="border-b border-gray-200">
-						<nav className="-mb-px flex space-x-8" aria-label="Tabs">
-							<button
-								onClick={() => setActiveTab('content')}
-								className={`${activeTab === 'content'
-										? 'border-orange-500 text-orange-600'
-										: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-									} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-							>
-								Content
-							</button>
-							<button
-								onClick={() => setActiveTab('comments')}
-								className={`${activeTab === 'comments'
-										? 'border-orange-500 text-orange-600'
-										: 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-									} whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-							>
-								Comment
-							</button>
-						</nav>
-					</div>
+					<Tabs
+						tabs={[
+							{ key: "content", label: "Nội dung" },
+							{ key: "comments", label: "Bình luận" }
+						]}
+						activeTab={activeTab}
+						setActiveTab={setActiveTab}
+					/>
 
 					<div className="mt-6">
 						{activeTab === 'content' ? (

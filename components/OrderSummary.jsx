@@ -147,7 +147,7 @@ const OrderSummary = () => {
   const createOrder = async () => {
     try {
       if (!selectedAddress) {
-        return toast.error("Please select an address");
+        return toast.error("Vui lòng chọn điểm giao hàng");
       }
   
       let cartItemsArray = Object.keys(cartItems).map((key) => ({
@@ -157,7 +157,7 @@ const OrderSummary = () => {
       cartItemsArray = cartItemsArray.filter(item => item.quantity > 0);
       
       if (cartItemsArray.length === 0) {
-        return toast.error("Cart is empty");
+        return toast.error("Giỏ hàng trống");
       }
   
       const token = await getToken();
@@ -226,12 +226,12 @@ const OrderSummary = () => {
   return (
     <div className="w-full md:w-96 bg-gray-500/5 p-5">
       <h2 className="text-xl md:text-2xl font-medium text-gray-700">
-        Order Summary
+        Tóm tắt đơn hàng
       </h2>
       <hr className="border-gray-500/30 my-5" />
       <div>
         <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-          Payment Method
+          Phương thức thanh toán
         </label>
         <PaymentMethod 
           selectedMethod={paymentMethod}
@@ -242,7 +242,7 @@ const OrderSummary = () => {
       <div className="space-y-6">
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-            Select Address
+            Chọn địa chỉ
           </label>
           <div className="relative inline-block w-full text-sm border">
             <button
@@ -252,7 +252,7 @@ const OrderSummary = () => {
               <span>
                 {selectedAddress
                   ? `${selectedAddress.fullName}, ${selectedAddress.area}, ${selectedAddress.city}, ${selectedAddress.state}`
-                  : "Select Address"}
+                  : "Chọn địa chỉ"}
               </span>
               <svg className={`w-5 h-5 inline float-right transition-transform duration-200 ${isDropdownOpen ? "rotate-0" : "-rotate-90"}`}
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6B7280"
@@ -276,7 +276,7 @@ const OrderSummary = () => {
                   onClick={() => router.push("/add-address")}
                   className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-center"
                 >
-                  + Add New Address
+                  + Thêm địa chỉ
                 </li>
               </ul>
             )}
@@ -286,7 +286,7 @@ const OrderSummary = () => {
         {/* Voucher select UI */}
         <div>
           <label className="text-base font-medium uppercase text-gray-600 block mb-2">
-            Select Voucher
+            Chọn mã giảm giá
           </label>
           <div className="relative inline-block w-full text-sm border">
             <button
@@ -298,8 +298,8 @@ const OrderSummary = () => {
                 {selectedVoucher
                   ? `${selectedVoucher.couponId?.code} - ${selectedVoucher.couponId?.type === 'PERCENTAGE' ? `Giảm ${selectedVoucher.couponId?.value}%` : `Giảm ${selectedVoucher.couponId?.value?.toLocaleString()}${currency}`}`
                   : userVouchers.length === 0
-                  ? "Voucher not available"
-                  : "Select Voucher"}
+                  ? "Không có mã giảm giá"
+                  : "Chọn mã giảm giá"}
               </span>
               <svg className={`w-5 h-5 inline float-right transition-transform duration-200 ${voucherDropdownOpen ? "rotate-0" : "-rotate-90"}`}
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="#6B7280"
@@ -323,7 +323,7 @@ const OrderSummary = () => {
                       {voucher.couponId?.minOrderAmount > 0 && ` | Minimum Order: ${voucher.couponId?.minOrderAmount?.toLocaleString()}${currency}`}
                     </span>
                     <span className="text-xs text-gray-400">
-                      Valid: {new Date(voucher.couponId?.startDate).toLocaleDateString()} - {new Date(voucher.couponId?.endDate).toLocaleDateString()}
+                      Hiệu lực: {new Date(voucher.couponId?.startDate).toLocaleDateString()} - {new Date(voucher.couponId?.endDate).toLocaleDateString()}
                     </span>
                   </li>
                 ))}
@@ -331,7 +331,7 @@ const OrderSummary = () => {
                   onClick={() => handleVoucherSelect(null)}
                   className="px-4 py-2 hover:bg-gray-500/10 cursor-pointer text-center text-red-500"
                 >
-                  x Clear
+                  x Loại bỏ
                 </li>
               </ul>
             )}
@@ -342,28 +342,28 @@ const OrderSummary = () => {
 
         <div className="space-y-4">
           <div className="flex justify-between text-base font-medium">
-            <p className="uppercase text-gray-600">Items {getCartCount()}</p>
+            <p className="uppercase text-gray-600">{getCartCount()} mặt hàng</p>
             <p className="text-gray-800">{formatPrice(getCartAmount())}{currency}</p>
           </div>
           <div className="flex justify-between">
-            <p className="text-gray-600">Shipping Fee</p>
-            <p className="font-medium text-gray-800">Free</p>
+            <p className="text-gray-600">Phí vận chuyển</p>
+            <p className="font-medium text-gray-800">0{currency}</p>
           </div>
           {appliedCoupon && (
             <div className="flex justify-between text-green-600">
-              <p>Discount ({appliedCoupon.type === 'PERCENTAGE' ? `${appliedCoupon.value}%` : 'Fixed'})</p>
+              <p>Giảm ({appliedCoupon.type === 'PERCENTAGE' ? `${appliedCoupon.value}%` : 'Fixed'})</p>
               <p className="font-medium">-{formatPrice(calculateDiscount())}{currency}</p>
             </div>
           )}
           <div className="flex justify-between text-lg md:text-xl font-medium border-t pt-3">
-            <p>Total</p>
+            <p>Tổng tiền</p>
             <p>{formatPrice(calculateTotal())}{currency}</p>
           </div>
         </div>
       </div>
 
       <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        {paymentMethod === 'VNPAY' ? 'Proceed to Payment' : 'Place Order'}
+        {paymentMethod === 'VNPAY' ? 'Thanh toán' : 'Đặt hàng'}
       </button>
     </div>
   );

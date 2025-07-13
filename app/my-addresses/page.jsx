@@ -49,12 +49,12 @@ const MyAddresses = () => {
       <div className="flex flex-col justify-between px-6 md:px-16 lg:px-32 py-6 min-h-screen">
         <div className="space-y-5">
           <div className="flex justify-between items-center mt-6">
-            <h2 className="text-lg font-medium">My Addresses</h2>
+            <h2 className="text-lg font-medium">Địa chỉ giao hàng</h2>
             <Link 
               href="/add-address"
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
             >
-              Add New Address
+              Thêm địa chỉ
             </Link>
           </div>
           
@@ -76,10 +76,9 @@ const MyAddresses = () => {
                   </div>
 
                   <div className="col-span-8 text-sm">
-                    <p className="font-medium">{address.fullName}</p>
-                    <p className="text-gray-500">{address.area}</p>
-                    <p className="text-gray-500">{`${address.city}, ${address.state} - ${address.pincode}`}</p>
-                    <p className="text-gray-500">Phone: {address.phoneNumber}</p>
+                    <p className="font-medium">Họ tên: {address.fullName}</p>
+                    <p className="text-gray-500">Địa chỉ: {address.area}, {address.city}, {address.state} - {address.pincode}</p>
+                    <p className="text-gray-500">Số điện thoại: {address.phoneNumber}</p>
                   </div>
 
                   <div className="col-span-3 flex justify-end gap-3">
@@ -87,13 +86,13 @@ const MyAddresses = () => {
                       className="text-blue-600 hover:text-blue-800"
                       onClick={() => handleEdit(address._id)}
                     >
-                      Edit
+                      Sửa
                     </button>
                     <button 
                       className="text-red-600 hover:text-red-800"
                       onClick={() => handleDelete(address._id)}
                     >
-                      Delete
+                      Xóa
                     </button>
                   </div>
                 </div>
@@ -101,7 +100,7 @@ const MyAddresses = () => {
               
               {addresses.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  No addresses found. Add a new address to get started.
+                  Không có địa chỉ giao hàng. Thêm địa chỉ để tiếp tục.
                 </div>
               )}
             </div>

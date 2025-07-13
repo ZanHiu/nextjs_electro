@@ -1,15 +1,22 @@
 // Order
 export const OrderStatus = {
-  PENDING: 'PENDING',
-  PROCESSING: 'PROCESSING',
-  DELIVERED: 'DELIVERED',
-  CANCELLED: 'CANCELLED',
+  PENDING: 'CHƯA XỬ LÝ',
+  PROCESSING: 'ĐANG XỬ LÝ',
+  DELIVERED: 'ĐÃ GIAO',
+  CANCELLED: 'ĐÃ HỦY',
 };
 
 // Payment
 export const PaymentStatus = {
-  PENDING: 'PENDING',
-  PAID: 'PAID',
-  FAILED: 'FAILED',
-  REFUND_PENDING: 'REFUND_PENDING',
+  PENDING: 'CHƯA THANH TOÁN',
+  PAID: 'ĐÃ THANH TOÁN',
+  FAILED: 'THẤT BẠI',
+  REFUND_PENDING: 'ĐANG HOÀN TIỀN',
 };
+
+// Sort options
+export const SortOptions = [
+  { value: "default", label: "Mặc định" },
+  { value: "price-asc", label: "Giá thấp đến cao" },
+  { value: "price-desc", label: "Giá cao đến thấp" },
+];

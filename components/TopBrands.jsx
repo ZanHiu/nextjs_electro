@@ -7,7 +7,7 @@ const TopBrands = () => {
   return (
     <div className="mt-12">
       <div className="flex flex-col items-start mb-8">
-        <p className="text-3xl font-medium">Top Brands</p>
+        <p className="text-3xl font-medium">Thương hiệu hàng đầu</p>
         <div className="w-28 h-0.5 bg-orange-600 mt-2"></div>
       </div>
       

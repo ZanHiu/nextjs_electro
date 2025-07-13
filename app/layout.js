@@ -3,6 +3,7 @@ import "./globals.css";
 import { AppContextProvider } from "@/context/AppContext";
 import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
+import { viVN } from '@clerk/localizations'
 
 const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500"] })
 
@@ -13,13 +14,13 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider localization={viVN}>
       <html 
-        lang="en" 
+        lang="vi" 
         data-locator-target="vscode" 
       >
         <body
-          data-new-gr-c-s-check-loaded="14.1238.0"
+          data-new-gr-c-s-check-loaded="14.1242.0"
           data-gr-ext-installed=""
           data-new-gr-c-s-loaded="14.1231.0"
           className={`${outfit.className} antialiased text-gray-700`}

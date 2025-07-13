@@ -17,42 +17,42 @@ const SideBar = () => {
   const [openMenus, setOpenMenus] = useState({});
 
   const menuItems = [
-    { name: "Dashboard", path: "/seller", icon: <BarChartOutlinedIcon sx={{ fontSize: 28 }} /> },
-    { name: "Users", path: "/seller/users", icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 28 }} /> },
-    { name: "Orders", path: "/seller/orders", icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 28 }} /> },
-    { name: "Blogs", path: "/seller/blogs", icon: <ArticleOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Bảng điều khiển", path: "/seller", icon: <BarChartOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Người dùng", path: "/seller/users", icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Đơn hàng", path: "/seller/orders", icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 28 }} /> },
     {
-      name: "Products",
+      name: "Sản phẩm",
       icon: <Inventory2OutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
-        { name: "Product List", path: "/seller/products" },
-        { name: "Add Product", path: "/seller/add-product" },
+        { name: "Danh sách sản phẩm", path: "/seller/products" },
+        { name: "Thêm sản phẩm", path: "/seller/add-product" },
       ],
     },
     {
-      name: "Categories",
+      name: "Danh mục",
       icon: <CategoryOutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
-        { name: "Category List", path: "/seller/categories" },
-        { name: "Add Category", path: "/seller/add-category" },
+        { name: "Danh sách danh mục", path: "/seller/categories" },
+        { name: "Thêm danh mục", path: "/seller/add-category" },
       ],
     },
     {
-      name: "Brands",
+      name: "Thương hiệu",
       icon: <LocalOfferOutlinedIcon sx={{ fontSize: 28 }} />,
       children: [
-        { name: "Brand List", path: "/seller/brands" },
-        { name: "Add Brand", path: "/seller/add-brand" },
+        { name: "Danh sách thương hiệu", path: "/seller/brands" },
+        { name: "Thêm thương hiệu", path: "/seller/add-brand" },
       ],
     },
     { 
-      name: "Coupons", 
+      name: "Mã giảm giá", 
       icon: <ConfirmationNumberOutlinedIcon sx={{ fontSize: 28 }} />, 
       children: [
-        { name: "Coupon List", path: "/seller/coupons" },
-        { name: "Add Coupon", path: "/seller/add-coupon" },
+        { name: "Danh sách mã giảm giá", path: "/seller/coupons" },
+        { name: "Thêm mã giảm giá", path: "/seller/add-coupon" },
       ]
     },
+    { name: "Bài viết", path: "/seller/blogs", icon: <ArticleOutlinedIcon sx={{ fontSize: 28 }} /> },
   ];
 
   const toggleMenu = (menuName) => {
@@ -101,7 +101,7 @@ const SideBar = () => {
         )}
 
         {hasChildren && openMenus[item.name] && (
-          <div className="ml-4 md:ml-8">
+          <div className="ml-2 md:ml-4">
             {item.children.map((child) => (
               <Link href={child.path} key={child.name} passHref>
                 <div
@@ -123,7 +123,7 @@ const SideBar = () => {
   };
 
   return (
-    <div className="md:w-64 w-16 border-r min-h-screen text-base border-gray-300 py-2 flex flex-col">
+    <div className="sticky top-0 left-0 overflow-y-auto md:w-64 w-16 border-r h-screen text-base border-gray-300 py-2 flex flex-col">
       {menuItems.map(renderMenuItem)}
     </div>
   );

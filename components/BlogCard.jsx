@@ -35,7 +35,7 @@ const BlogCard = ({ blog }) => {
 				<div className="flex items-center justify-between">
 					{/* Read More Link */}
 					<button className="flex items-center gap-2 text-orange-600 hover:text-orange-700 transition group">
-						Read more
+						Đọc thêm
 					</button>
 					<div className="flex items-center gap-1 text-sm text-gray-500">
 						<CalendarMonthOutlinedIcon sx={{ fontSize: 20 }} />
