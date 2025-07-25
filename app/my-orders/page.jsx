@@ -201,26 +201,46 @@ const MyOrders = () => {
                       <div className="col-span-12 lg:col-span-6">
                         <h4 className="font-medium text-gray-800 mb-3">Sản phẩm</h4>
                         <div className="space-y-4">
-                          {order.items.map((item, idx) => (
+                          {order.items.map((item, idx) => {
+                            // Nếu có variant thì lấy thông tin từ variant, nếu không thì lấy từ product
+                            const hasVariant = !!item.variant;
+                            const displayImage = hasVariant && item.variant.images && item.variant.images.length > 0
+                              ? item.variant.images[0]
+                              : (item.product.image && item.product.image[0]);
+                            const displayName = item.product.name + (hasVariant && item.variant.attributes ? ` (${Object.values(item.variant.attributes).join(', ')})` : '');
+                            const displayPrice = hasVariant ? item.variant.offerPrice : item.product.offerPrice;
+                            const displayOriginPrice = hasVariant ? item.variant.price : item.product.price;
+                            return (
                             <div key={idx} className="flex gap-4">
                               <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
                                 <Image
-                                  src={item.product.image[0]}
-                                  alt={item.product.name}
+                                    src={displayImage}
+                                    alt={displayName}
                                   className="w-full h-full object-cover"
                                   width={80}
                                   height={80}
                                 />
                               </div>
                               <div className="flex-1">
-                                <h5 className="font-medium text-gray-800 line-clamp-1">{item.product.name}</h5>
+                                  <h5 className="font-medium text-gray-800 line-clamp-1">{displayName}</h5>
+                                  {hasVariant && item.variant.attributes && (
+                                    <p className="text-xs text-gray-500/80 mb-1">
+                                      {Object.entries(item.variant.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')}
+                                    </p>
+                                  )}
                                 <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                                  <div className="flex items-center gap-2">
                                 <p className="text-sm font-medium text-orange-500">
-                                  {formatPrice(item.product.offerPrice)}{currency}
+                                      {formatPrice(displayPrice)}{currency}
                                 </p>
+                                    {displayOriginPrice > displayPrice && (
+                                      <span className="text-xs text-gray-400 line-through">{formatPrice(displayOriginPrice)}{currency}</span>
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
 

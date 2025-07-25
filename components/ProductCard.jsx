@@ -74,6 +74,13 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
     }
   };
 
+  // Lấy variant đầu tiên nếu có
+  const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
+  const displayImage = firstVariant && firstVariant.images && firstVariant.images.length > 0 ? firstVariant.images[0] : (product.image && product.image[0]);
+  const displayPrice = firstVariant ? firstVariant.price : product.price;
+  const displayOfferPrice = firstVariant ? firstVariant.offerPrice : product.offerPrice;
+  const displayColor = firstVariant && firstVariant.attributes && firstVariant.attributes.color;
+
   return (
     <div
       onClick={handleProductClick}
@@ -81,16 +88,16 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
     >
       <div className="cursor-pointer group relative bg-gray-500/10 rounded-lg w-full h-52 flex items-center justify-center">
         <Image
-          src={product.image[0]}
+          src={displayImage}
           alt={product.name}
           className="group-hover:scale-105 transition object-contain w-4/5 h-4/5 md:w-full md:h-full mix-blend-multiply"
           width={800}
           height={800}
         />
-        {product.price > product.offerPrice && (
+        {displayPrice > displayOfferPrice && (
           <div className="absolute top-2 left-2 z-10">
             <span className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs font-medium rounded-lg">
-              -{Math.round(((product.price - product.offerPrice) / product.price) * 100)}%
+              -{Math.round(((displayPrice - displayOfferPrice) / displayPrice) * 100)}%
             </span>
           </div>
         )}
@@ -114,6 +121,9 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
       <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">
         {product.description}
       </p>
+      {/* {displayColor && (
+        <p className="text-xs text-gray-500/80">Màu: {displayColor}</p>
+      )} */}
       {getProductReviewCount(product._id) > 0 ? (
         <>
           <div className="flex items-center gap-2">
@@ -144,15 +154,15 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
           {/* Giá khuyến mãi */}
           <div className="flex items-baseline">
             <span className="text-xl font-semibold text-orange-500">
-              {formatPrice(product.offerPrice)}{currency}
+              {formatPrice(displayOfferPrice)}{currency}
             </span>
           </div>
 
           {/* Giá gốc */}
-          {product.price > product.offerPrice && (
+          {displayPrice > displayOfferPrice && (
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 line-through">
-                {formatPrice(product.price)}{currency}
+                {formatPrice(displayPrice)}{currency}
               </span>
             </div>
           )}

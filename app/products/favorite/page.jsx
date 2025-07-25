@@ -4,8 +4,8 @@ import { useAppContext } from "@/context/AppContext";
 import ProductCard from "@/components/ProductCard";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import axios from "axios";
 import toast from "react-hot-toast";
+import axios from "axios";
 
 const FavoriteProducts = () => {
   const { user, getToken } = useAppContext();

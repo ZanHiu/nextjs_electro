@@ -20,7 +20,7 @@ export default function RootLayout({ children }) {
         data-locator-target="vscode" 
       >
         <body
-          data-new-gr-c-s-check-loaded="14.1242.0"
+          data-new-gr-c-s-check-loaded="14.1244.0"
           data-gr-ext-installed=""
           data-new-gr-c-s-loaded="14.1231.0"
           className={`${outfit.className} antialiased text-gray-700`}
