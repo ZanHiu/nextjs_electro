@@ -151,10 +151,10 @@ const Orders = () => {
                   value={order.status}
                   onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                 >
-                  <option value={OrderStatus.PENDING}>Chờ xử lý</option>
-                  <option value={OrderStatus.PROCESSING}>Đang xử lý</option>
-                  <option value={OrderStatus.DELIVERED}>Đã giao</option>
-                  <option value={OrderStatus.CANCELLED}>Đã hủy</option>
+                  <option value="PENDING">{OrderStatus.PENDING}</option>
+                  <option value="PROCESSING">{OrderStatus.PROCESSING}</option>
+                  <option value="DELIVERED">{OrderStatus.DELIVERED}</option>
+                  <option value="CANCELLED">{OrderStatus.CANCELLED}</option>
                 </select>
                 <p className="text-gray-500">
                   Ngày: {formatDate(order.date)}

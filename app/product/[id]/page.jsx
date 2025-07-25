@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import Loading from "@/components/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
+import { VariantLabels } from "@/utils/constants";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Tabs from "@/components/Tabs";
@@ -20,8 +21,12 @@ const Product = () => {
   const { currency, router, products, addToCart, reviews, fetchReviews, getReviewAmount, getReviewCount } = useAppContext();
   const [mainImage, setMainImage] = useState(null);
   const [productData, setProductData] = useState(null);
+  const [variants, setVariants] = useState([]);
+  const [selectedAttributes, setSelectedAttributes] = useState({});
+  const [activeVariant, setActiveVariant] = useState(null);
   const [activeTab, setActiveTab] = useState('reviews');
 
+  // Lấy dữ liệu sản phẩm và variants
   const fetchProductData = async () => {
     try {
       const { data } = await axios.get(
@@ -29,6 +34,15 @@ const Product = () => {
       );
       if (data.success) {
         setProductData(data.product);
+        setVariants(data.variants || []);
+        // Nếu có variants, chọn mặc định variant đầu tiên
+        if (data.variants && data.variants.length > 0) {
+          setActiveVariant(data.variants[0]);
+          setSelectedAttributes(data.variants[0].attributes);
+          setMainImage(data.variants[0].images[0]);
+        } else {
+          setMainImage(data.product.image[0]);
+        }
       } else {
         toast.error(data.message);
       }
@@ -37,10 +51,44 @@ const Product = () => {
     }
   };
 
+  // Khi chọn thuộc tính (color, storage, ...)
+  const handleSelectAttribute = (attrName, value) => {
+    const newAttrs = { ...selectedAttributes, [attrName]: value };
+    setSelectedAttributes(newAttrs);
+    // Tìm variant phù hợp
+    const found = variants.find(v => {
+      return Object.entries(newAttrs).every(([k, v2]) => v.attributes[k] === v2);
+    });
+    if (found) {
+      setActiveVariant(found);
+      setMainImage(found.images[0]);
+    }
+  };
+
+  // Lấy variant đầu tiên nếu có
+  const firstVariant = variants && variants.length > 0 ? variants[0] : null;
+  // Nếu chưa chọn thuộc tính, mặc định chọn variant đầu tiên
+  useEffect(() => {
+    if (firstVariant && !activeVariant) {
+      setActiveVariant(firstVariant);
+      setSelectedAttributes(firstVariant.attributes);
+      setMainImage(firstVariant.images[0]);
+    }
+  }, [variants]);
+
   useEffect(() => {
     fetchProductData();
     fetchReviews(id, "product");
   }, [id]);
+
+  // Lấy danh sách thuộc tính có trong variants
+  const attributeOptions = {};
+  variants.forEach(variant => {
+    Object.entries(variant.attributes).forEach(([key, value]) => {
+      if (!attributeOptions[key]) attributeOptions[key] = new Set();
+      attributeOptions[key].add(value);
+    });
+  });
 
   return productData ? (
     <>
@@ -50,7 +98,7 @@ const Product = () => {
           <div className="px-5 lg:px-16 xl:px-20">
             <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4">
               <Image
-                src={mainImage || productData.image[0]}
+                src={mainImage || (firstVariant && firstVariant.images[0]) || (productData.image && productData.image[0])}
                 alt="alt"
                 className="w-full h-auto object-cover mix-blend-multiply"
                 width={1280}
@@ -59,7 +107,7 @@ const Product = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-4">
-              {productData.image.map((image, index) => (
+              {(activeVariant ? activeVariant.images : (firstVariant && firstVariant.images) || productData.image).map((image, index) => (
                 <div
                   key={index}
                   onClick={() => setMainImage(image)}
@@ -97,42 +145,109 @@ const Product = () => {
               <span className="text-gray-600 text-sm">{(getReviewAmount(reviews)).toFixed(1)} / 5 ({getReviewCount(reviews)} lượt đánh giá)</span>
             </div>
             <p className="text-gray-600 mt-3">{productData.description}</p>
+            <div className="flex flex-col gap-4 mt-4">
+              {/* Hiển thị các lựa chọn thuộc tính */}
+              {Object.entries(attributeOptions).map(([attr, values]) => (
+                <div key={attr} className="flex flex-col">
+                  <span className="text-sm text-gray-600 mb-1">{VariantLabels[attr] || attr}</span>
+                  <div className="flex gap-2">
+                    {[...values].map(val => (
+                      <button
+                        key={val}
+                        className={`px-3 py-1 rounded border ${selectedAttributes[attr] === val ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-800/80'}`}
+                        onClick={() => handleSelectAttribute(attr, val)}
+                      >
+                        {val}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
             <p className="text-3xl font-medium mt-6">
-              {formatPrice(productData.offerPrice)}{currency}
+              {formatPrice(activeVariant ? activeVariant.offerPrice : (firstVariant ? firstVariant.offerPrice : productData.offerPrice))}{currency}
               <span className="text-base font-normal text-gray-800/60 line-through ml-2">
-                {formatPrice(productData.price)}{currency}
+                {formatPrice(activeVariant ? activeVariant.price : (firstVariant ? firstVariant.price : productData.price))}{currency}
               </span>
             </p>
             <hr className="bg-gray-600 my-6" />
             <div className="overflow-x-auto">
-              <table className="table-auto border-collapse w-full max-w-72">
+              <table className="table-auto border-collapse w-full max-w-96">
                 <tbody>
                   <tr>
-                    <td className="text-gray-600 font-medium">Màu sắc</td>
-                    <td className="text-gray-800/50 ">Multi</td>
+                    <td className="text-gray-600 font-medium">{productData.brand?.name ? 'Thương hiệu' : ''}</td>
+                    <td className="text-gray-800/50">{productData.brand?.name || ''}</td>
                   </tr>
                   <tr>
-                    <td className="text-gray-600 font-medium">Thương hiệu</td>
-                    <td className="text-gray-800/50 ">{productData.brand?.name}</td>
+                    <td className="text-gray-600 font-medium">{productData.category?.name ? 'Danh mục' : ''}</td>
+                    <td className="text-gray-800/50">{productData.category?.name || ''}</td>
                   </tr>
-                  <tr>
-                    <td className="text-gray-600 font-medium">Danh mục</td>
-                    <td className="text-gray-800/50">{productData.category?.name}</td>
+                  {Object.entries(attributeOptions).map(([attr, values]) => (
+                    <tr key={attr}>
+                      <td className="text-gray-600 font-medium">{VariantLabels[attr] || attr}</td>
+                      <td className="text-gray-800/50 ">{selectedAttributes[attr] || '-'}</td>
                   </tr>
+                  ))}
+                  {productData.specs?.cpu && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">CPU</td>
+                      <td className="text-gray-800/50">{productData.specs.cpu}</td>
+                    </tr>
+                  )}
+                  {productData.specs?.vga && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">VGA</td>
+                      <td className="text-gray-800/50">{productData.specs.vga}</td>
+                    </tr>
+                  )}
+                  {productData.specs?.os && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">Hệ điều hành</td>
+                      <td className="text-gray-800/50">{productData.specs.os}</td>
+                    </tr>
+                  )}
+                  {productData.specs?.pin && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">Pin</td>
+                      <td className="text-gray-800/50">{productData.specs.pin}</td>
+                    </tr>
+                  )}
+                  {productData.specs?.manhinh && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">Màn hình</td>
+                      <td className="text-gray-800/50">{productData.specs.manhinh}</td>
+                    </tr>
+                  )}
+                  {productData.specs?.camera && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">Camera</td>
+                      <td className="text-gray-800/50">{productData.specs.camera}</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
 
             <div className="flex items-center mt-10 gap-4">
               <button
-                onClick={() => addToCart(productData._id)}
+                onClick={() => {
+                  if (variants.length > 0 && !activeVariant) {
+                    toast.error("Vui lòng chọn đầy đủ thuộc tính sản phẩm!");
+                    return;
+                  }
+                  addToCart(productData._id, activeVariant ? activeVariant._id : null);
+                }}
                 className="w-full py-3.5 bg-gray-100 text-gray-800/80 hover:bg-gray-200 transition"
               >
                 Thêm vào giỏ hàng
               </button>
               <button
                 onClick={() => {
-                  addToCart(productData._id);
+                  if (variants.length > 0 && !activeVariant) {
+                    toast.error("Vui lòng chọn đầy đủ thuộc tính sản phẩm!");
+                    return;
+                  }
+                  addToCart(productData._id, activeVariant ? activeVariant._id : null);
                   router.push("/cart");
                 }}
                 className="w-full py-3.5 bg-orange-500 text-white hover:bg-orange-600 transition"

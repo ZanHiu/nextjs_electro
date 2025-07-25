@@ -1,5 +1,5 @@
 "use client";
-import { useAuth, useUser } from "@clerk/nextjs";
+import { useAuth, useUser, useClerk } from "@clerk/nextjs";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -17,6 +17,7 @@ export const AppContextProvider = (props) => {
 
   const { user } = useUser();
   const { getToken } = useAuth();
+  const { signOut, openSignIn } = useClerk();
 
   const [products, setProducts] = useState([]);
   const [saleProducts, setSaleProducts] = useState([]);
@@ -36,6 +37,29 @@ export const AppContextProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [hasUserPurchasedProduct, setHasUserPurchasedProduct] = useState(false);
   const [favoriteProductIds, setFavoriteProductIds] = useState([]);
+
+  // Hàm xử lý khi token hết hạn
+  const handleTokenExpired = async () => {
+    toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
+    await signOut();
+    openSignIn();
+  };
+
+  // Interceptor cho axios để tự động logout khi token hết hạn
+  useEffect(() => {
+    const interceptor = axios.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.response?.data?.code === 'TOKEN_EXPIRED') {
+          handleTokenExpired();
+        }
+        return Promise.reject(error);
+      }
+    );
+    return () => {
+      axios.interceptors.response.eject(interceptor);
+    };
+  }, []);
 
   const refreshFavoriteProducts = async () => {
     if (!user) {
@@ -198,12 +222,13 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const addToCart = async (itemId) => {
+  const addToCart = async (productId, variantId = null) => {
+    const key = variantId ? `${productId}|${variantId}` : `${productId}|`;
     let cartData = structuredClone(cartItems);
-    if (cartData[itemId]) {
-      cartData[itemId] += 1;
+    if (cartData[key]) {
+      cartData[key] += 1;
     } else {
-      cartData[itemId] = 1;
+      cartData[key] = 1;
     }
     setCartItems(cartData);
     // if (!user) {
@@ -250,10 +275,6 @@ export const AppContextProvider = (props) => {
           );
           toast.success("Cart updated");
         } catch (error) {
-          if (error.response?.data?.code === 'TOKEN_EXPIRED') {
-            toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
-            return;
-          }
           toast.error(error.response?.data?.message || error.message);
         }
       }
@@ -271,10 +292,18 @@ export const AppContextProvider = (props) => {
 
   const getCartAmount = () => {
     let totalAmount = 0;
-    for (const items in cartItems) {
-      let itemInfo = products.find((product) => product._id === items);
-      if (itemInfo && cartItems[items] > 0) {
-        totalAmount += itemInfo.offerPrice * cartItems[items];
+    for (const key in cartItems) {
+      const [productId, variantId] = key.split('|');
+      const product = products.find((product) => product._id === productId);
+      let price = 0;
+      if (product) {
+        if (variantId) {
+          const variant = (product.variants || []).find(v => v._id === variantId);
+          price = variant ? variant.offerPrice : 0;
+        } else {
+          price = product.offerPrice;
+        }
+        totalAmount += price * cartItems[key];
       }
     }
     return Math.floor(totalAmount * 100) / 100;

@@ -20,3 +20,17 @@ export const SortOptions = [
   { value: "price-asc", label: "Giá thấp đến cao" },
   { value: "price-desc", label: "Giá cao đến thấp" },
 ];
+
+
+// Variant labels
+export const VariantLabels = {
+  color: 'Màu sắc',
+  ram: 'RAM',
+  rom: 'ROM',
+  cpu: 'CPU',
+  vga: 'VGA',
+  os: 'Hệ điều hành',
+  pin: 'Pin',
+  manhinh: 'Màn hình',
+  camera: 'Camera',
+};

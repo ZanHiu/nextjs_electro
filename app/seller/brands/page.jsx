@@ -110,7 +110,7 @@ const BrandList = () => {
                       <Image
                         src={brand.image[0]}
                         alt="product Image"
-                        className="w-16"
+                        className="w-20 h-4 object-contain"
                         width={1280}
                         height={720}
                       />

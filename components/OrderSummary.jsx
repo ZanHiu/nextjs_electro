@@ -150,10 +150,15 @@ const OrderSummary = () => {
         return toast.error("Vui lòng chọn điểm giao hàng");
       }
   
-      let cartItemsArray = Object.keys(cartItems).map((key) => ({
-        product: key,
+      // Parse cartItems: key = "productId|variantId" hoặc "productId|"
+      let cartItemsArray = Object.keys(cartItems).map((key) => {
+        const [productId, variantId] = key.split('|');
+        return {
+          product: productId,
+          variant: variantId || undefined,
         quantity: cartItems[key],
-      }));
+        };
+      });
       cartItemsArray = cartItemsArray.filter(item => item.quantity > 0);
       
       if (cartItemsArray.length === 0) {

@@ -43,19 +43,25 @@ const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                {Object.keys(cartItems).map((itemId) => {
-                  const product = products.find(product => product._id === itemId);
-
-                  if (!product || cartItems[itemId] <= 0) return null;
-
+                {Object.keys(cartItems).map((itemKey) => {
+                  // Parse key: "productId|variantId" hoặc "productId|"
+                  const [productId, variantId] = itemKey.split('|');
+                  const product = products.find(product => product._id === productId);
+                  if (!product || cartItems[itemKey] <= 0) return null;
+                  // Nếu có variantId, lấy variant tương ứng
+                  const variant = variantId ? (product.variants || []).find(v => v._id === variantId) : null;
+                  const displayImage = variant && variant.images && variant.images.length > 0 ? variant.images[0] : (product.image && product.image[0]);
+                  const displayName = product.name + (variant ? ` (${Object.values(variant.attributes).join(', ')})` : '');
+                  const displayPrice = variant ? variant.offerPrice : product.offerPrice;
+                  const displayOriginPrice = variant ? variant.price : product.price;
                   return (
-                    <tr key={itemId}>
+                    <tr key={itemKey}>
                       <td className="flex items-center gap-4 py-4 md:px-4 px-1">
                         <div>
                           <div className="rounded-lg overflow-hidden bg-gray-500/10 p-2">
                             <Image
-                              src={product.image[0]}
-                              alt={product.name}
+                              src={displayImage}
+                              alt={displayName}
                               className="w-16 h-auto object-cover mix-blend-multiply"
                               width={1280}
                               height={720}
@@ -63,34 +69,42 @@ const Cart = () => {
                           </div>
                           <button
                             className="md:hidden text-xs text-orange-600 mt-1"
-                            onClick={() => updateCartQuantity(product._id, 0)}
+                            onClick={() => updateCartQuantity(itemKey, 0)}
                           >
                             Xóa
                           </button>
                         </div>
                         <div className="text-sm hidden md:block">
-                          <p className="text-gray-800">{product.name}</p>
+                          <p className="text-gray-800">{displayName}</p>
+                          {variant && (
+                            <p className="text-xs text-gray-500/80">{Object.entries(variant.attributes).map(([k,v]) => `${k}: ${v}`).join(', ')}</p>
+                          )}
                           <button
                             className="text-xs text-orange-600 mt-1"
-                            onClick={() => updateCartQuantity(product._id, 0)}
+                            onClick={() => updateCartQuantity(itemKey, 0)}
                           >
                             Xóa
                           </button>
                         </div>
                       </td>
-                      <td className="py-4 md:px-4 px-1 text-gray-600">{formatPrice(product.offerPrice)}{currency}</td>
+                      <td className="py-4 md:px-4 px-1 text-gray-600">
+                        <span>{formatPrice(displayPrice)}{currency}</span>
+                        {displayOriginPrice > displayPrice && (
+                          <span className="ml-2 text-xs text-gray-400 line-through">{formatPrice(displayOriginPrice)}{currency}</span>
+                        )}
+                      </td>
                       <td className="py-4 md:px-4 px-1">
                         <div className="flex items-center md:gap-2 gap-1">
-                          <button onClick={() => updateCartQuantity(product._id, cartItems[itemId] - 1)}>
+                          <button onClick={() => updateCartQuantity(itemKey, cartItems[itemKey] - 1)}>
                             <ArrowLeftIcon sx={{ fontSize: 20 }} />
                           </button>
-                          <input onChange={e => updateCartQuantity(product._id, Number(e.target.value))} type="number" value={cartItems[itemId]} className="w-8 border text-center appearance-none"></input>
-                          <button onClick={() => addToCart(product._id)}>
+                          <input onChange={e => updateCartQuantity(itemKey, Number(e.target.value))} type="number" value={cartItems[itemKey]} className="w-8 border text-center appearance-none"></input>
+                          <button onClick={() => updateCartQuantity(itemKey, cartItems[itemKey] + 1)}>
                             <ArrowRightIcon sx={{ fontSize: 20 }} />
                           </button>
                         </div>
                       </td>
-                      <td className="py-4 md:px-4 px-1 text-gray-600">{formatPrice(product.offerPrice * cartItems[itemId])}{currency}</td>
+                      <td className="py-4 md:px-4 px-1 text-gray-600">{formatPrice(displayPrice * cartItems[itemKey])}{currency}</td>
                     </tr>
                   );
                 })}
