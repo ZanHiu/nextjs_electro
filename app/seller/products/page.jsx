@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
@@ -7,7 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { formatPrice } from "@/utils/format";
 import { Tooltip } from "react-tooltip";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 
 const ProductList = () => {

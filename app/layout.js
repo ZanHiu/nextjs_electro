@@ -4,6 +4,7 @@ import { AppContextProvider } from "@/context/AppContext";
 import { Toaster } from "react-hot-toast";
 import { ClerkProvider } from "@clerk/nextjs";
 import { viVN } from '@clerk/localizations'
+import OpenRouterChatbot from "@/components/common/OpenRouterChatbot";
 
 const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500"] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({ children }) {
           <Toaster />
           <AppContextProvider>
             {children}
+            <OpenRouterChatbot />
           </AppContextProvider>
         </body>
       </html>

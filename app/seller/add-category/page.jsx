@@ -1,11 +1,11 @@
-'use client'
+"use client";
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import Footer from "@/components/seller/Footer";
 
 const AddCategory = () => {

@@ -1,11 +1,18 @@
+"use client";
 import React , { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
 import LaunchIcon from '@mui/icons-material/Launch';
+import { useRouter } from "next/navigation";
 
-const HomeBlogs = () => {
-  const { homeBlogs, router } = useAppContext();
+const HomeBlogs = ({ initialData = null }) => {
+  const { homeBlogs: contextHomeBlogs, router: contextRouter } = useAppContext();
+  const router = useRouter();
   const [showAll, setShowAll] = useState(false);
+  
+  // Use initial data if provided (SSR), otherwise use context data (CSR fallback)
+  const homeBlogs = initialData || contextHomeBlogs;
+  const routerInstance = contextRouter || router;
   const blogsToShow = showAll ? homeBlogs.slice(0, 10) : homeBlogs.slice(0, 5);
 
   const handleToggleShow = () => {

@@ -6,11 +6,11 @@ import { getOrderStatusColor, getPaymentStatusColor } from '@/utils/helpers';
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { formatPrice, formatDate } from "@/utils/format";
-import Tabs from "@/components/Tabs";
+import Tabs from "@/components/common/Tabs";
 
 const Orders = () => {
 

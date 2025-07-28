@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useAppContext } from "@/context/AppContext";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
 import toast from "react-hot-toast";

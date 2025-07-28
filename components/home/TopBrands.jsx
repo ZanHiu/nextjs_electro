@@ -1,8 +1,15 @@
+"use client";
 import { useAppContext } from "@/context/AppContext";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-const TopBrands = () => {
-  const { topBrands, router } = useAppContext();
+const TopBrands = ({ initialData = null }) => {
+  const { topBrands: contextTopBrands, router: contextRouter } = useAppContext();
+  const router = useRouter();
+  
+  // Use initial data if provided (SSR), otherwise use context data (CSR fallback)
+  const topBrands = initialData || contextTopBrands;
+  const routerInstance = contextRouter || router;
 
   return (
     <div className="mt-12">
@@ -15,7 +22,7 @@ const TopBrands = () => {
         {topBrands.map((brand, index) => (
           <div
             key={brand._id || index}
-            onClick={() => router.push(`/products/brand/${brand._id}`)}
+            onClick={() => routerInstance.push(`/products/brand/${brand._id}`)}
             className="bg-white rounded border hover:border-orange-600 cursor-pointer transition-all duration-300 p-3 flex items-center justify-center"
           >
             <div className="relative w-full aspect-[5/2]">

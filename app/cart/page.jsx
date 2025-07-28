@@ -1,9 +1,9 @@
-'use client'
+"use client";
 import React from "react";
 import { assets } from "@/assets/assets";
-import OrderSummary from "@/components/OrderSummary";
+import OrderSummary from "@/components/ecommerce/OrderSummary";
 import Image from "next/image";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/layout/Navbar";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';

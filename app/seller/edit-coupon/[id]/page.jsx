@@ -4,7 +4,7 @@ import axios from "axios";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import Footer from "@/components/seller/Footer";
 
 const EditCoupon = () => {

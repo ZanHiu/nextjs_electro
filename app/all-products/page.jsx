@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
-import ProductCard from "@/components/ProductCard";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ProductCard from "@/components/product/ProductCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useAppContext } from "@/context/AppContext";
 import axios from "axios";
-import Filter from "@/components/Filter";
+import Filter from "@/components/product/Filter";
 import { useRouter } from "next/navigation";
-import ProductToolbar from "@/components/ProductToolbar";
+import ProductToolbar from "@/components/product/ProductToolbar";
 import { SortOptions } from "@/utils/constants";
 
 const getInitialFilter = (key, defaultValue = 'all') => {

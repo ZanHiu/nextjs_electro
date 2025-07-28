@@ -1,10 +1,14 @@
+"use client";
 import React, { useState } from "react";
-import ProductCard from "./ProductCard";
+import ProductCard from "../product/ProductCard";
 import { useAppContext } from "@/context/AppContext";
 
-const SaleProducts = () => {
-  const { saleProducts, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
+const SaleProducts = ({ initialData = null }) => {
+  const { saleProducts: contextSaleProducts, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
   const [showAll, setShowAll] = useState(false);
+  
+  // Use initial data if provided (SSR), otherwise use context data (CSR fallback)
+  const saleProducts = initialData || contextSaleProducts;
   const productsToShow = showAll ? saleProducts.slice(0, 8) : saleProducts.slice(0, 4);
 
   const handleToggleShow = () => {

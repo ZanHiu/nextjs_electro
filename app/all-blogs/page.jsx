@@ -1,8 +1,8 @@
 "use client";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { useAppContext } from "@/context/AppContext";
-import BlogCard from "@/components/BlogCard";
+import BlogCard from "@/components/blog/BlogCard";
 
 const AllBlogs = () => {
   const { blogs, router } = useAppContext();

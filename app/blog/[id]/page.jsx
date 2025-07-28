@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState, useRef } from "react";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import CommentSection from "@/components/CommentSection";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import CommentSection from "@/components/social/CommentSection";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { countTimeFromNow } from "@/utils/helpers";
 import axios from "axios";
@@ -13,7 +13,7 @@ import toast from "react-hot-toast";
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import SettingsIcon from '@mui/icons-material/Settings';
-import Tabs from "@/components/Tabs";
+import Tabs from "@/components/common/Tabs";
 
 const Blog = () => {
 	const { id } = useParams();

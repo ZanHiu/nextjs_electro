@@ -1,20 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import { assets } from "@/assets/assets";
-import ProductCard from "@/components/ProductCard";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ReviewSection from "@/components/ReviewSection";
-import CommentSection from "@/components/CommentSection";
+import ProductCard from "@/components/product/ProductCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ReviewSection from "@/components/social/ReviewSection";
+import CommentSection from "@/components/social/CommentSection";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
 import { VariantLabels } from "@/utils/constants";
 import axios from "axios";
 import toast from "react-hot-toast";
-import Tabs from "@/components/Tabs";
+import Tabs from "@/components/common/Tabs";
 
 const Product = () => {
   const { id } = useParams();

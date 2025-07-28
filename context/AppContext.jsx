@@ -37,6 +37,18 @@ export const AppContextProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [hasUserPurchasedProduct, setHasUserPurchasedProduct] = useState(false);
   const [favoriteProductIds, setFavoriteProductIds] = useState([]);
+  
+  // Track if data has been fetched to avoid duplicate requests
+  const [dataFetched, setDataFetched] = useState({
+    products: false,
+    categories: false,
+    brands: false,
+    blogs: false,
+    homeProducts: false,
+    topBrands: false,
+    homeBlogs: false,
+    allReviews: false
+  });
 
   // Hàm xử lý khi token hết hạn
   const handleTokenExpired = async () => {
@@ -88,10 +100,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchProductData = async () => {
+    if (dataFetched.products) return; // Skip if already fetched
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/list`);
       if (data.success) {
         setProducts(data.products);
+        setDataFetched(prev => ({ ...prev, products: true }));
       } else {
         toast.error(data.message);
       }
@@ -101,10 +116,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchBlogData = async () => {
+    if (dataFetched.blogs) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/blogs/list`);
       if (data.success) {
         setBlogs(data.blogs);
+        setDataFetched(prev => ({ ...prev, blogs: true }));
       } else {
         toast.error(data.message);
       }
@@ -114,12 +132,15 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchHomeProducts = async () => {
+    if (dataFetched.homeProducts) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/home`);
       if (data.success) {
         setNewProducts(data.newProducts);
         setSaleProducts(data.saleProducts);
         setHotProducts(data.hotProducts);
+        setDataFetched(prev => ({ ...prev, homeProducts: true }));
       } else {
         toast.error(data.message);
       }
@@ -129,10 +150,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchHomeBlogs = async () => {
+    if (dataFetched.homeBlogs) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/blogs/home`);
       if (data.success) {
         setHomeBlogs(data.homeBlogs);
+        setDataFetched(prev => ({ ...prev, homeBlogs: true }));
       } else {
         toast.error(data.message);
       }
@@ -142,10 +166,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchCategoryData = async () => {
+    if (dataFetched.categories) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/categories/list`);
       if (data.success) {
         setCategories(data.categories);
+        setDataFetched(prev => ({ ...prev, categories: true }));
       } else {
         toast.error(data.message);
       }
@@ -155,10 +182,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchBrandData = async () => {
+    if (dataFetched.brands) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/list`);
       if (data.success) {
         setBrands(data.brands);
+        setDataFetched(prev => ({ ...prev, brands: true }));
       } else {
         toast.error(data.message);
       }
@@ -168,10 +198,13 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchTopBrands = async () => {
+    if (dataFetched.topBrands) return;
+    
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/brands/top`);
       if (data.success) {
         setTopBrands(data.topBrands);
+        setDataFetched(prev => ({ ...prev, topBrands: true }));
       } else {
         toast.error(data.message);
       }
@@ -191,8 +224,9 @@ export const AppContextProvider = (props) => {
   };
 
   const getUserAvatar = (userId) => {
-    const user = users.find(u => u._id === userId);
-    return user ? user.avatar : assets.default_avatar;
+    // Assuming 'users' and 'assets' are defined elsewhere or will be added
+    // For now, returning a placeholder or null
+    return null; 
   };
 
   const fetchUserData = async () => {
@@ -310,6 +344,7 @@ export const AppContextProvider = (props) => {
   };
 
   const fetchAllReviews = async () => {
+    if (dataFetched.allReviews) return;
     try {
       const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/all`);
       if (data.success) {
@@ -322,6 +357,7 @@ export const AppContextProvider = (props) => {
           reviewsByProduct[review.targetId].push(review);
         });
         setAllReviews(reviewsByProduct);
+        setDataFetched(prev => ({ ...prev, allReviews: true }));
       } else {
         toast.error(data.message);
       }

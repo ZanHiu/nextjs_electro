@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useAppContext } from "@/context/AppContext";
-import ProductCard from "@/components/ProductCard";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import ProductCard from "@/components/product/ProductCard";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import axios from "axios";
 import toast from "react-hot-toast";
 
