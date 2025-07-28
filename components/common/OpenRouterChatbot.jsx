@@ -58,7 +58,7 @@ const OpenRouterChatbot = () => {
       }));
 
     try {
-      const response = await axios.post('http://localhost:5000/api/openrouter/chat', {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api/openrouter/chat`, {
         message: inputMessage,
         conversationHistory: conversationHistory
       });
