@@ -7,48 +7,179 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import Footer from "@/components/seller/Footer";
 
 const EditProduct = () => {
   const { id } = useParams();
-  const { getToken, brands, categories, products, fetchProductData, router } =
-    useAppContext();
+  const { getToken, brands, categories } = useAppContext();
+
+  // Danh sách tên danh mục đặc biệt (có thể thay bằng id nếu cần)
+  const specialCategoryNames = ["Điện thoại", "Máy tính", "Máy tính bảng"];
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
-  const [price, setPrice] = useState("");
-  const [offerPrice, setOfferPrice] = useState("");
-  const [existingImages, setExistingImages] = useState([]);
   const [views, setViews] = useState("");
   const [loading, setLoading] = useState(false);
+  const [colors, setColors] = useState([]);
+  const [variants, setVariants] = useState([]);
+  const [isSpecialCategory, setIsSpecialCategory] = useState(false);
+  const [specs, setSpecs] = useState({
+    cpu: '',
+    vga: '',
+    os: '',
+    pin: '',
+    manhinh: '',
+    camera: '',
+  });
 
   useEffect(() => {
-    const fetchData = async () => {
-      await fetchProductData(); // Refresh products data
-      if (products.length > 0) {
-        const product = products.find((p) => p._id === id);
-        if (product) {
+    if (brands.length > 0) setBrand(brands[0]._id);
+    if (categories.length > 0) setCategory(categories[0]._id);
+  }, [brands, categories]);
+
+  useEffect(() => {
+    // Kiểm tra nếu category hiện tại là đặc biệt
+    const selectedCategory = categories.find((cat) => cat._id === category);
+    if (selectedCategory && specialCategoryNames.includes(selectedCategory.name.trim())) {
+      setIsSpecialCategory(true);
+    } else {
+      setIsSpecialCategory(false);
+    }
+  }, [category, categories]);
+
+  // Load dữ liệu sản phẩm
+  useEffect(() => {
+    const fetchProductData = async () => {
+      try {
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/products/${id}`);
+        if (data.success) {
+          const product = data.product;
+          const productVariants = data.variants || [];
+          
           setName(product.name);
           setDescription(product.description);
-          setBrand(product.brand);
-          setCategory(product.category);
-          setPrice(product.price);
-          setOfferPrice(product.offerPrice);
-          setExistingImages(product.image);
-          setViews(product.views);
+          setBrand(product.brand?._id || product.brand);
+          setCategory(product.category?._id || product.category);
+          setViews(product.views?.toString() || '');
+          setSpecs(product.specs || { cpu: '', vga: '', os: '', pin: '', manhinh: '', camera: '' });
+
+          // Xử lý colors từ variants
+          const colorMap = {};
+          productVariants.forEach(variant => {
+            if (variant.attributes?.color) {
+              if (!colorMap[variant.attributes.color]) {
+                colorMap[variant.attributes.color] = {
+                  name: variant.attributes.color,
+                  images: variant.images || []
+                };
+              }
+            }
+          });
+          setColors(Object.values(colorMap));
+
+          // Xử lý variants
+          const processedVariants = productVariants.map(variant => ({
+            color: variant.attributes?.color || '',
+            price: variant.price?.toString() || '',
+            offerPrice: variant.offerPrice?.toString() || '',
+            ram: variant.attributes?.ram || '',
+            rom: variant.attributes?.rom || '',
+          }));
+          setVariants(processedVariants);
         }
+      } catch (error) {
+        toast.error(error.message);
       }
     };
 
-    fetchData();
-  }, [id, products.length, getToken]);
+    if (id) {
+      fetchProductData();
+    }
+  }, [id]);
+
+  // Thêm màu mới
+  const handleAddColor = () => {
+    setColors([
+      ...colors,
+      {
+        name: '',
+        images: [],
+      },
+    ]);
+  };
+
+  const handleRemoveColor = (idx) => {
+    setColors(colors.filter((_, i) => i !== idx));
+  };
+
+  const handleColorChange = (idx, value) => {
+    const updated = [...colors];
+    updated[idx].name = value;
+    setColors(updated);
+  };
+
+  const handleColorImageChange = (idx, imgIdx, file) => {
+    const updated = [...colors];
+    const images = updated[idx].images ? [...updated[idx].images] : [];
+    images[imgIdx] = file;
+    updated[idx].images = images;
+    setColors(updated);
+  };
+
+  const handleSpecsChange = (field, value) => {
+    setSpecs((prev) => ({ ...prev, [field]: value }));
+  };
+
+  // Thêm variant mới
+  const handleAddVariant = () => {
+    setVariants([
+      ...variants,
+      isSpecialCategory
+        ? {
+            color: '',
+            price: '',
+            offerPrice: '',
+            ram: '',
+            rom: '',
+          }
+        : {
+            color: '',
+            price: '',
+            offerPrice: '',
+          },
+    ]);
+  };
+
+  const handleRemoveVariant = (idx) => {
+    setVariants(variants.filter((_, i) => i !== idx));
+  };
+
+  const handleVariantChange = (idx, field, value) => {
+    const updated = [...variants];
+    updated[idx][field] = value;
+    setVariants(updated);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (colors.length === 0) {
+      toast.error('Cần thêm ít nhất 1 màu cho sản phẩm!');
+      return;
+    }
+    for (let i = 0; i < colors.length; i++) {
+      if (!colors[i].images || colors[i].images.length === 0 || !colors[i].images[0]) {
+        toast.error(`Màu thứ ${i + 1} chưa có ảnh!`);
+        return;
+      }
+    }
+    if (variants.length === 0) {
+      toast.error('Cần thêm ít nhất 1 biến thể cho sản phẩm!');
+      return;
+    }
     setLoading(true);
 
     const formData = new FormData();
@@ -57,19 +188,44 @@ const EditProduct = () => {
     formData.append("description", description);
     formData.append("brand", brand);
     formData.append("category", category);
-    formData.append("price", Number(price));
-    formData.append("offerPrice", Number(offerPrice));
-    formData.append("views", Number(views));
+    formData.append("views", views);
 
-    // Append new images if any
     for (let i = 0; i < files.length; i++) {
-      if (files[i]) {
-        formData.append(`images`, files[i]);
-      }
+      formData.append(`images`, files[i]);
     }
 
-    // Append existing images
-    formData.append("existingImages", JSON.stringify(existingImages));
+    // Chỉ gửi các trường optional nếu có giá trị
+    const filteredVariants = variants.map((variant) => {
+      let result = {
+        color: variant.color,
+        price: variant.price,
+        offerPrice: variant.offerPrice,
+        ram: variant.ram,
+        rom: variant.rom,
+      };
+      // Xóa ram/rom nếu không có
+      if (!result.ram) delete result.ram;
+      if (!result.rom) delete result.rom;
+      return result;
+    });
+    formData.append('variants', JSON.stringify(filteredVariants));
+
+    // Nếu là danh mục đặc biệt, gửi specs lên backend
+    if (isSpecialCategory) {
+      formData.append('specs', JSON.stringify(specs));
+    }
+
+    colors.forEach((color, cIdx) => {
+      if (color.images && color.images.length > 0) {
+        color.images.forEach((file, imgIdx) => {
+          if (file) {
+            formData.append(`colorImages_${cIdx}_${imgIdx}`, file);
+          }
+        });
+      }
+    });
+
+    formData.append('colors', JSON.stringify(colors));
 
     try {
       const token = await getToken();
@@ -84,9 +240,9 @@ const EditProduct = () => {
       );
 
       if (data.success) {
-        await fetchProductData();
         toast.success(data.message);
-        router.push('/seller/products');
+        // Redirect to products page
+        window.location.href = '/seller/products';
       } else {
         toast.error(data.message);
       }
@@ -95,12 +251,6 @@ const EditProduct = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRemoveImage = (index) => {
-    const updatedExistingImages = [...existingImages];
-    updatedExistingImages.splice(index, 1);
-    setExistingImages(updatedExistingImages);
   };
 
   return (
@@ -123,56 +273,6 @@ const EditProduct = () => {
             />
           </div>
 
-          <div>
-            <p className="text-base font-medium">Ảnh sản phẩm</p>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              {[...Array(4)].map((_, index) => (
-                <div key={index} className="relative group">
-                  <label htmlFor={`image${index}`}>
-                    <input
-                      onChange={(e) => {
-                        const updatedFiles = [...files];
-                        updatedFiles[index] = e.target.files[0];
-                        setFiles(updatedFiles);
-                      }}
-                      type="file"
-                      id={`image${index}`}
-                      hidden
-                    />
-                    <Image
-                      className="max-w-24 cursor-pointer"
-                      src={
-                        files[index]
-                          ? URL.createObjectURL(files[index])
-                          : existingImages[index] || assets.upload_area
-                      }
-                      alt=""
-                      width={100}
-                      height={100}
-                    />
-                  </label>
-                  {(files[index] || existingImages[index]) && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (files[index]) {
-                          const updatedFiles = [...files];
-                          updatedFiles[index] = null;
-                          setFiles(updatedFiles);
-                        } else if (existingImages[index]) {
-                          handleRemoveImage(index);
-                        }
-                      }}
-                      className="absolute -top-2 -right-2 p-1.5 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-full text-gray-500 hover:text-red-500 hover:border-red-500 transition-all duration-200 opacity-0 group-hover:opacity-100 shadow-sm"
-                    >
-                      <ClearOutlinedIcon sx={{ fontSize: 10 }} />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
           <div className="flex flex-col gap-1 max-w-md">
             <label
               className="text-base font-medium"
@@ -191,52 +291,7 @@ const EditProduct = () => {
             ></textarea>
           </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="text-base font-medium" htmlFor="views">
-              Lượt xem
-            </label>
-            <input
-              id="views"
-              type="number"
-              placeholder="0"
-              className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              onChange={(e) => setViews(e.target.value)}
-              value={views}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-5">
-            <div className="flex flex-col gap-1">
-              <label className="text-base font-medium" htmlFor="product-price">
-                Giá sản phẩm
-              </label>
-              <input
-                id="product-price"
-                type="number"
-                placeholder="0"
-                className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-                onChange={(e) => setPrice(e.target.value)}
-                value={price}
-                required
-              />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-base font-medium" htmlFor="offer-price">
-                Giá khuyến mãi
-              </label>
-              <input
-                id="offer-price"
-                type="number"
-                placeholder="0"
-                className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-                onChange={(e) => setOfferPrice(e.target.value)}
-                value={offerPrice}
-                required
-              />
-            </div>
-          </div>
-
+          {/* Chọn thương hiệu và danh mục lên đầu */}
           <div className="grid grid-cols-2 gap-5">
             <div className="flex flex-col gap-1">
               <label className="text-base font-medium" htmlFor="brand">
@@ -276,6 +331,146 @@ const EditProduct = () => {
             </div>
           </div>
 
+          {/* Thông tin cơ bản (chỉ hiện với danh mục đặc biệt) */}
+          {isSpecialCategory && (
+            <div className="border rounded p-3 bg-gray-50 mb-6">
+              <h2 className="text-base font-semibold mb-2">Thông tin cơ bản</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-sm mb-1">CPU</label>
+                  <input type="text" value={specs.cpu} onChange={e => handleSpecsChange('cpu', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: Intel i5" />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">VGA</label>
+                  <input type="text" value={specs.vga} onChange={e => handleSpecsChange('vga', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: RTX 3050" />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Hệ điều hành</label>
+                  <input type="text" value={specs.os} onChange={e => handleSpecsChange('os', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: Android, Windows" />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Pin</label>
+                  <input type="text" value={specs.pin} onChange={e => handleSpecsChange('pin', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: 5000mAh" />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Màn hình</label>
+                  <input type="text" value={specs.manhinh} onChange={e => handleSpecsChange('manhinh', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: 6.5 inch" />
+                </div>
+                <div>
+                  <label className="block text-sm mb-1">Camera</label>
+                  <input type="text" value={specs.camera} onChange={e => handleSpecsChange('camera', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: 50MP" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="my-6">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-base font-medium">Màu sắc sản phẩm <span className="text-red-500">*</span></p>
+              <button type="button" onClick={handleAddColor} className="px-3 py-1 bg-orange-500 text-white rounded">Thêm màu</button>
+            </div>
+            {colors.length === 0 && <p className="text-red-500 text-sm mb-2">Cần ít nhất 1 màu cho sản phẩm</p>}
+            <div className="flex flex-col gap-4">
+              {colors.map((color, idx) => (
+                <div key={idx} className="border rounded p-3 bg-gray-50">
+                  <div className="flex flex-col gap-4 mb-2">
+                    <div className="flex flex-col w-full">
+                      <label className="block text-sm mb-1">Tên màu</label>
+                      <input type="text" value={color.name} onChange={e => handleColorChange(idx, e.target.value)} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: Đen, Trắng..." />
+                    </div>
+                    <div className="flex flex-col w-full">
+                      <label className="block text-sm mb-1">Ảnh màu (bắt buộc)</label>
+                      <div className="flex gap-3 flex-row items-center">
+                        {[...Array(4)].map((_, imgIdx) => (
+                          <label key={imgIdx} htmlFor={`color-image-${idx}-${imgIdx}`} className="block">
+                            <input type="file" id={`color-image-${idx}-${imgIdx}`} hidden onChange={e => handleColorImageChange(idx, imgIdx, e.target.files[0])} />
+                            <Image
+                              src={color.images && color.images[imgIdx] ? (color.images[imgIdx] instanceof File ? URL.createObjectURL(color.images[imgIdx]) : color.images[imgIdx]) : assets.upload_area}
+                              alt=""
+                              width={80}
+                              height={80}
+                              className="rounded cursor-pointer border mx-auto"
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="flex flex-col flex-end">
+                      <button type="button" onClick={() => handleRemoveColor(idx)} className="h-10 px-4 py-2 bg-red-500 text-white rounded mt-6">Xóa</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Biến thể sản phẩm */}
+          <div className="my-6">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-base font-medium">Biến thể sản phẩm <span className="text-red-500">*</span></p>
+              <button type="button" onClick={handleAddVariant} className="px-3 py-1 bg-orange-500 text-white rounded">Thêm biến thể</button>
+            </div>
+            {variants.length === 0 && <p className="text-red-500 text-sm mb-2">Cần ít nhất 1 biến thể cho sản phẩm</p>}
+            <div className="flex flex-col gap-4">
+              {variants.map((variant, idx) => (
+                <div key={idx} className="border rounded p-3 bg-gray-50">
+                  <div className="flex flex-col gap-4 mb-2">
+                    <div className="flex flex-col w-full">
+                      <label className="block text-sm mb-1">Màu sắc</label>
+                      <select value={variant.color} onChange={e => handleVariantChange(idx, 'color', e.target.value)} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full">
+                        <option value="">Chọn màu</option>
+                        {colors.map((color, cidx) => (
+                          <option key={cidx} value={color.name}>{color.name}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex flex-col-2 gap-5">
+                      <div>
+                        <label className="block text-sm mb-1">Giá</label>
+                        <input type="number" placeholder="0" value={variant.price} onChange={e => handleVariantChange(idx, 'price', e.target.value)} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full" />
+                      </div>
+                      <div>
+                        <label className="block text-sm mb-1">Giá khuyến mãi</label>
+                        <input type="number" placeholder="0" value={variant.offerPrice} onChange={e => handleVariantChange(idx, 'offerPrice', e.target.value)} className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 w-full" />
+                      </div>
+                    </div>
+                    {/* Nếu là danh mục đặc biệt thì hiển thị ram/rom */}
+                    {isSpecialCategory && (
+                      <div className="grid grid-cols-2 gap-3 mt-2">
+                        <div>
+                          <label className="block text-sm mb-1">RAM</label>
+                          <input type="text" value={variant.ram || ''} onChange={e => handleVariantChange(idx, 'ram', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: 8GB" />
+                        </div>
+                        <div>
+                          <label className="block text-sm mb-1">ROM</label>
+                          <input type="text" value={variant.rom || ''} onChange={e => handleVariantChange(idx, 'rom', e.target.value)} className="outline-none py-2 px-3 rounded border border-gray-500/40 w-full" placeholder="VD: 128GB" />
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex flex-col flex-end">
+                      <button type="button" onClick={() => handleRemoveVariant(idx)} className="h-10 px-4 py-2 bg-red-500 text-white rounded mt-6">Xóa</button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="text-base font-medium" htmlFor="views">
+              Lượt xem
+            </label>
+            <input
+              id="views"
+              type="number"
+              placeholder="0"
+              className="w-full outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              onChange={(e) => setViews(e.target.value)}
+              value={views}
+              required
+            />
+          </div>
+
           <button
             type="submit"
             disabled={loading}
@@ -285,6 +480,7 @@ const EditProduct = () => {
           </button>
         </form>
       )}
+      <Footer />
     </div>
   );
 };

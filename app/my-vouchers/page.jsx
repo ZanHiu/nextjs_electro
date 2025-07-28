@@ -2,11 +2,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAppContext } from "@/context/AppContext";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import Loading from "@/components/Loading";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Loading from "@/components/common/Loading";
 import toast from "react-hot-toast";
-import VoucherTicket from "@/components/VoucherTicket";
+import VoucherTicket from "@/components/ecommerce/VoucherTicket";
 
 const MyVouchers = () => {
   const { getToken, currency, user } = useAppContext();

@@ -5,9 +5,9 @@ import { getOrderStatusColor, getPaymentStatusColor, genOrderCode } from "@/util
 import { formatDate } from "@/utils/format";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
-import Footer from "@/components/Footer";
-import Navbar from "@/components/Navbar";
-import Loading from "@/components/Loading";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import Loading from "@/components/common/Loading";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { formatPrice } from "@/utils/format";

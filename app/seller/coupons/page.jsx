@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { formatDate, formatPrice } from "@/utils/format";
 import Footer from "@/components/seller/Footer";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import { Tooltip } from "react-tooltip";
 
 const CouponList = () => {

@@ -7,7 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useParams } from "next/navigation";
 import ClearOutlinedIcon from '@mui/icons-material/ClearOutlined';
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import Footer from "@/components/seller/Footer";
 
 const EditBrand = () => {
