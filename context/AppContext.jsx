@@ -343,6 +343,48 @@ export const AppContextProvider = (props) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
+  const fetchReviews = async (targetId) => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/product/${targetId}`);
+      if (data.success) {
+        setReviews(data.reviews);
+        setAllReviews(prev => ({ ...prev, [targetId]: data.reviews }));
+        setDataFetched(prev => ({ ...prev, allReviews: true }));
+      } else {
+        toast.error(data.message);
+      }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getReviewCount = (reviews) => {
+    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
+    return reviewsWithRating.length;
+  };
+
+  const getReviewAmount = (reviews) => {
+    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
+    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
+    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
+  };
+
+  const getProductReviewCount = (productId) => {
+    const productReviews = allReviews[productId] || [];
+    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
+    return reviewsWithRating.length;
+  };
+
+  const getProductReviewAmount = (productId) => {
+    const productReviews = allReviews[productId] || [];
+    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
+    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
+    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
+  };
+
   const fetchAllReviews = async () => {
     if (dataFetched.allReviews) return;
     try {
@@ -366,56 +408,43 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const getProductReviewCount = (productId) => {
-    const productReviews = allReviews[productId] || [];
-    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
-    return reviewsWithRating.length;
-  };
-
-  const getProductReviewAmount = (productId) => {
-    const productReviews = allReviews[productId] || [];
-    const reviewsWithRating = productReviews.filter(review => review.ratingValue > 0);
-    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
-    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
-  };
-
-  const fetchReviews = async (targetId, type = 'product') => {
-    setLoading(true);
+  const postReview = async (targetId, content, ratingValue, token, orderId) => {
     try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/${type}/${targetId}`);
+      const { data } = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews`,
+        { targetId, content, ratingValue, orderId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       if (data.success) {
-        setReviews(data.reviews);
+        toast.success(data.message);
+        fetchReviews(targetId);
       } else {
         toast.error(data.message);
       }
     } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setLoading(false);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
-  const getReviewCount = (reviews) => {
-    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
-    return reviewsWithRating.length;
-  };
-
-  const getReviewAmount = (reviews) => {
-    const reviewsWithRating = reviews.filter(review => review.ratingValue > 0);
-    const totalRating = reviewsWithRating.reduce((sum, review) => sum + review.ratingValue, 0);
-    return reviewsWithRating.length > 0 ? totalRating / reviewsWithRating.length : 0;
-  };
-
-  const postReview = async (targetId, type = 'product', content, ratingValue, token, orderId) => {
+  const updateReview = async (reviewId, content, ratingValue, token) => {
     try {
-      await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/reviews/${type}`,
-        { targetId, content, ratingValue, orderId },
+      const { data } = await axios.put(
+        `${process.env.NEXT_PUBLIC_API_URL}/reviews/${reviewId}`,
+        { content, ratingValue },
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      fetchReviews(targetId, type);
+      if (data.success) {
+        toast.success(data.message);
+        // Refresh reviews after update
+        const review = reviews.find(r => r._id === reviewId);
+        if (review) {
+          fetchReviews(review.targetId);
+        }
+      } else {
+        toast.error(data.message);
+      }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -446,7 +475,7 @@ export const AppContextProvider = (props) => {
         toast.error(data.message);
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -460,13 +489,13 @@ export const AppContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
-        toast.success(parentId ? "Trả lời thành công!" : "Bình luận thành công!");
+        toast.success(data.message);
         fetchComments(targetId, type);
       } else {
         toast.error(data.message);
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -478,7 +507,7 @@ export const AppContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
-        toast.success("Cập nhật bình luận thành công!");
+        toast.success(data.message);
         // Refresh comments after update
         const comment = comments.find(c => c._id === commentId);
         if (comment) {
@@ -488,7 +517,7 @@ export const AppContextProvider = (props) => {
         toast.error(data.message);
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -499,7 +528,7 @@ export const AppContextProvider = (props) => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
-        toast.success("Xóa bình luận thành công!");
+        toast.success(data.message);
         // Refresh comments after delete
         const comment = comments.find(c => c._id === commentId);
         if (comment) {
@@ -509,7 +538,7 @@ export const AppContextProvider = (props) => {
         toast.error(data.message);
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.response?.data?.message || err.message);
     }
   };
 
@@ -577,6 +606,7 @@ export const AppContextProvider = (props) => {
     fetchReviews,
     fetchAllReviews,
     postReview,
+    updateReview,
     getReviewCount,
     getReviewAmount,
     getProductReviewCount,

@@ -11,6 +11,8 @@ import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import ConfirmationNumberOutlinedIcon from '@mui/icons-material/ConfirmationNumberOutlined';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
+import RateReviewOutlinedIcon from '@mui/icons-material/RateReviewOutlined';
+import CommentOutlinedIcon from '@mui/icons-material/CommentOutlined';
 
 const SideBar = () => {
   const pathname = usePathname();
@@ -53,6 +55,8 @@ const SideBar = () => {
       ]
     },
     { name: "Bài viết", path: "/seller/blogs", icon: <ArticleOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Đánh giá", path: "/seller/reviews", icon: <RateReviewOutlinedIcon sx={{ fontSize: 28 }} /> },
+    { name: "Bình luận", path: "/seller/comments", icon: <CommentOutlinedIcon sx={{ fontSize: 28 }} /> },
   ];
 
   const toggleMenu = (menuName) => {

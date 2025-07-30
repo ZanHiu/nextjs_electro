@@ -16,6 +16,17 @@ const getInitialFilter = (key, defaultValue = 'all') => {
   return params.get(key) || defaultValue;
 };
 
+// Helper function để lấy giá hiển thị từ product variants
+const getDisplayPrice = (product) => {
+  const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
+  return firstVariant ? firstVariant.price : product.price;
+};
+
+const getDisplayOfferPrice = (product) => {
+  const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
+  return firstVariant ? firstVariant.offerPrice : product.offerPrice;
+};
+
 const AllProducts = () => {
   const { products, categories, brands, favoriteProductIds, refreshFavoriteProducts } = useAppContext();
   const router = useRouter();
@@ -79,9 +90,9 @@ const AllProducts = () => {
   useEffect(() => {
     let sorted = [...filteredProducts];
     if (sortType === "price-asc") {
-      sorted.sort((a, b) => toNumber(a.offerPrice) - toNumber(b.offerPrice));
+      sorted.sort((a, b) => toNumber(getDisplayOfferPrice(a)) - toNumber(getDisplayOfferPrice(b)));
     } else if (sortType === "price-desc") {
-      sorted.sort((a, b) => toNumber(b.offerPrice) - toNumber(a.offerPrice));
+      sorted.sort((a, b) => toNumber(getDisplayOfferPrice(b)) - toNumber(getDisplayOfferPrice(a)));
     }
     setSortedProducts(sorted);
   }, [filteredProducts, sortType]);
