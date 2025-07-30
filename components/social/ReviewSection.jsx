@@ -18,6 +18,7 @@ const ReviewSection = ({ productId }) => {
     reviews,
     fetchReviews,
     postReview,
+    updateReview,
     getReviewAmount,
     getReviewCount,
     hasUserPurchasedProduct,
@@ -30,7 +31,7 @@ const ReviewSection = ({ productId }) => {
   const [editingReviewId, setEditingReviewId] = useState(null);
 
   useEffect(() => {
-    fetchReviews(productId, "product");
+    fetchReviews(productId);
   }, [productId, user?.id]);
 
   useEffect(() => {
@@ -85,7 +86,14 @@ const ReviewSection = ({ productId }) => {
     }
 
     const token = await getToken();
-    await postReview(productId, "product", content, value, token, orderId);
+    
+    if (editingReviewId) {
+      // Update existing review
+      await updateReview(editingReviewId, content, value, token);
+    } else {
+      // Create new review
+      await postReview(productId, content, value, token, orderId);
+    }
 
     setContent("");
     setValue(0);

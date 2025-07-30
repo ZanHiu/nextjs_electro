@@ -22,7 +22,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 
 const Navbar = () => {
-  const { isSeller, router, user, currency } = useAppContext();
+  const { isSeller, router, user, currency, getCartCount } = useAppContext();
   const { openSignIn } = useClerk();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -135,34 +135,41 @@ const Navbar = () => {
                 <div className="p-4 text-center text-gray-500">Đang tìm...</div>
               ) : searchResults.length > 0 ? (
                 <div className="max-h-96 overflow-y-auto">
-                  {searchResults.map((product) => (
-                    <div
-                      key={product._id}
-                      className="p-3 hover:bg-gray-50 cursor-pointer"
-                      onClick={() => {
-                        router.push(`/product/${product._id}`);
-                        setIsSearchOpen(false);
-                        setSearchQuery('');
-                        setSearchResults([]);
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Image
-                          src={product.image[0]}
-                          alt={product.name}
-                          width={40}
-                          height={40}
-                          className="rounded-md"
-                        />
-                        <div>
-                          <p className="font-medium">{product.name}</p>
-                          <p className="text-sm text-gray-500">
-                            {formatPrice(product.price)}{currency}
-                          </p>
+                  {searchResults.map((product) => {
+                    // Lấy variant đầu tiên nếu có
+                    const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
+                    const displayImage = firstVariant && firstVariant.images && firstVariant.images.length > 0 ? firstVariant.images[0] : (product.image && product.image[0]);
+                    const displayPrice = firstVariant ? firstVariant.price : product.price;
+                    
+                    return (
+                      <div
+                        key={product._id}
+                        className="p-3 hover:bg-gray-50 cursor-pointer"
+                        onClick={() => {
+                          router.push(`/product/${product._id}`);
+                          setIsSearchOpen(false);
+                          setSearchQuery('');
+                          setSearchResults([]);
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Image
+                            src={displayImage}
+                            alt={product.name}
+                            width={40}
+                            height={40}
+                            className="rounded-md"
+                          />
+                          <div>
+                            <p className="font-medium">{product.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {formatPrice(displayPrice)}{currency}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : searchQuery && !isSearching ? (
                 <div className="p-4 text-center text-gray-500">Không tìm thấy sản phẩm</div>
@@ -173,9 +180,12 @@ const Navbar = () => {
 
         <button
           onClick={() => router.push('/cart')}
-          className="hover:text-gray-900 transition"
+          className="hover:text-gray-900 transition relative"
         >
           <ShoppingCartOutlinedIcon sx={{ fontSize: 20 }} />
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-medium">
+            {getCartCount()}
+          </span>
         </button>
 
         <button

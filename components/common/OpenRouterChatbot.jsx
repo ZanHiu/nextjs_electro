@@ -277,17 +277,11 @@ const OpenRouterChatbot = () => {
                   <Paper
                     sx={{
                       p: 1.5,
-                      bgcolor: message.sender === 'user' 
-                        ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)' 
-                        : 'white',
-                      color: message.sender === 'user' ? 'white' : 'text.primary',
+                      bgcolor: 'white',
+                      color: 'text.primary',
                       borderRadius: 3,
-                      boxShadow: message.sender === 'user' 
-                        ? '0 4px 12px rgba(234, 88, 12, 0.2)' 
-                        : '0 2px 8px rgba(0, 0, 0, 0.1)',
-                      border: message.sender === 'user' 
-                        ? 'none' 
-                        : '1px solid #fed7aa'
+                      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+                      border: '1px solid #fed7aa'
                     }}
                   >
                     <Typography variant="body2" sx={{ lineHeight: 1.5 }}>

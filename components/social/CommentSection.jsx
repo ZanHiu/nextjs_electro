@@ -25,7 +25,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
       setContent("");
       setReplyingTo(null);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -38,7 +38,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
       setContent("");
       setEditingComment(null);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -49,7 +49,7 @@ const CommentSection = ({ targetId, type = 'product' }) => {
       const token = await getToken();
       await deleteComment(commentId, token);
     } catch (error) {
-      toast.error("Có lỗi xảy ra!");
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
