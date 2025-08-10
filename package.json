@@ -35,7 +35,6 @@
     "react-i18next": "^15.5.2",
     "react-simple-wysiwyg": "^3.2.2",
     "react-tooltip": "^5.29.1",
-    "react-wheel-of-prizes": "^1.1.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
