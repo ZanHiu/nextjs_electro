@@ -21,7 +21,6 @@ export const SortOptions = [
   { value: "price-desc", label: "Giá cao đến thấp" },
 ];
 
-
 // Variant labels
 export const VariantLabels = {
   color: 'Màu sắc',

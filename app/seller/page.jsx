@@ -1,9 +1,10 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PersonOutlineOutlinedIcon from '@mui/icons-material/PersonOutlineOutlined';
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import Inventory2OutlinedIcon from '@mui/icons-material/Inventory2Outlined';
 import AttachMoneyOutlinedIcon from '@mui/icons-material/AttachMoneyOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,6 +19,9 @@ import {
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import Footer from "@/components/seller/Footer";
+import axios from 'axios';
+import { useAuth } from '@clerk/nextjs';
+import { toast } from 'react-hot-toast';
 
 ChartJS.register(
   CategoryScale,
@@ -32,27 +36,112 @@ ChartJS.register(
 );
 
 const DashBoard = () => {
-  const stats = [
-    { title: "Tổng doanh thu", value: "$12,345", icon: <AttachMoneyOutlinedIcon sx={{ fontSize: 48 }} /> },
-    { title: "Tổng đơn hàng", value: "234", icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 48 }} /> },
-    { title: "Tổng sản phẩm", value: "89", icon: <Inventory2OutlinedIcon sx={{ fontSize: 48 }} /> },
-    { title: "Tổng khách hàng", value: "156", icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 48 }} /> },
-  ];
+  const { getToken } = useAuth();
+  const [dashboardData, setDashboardData] = useState({
+    stats: {
+      totalRevenue: 0,
+      totalOrders: 0,
+      totalProducts: 0,
+      totalCustomers: 0
+    },
+    salesData: [],
+    orderStatusData: {
+      processing: 0,
+      delivered: 0,
+      cancelled: 0
+    },
+    categoryStats: [],
+    recentOrders: []
+  });
+  const [loading, setLoading] = useState(true);
 
-  const recentOrders = [
-    { id: "#ORD001", customer: "John Doe", date: "2024-04-13", status: "Delivered", amount: "$120" },
-    { id: "#ORD002", customer: "Jane Smith", date: "2024-04-12", status: "Processing", amount: "$350" },
-    { id: "#ORD003", customer: "Mike Johnson", date: "2024-04-12", status: "Pending", amount: "$89" },
-    { id: "#ORD004", customer: "Sarah Williams", date: "2024-04-11", status: "Delivered", amount: "$230" },
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const token = await getToken();
+      
+      const [statsRes, salesRes, statusRes, categoryRes, ordersRes] = await Promise.all([
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/sales-data`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/order-status`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/category-stats`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }),
+        axios.get(`${process.env.NEXT_PUBLIC_API_URL}/dashboard/recent-orders`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      ]);
+
+      if (statsRes.data.success) {
+        setDashboardData({
+          stats: statsRes.data.stats,
+          salesData: salesRes.data.salesData,
+          orderStatusData: statusRes.data.statusData,
+          categoryStats: categoryRes.data.categoryStats,
+          recentOrders: ordersRes.data.recentOrders
+        });
+      } else {
+        toast.error('Không thể tải dữ liệu dashboard');
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      toast.error('Lỗi khi tải dữ liệu dashboard');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ... existing code ...
+  const stats = [
+    { 
+      title: "Tổng doanh thu", 
+      value: `${dashboardData.stats.totalRevenue.toLocaleString('vi-VN')}₫`, 
+      icon: <AttachMoneyOutlinedIcon sx={{ fontSize: 48 }} /> 
+    },
+    { 
+      title: "Tổng đơn hàng", 
+      value: dashboardData.stats.totalOrders.toString(), 
+      icon: <ShoppingCartOutlinedIcon sx={{ fontSize: 48 }} /> 
+    },
+    { 
+      title: "Tổng sản phẩm", 
+      value: dashboardData.stats.totalProducts.toString(), 
+      icon: <Inventory2OutlinedIcon sx={{ fontSize: 48 }} /> 
+    },
+    { 
+      title: "Tổng khách hàng", 
+      value: dashboardData.stats.totalCustomers.toString(), 
+      icon: <PersonOutlineOutlinedIcon sx={{ fontSize: 48 }} /> 
+    },
   ];
 
   // Sales Data
   const salesData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: dashboardData.salesData.map(item => item.month),
     datasets: [
       {
         label: 'Doanh thu hàng tháng',
-        data: [3000, 4500, 3800, 5200, 4800, 6000],
+        data: dashboardData.salesData.map(item => item.revenue),
         borderColor: 'rgb(75, 192, 192)',
         tension: 0.1,
       },
@@ -61,15 +150,17 @@ const DashBoard = () => {
 
   // Product Categories Data
   const productCategoryData = {
-    labels: ['Điện thoại', 'Laptop', 'Tai nghe', 'Đồng hồ'],
+    labels: dashboardData.categoryStats.map(item => item._id),
     datasets: [
       {
-        data: [35, 40, 15, 10],
+        data: dashboardData.categoryStats.map(item => item.count),
         backgroundColor: [
-          'rgba(255, 182, 193, 0.8)',  // Pink
-          'rgba(135, 206, 235, 0.8)',  // Sky blue
-          'rgba(255, 218, 185, 0.8)',  // Peach
-          'rgba(176, 224, 230, 0.8)',  // Powder blue
+          'rgba(255, 182, 193, 0.8)',
+          'rgba(135, 206, 235, 0.8)',
+          'rgba(255, 218, 185, 0.8)',
+          'rgba(176, 224, 230, 0.8)',
+          'rgba(221, 160, 221, 0.8)',
+          'rgba(255, 228, 181, 0.8)',
         ],
       },
     ],
@@ -77,11 +168,11 @@ const DashBoard = () => {
 
   // Monthly Orders Data
   const ordersData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+    labels: dashboardData.salesData.map(item => item.month),
     datasets: [
       {
         label: 'Đơn hàng',
-        data: [65, 59, 80, 81, 56, 90],
+        data: dashboardData.salesData.map(item => item.orderCount),
         backgroundColor: 'rgba(54, 162, 235, 0.5)',
       },
     ],
@@ -92,20 +183,96 @@ const DashBoard = () => {
     labels: ['Đang xử lý', 'Đã giao', 'Đã hủy'],
     datasets: [
       {
-        data: [45, 40, 15],
+        data: [
+          dashboardData.orderStatusData.processing,
+          dashboardData.orderStatusData.delivered,
+          dashboardData.orderStatusData.cancelled
+        ],
         backgroundColor: [
-          'rgba(255, 159, 64, 0.8)',  // Orange for processing
-          'rgba(75, 192, 75, 0.8)',   // Green for delivered
-          'rgba(255, 99, 132, 0.8)',  // Red for canceled
+          'rgba(255, 159, 64, 0.8)',
+          'rgba(75, 192, 75, 0.8)',
+          'rgba(255, 99, 132, 0.8)',
         ],
       },
     ],
   };
 
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'DELIVERED': return 'bg-green-100 text-green-800';
+      case 'PROCESSING': return 'bg-blue-100 text-blue-800';
+      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
+      case 'CANCELLED': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch(status) {
+      case 'DELIVERED': return 'Đã giao';
+      case 'PROCESSING': return 'Đang xử lý';
+      case 'PENDING': return 'Chờ xử lý';
+      case 'CANCELLED': return 'Đã hủy';
+      default: return status;
+    }
+  };
+
+  const handleExportExcel = async () => {
+    try {
+      const token = await getToken();
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/dashboard/export-excel`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          responseType: 'blob', // Quan trọng: để nhận file
+        }
+      );
+
+      // Tạo URL để download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Tên file với ngày hiện tại
+      const fileName = `Dashboard_Report_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.setAttribute('download', fileName);
+      
+      // Trigger download
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      
+      toast.success('Xuất file Excel thành công!');
+    } catch (error) {
+      console.error('Error exporting Excel:', error);
+      toast.error('Lỗi khi xuất file Excel');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex-1 h-screen flex items-center justify-center">
+        <div className="text-lg">Đang tải dữ liệu...</div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 h-screen flex flex-col overflow-scroll justify-between text-sm">
       <div className="w-full md:p-10 p-4">
-        <h1 className="text-2xl font-semibold mb-6">Bảng điều khiển</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold">Bảng điều khiển</h1>
+          <button
+            onClick={handleExportExcel}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
+          >
+            <FileDownloadOutlinedIcon />
+            Xuất Excel
+          </button>
+        </div>
         
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -210,21 +377,17 @@ const DashBoard = () => {
                 </tr>
               </thead>
               <tbody>
-                {recentOrders.map((order, index) => (
+                {dashboardData.recentOrders.map((order, index) => (
                   <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="py-3 px-4">{order.id}</td>
+                    <td className="py-3 px-4">#{order._id.slice(-6)}</td>
                     <td className="py-3 px-4">{order.customer}</td>
                     <td className="py-3 px-4">{order.date}</td>
                     <td className="py-3 px-4">
-                      <span className={`px-2 py-1 rounded-full text-sm ${
-                        order.status === 'Delivered' ? 'bg-green-100 text-green-800' :
-                        order.status === 'Processing' ? 'bg-blue-100 text-blue-800' :
-                        'bg-yellow-100 text-yellow-800'
-                      }`}>
-                        {order.status}
+                      <span className={`px-2 py-1 rounded-full text-sm ${getStatusColor(order.status)}`}>
+                        {getStatusText(order.status)}
                       </span>
                     </td>
-                    <td className="py-3 px-4">{order.amount}</td>
+                    <td className="py-3 px-4">{order.amount.toLocaleString('vi-VN')}₫</td>
                   </tr>
                 ))}
               </tbody>

@@ -48,7 +48,7 @@ const Filter = ({
         >
           <span>
             {selectedCategory === 'all'
-              ? 'Tất cả danh mục'
+              ? 'Chọn danh mục'
               : categories.find(c => c._id === selectedCategory)?.name || 'Chọn danh mục'}
           </span>
           <svg className={`w-4 h-4 ml-2 transition-transform ${openCategory ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
@@ -86,7 +86,7 @@ const Filter = ({
         >
           <span>
             {selectedBrand === 'all'
-              ? 'Tất cả thương hiệu'
+              ? 'Chọn thương hiệu'
               : brands.find(b => b._id === selectedBrand)?.name || 'Chọn thương hiệu'}
           </span>
           <svg className={`w-4 h-4 ml-2 transition-transform ${openBrand ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>

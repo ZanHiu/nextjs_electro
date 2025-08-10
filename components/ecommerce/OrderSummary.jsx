@@ -344,6 +344,45 @@ const OrderSummary = () => {
           </div>
         </div>
 
+        {/* Manual coupon input */}
+        <div>
+          <label className="text-base font-medium uppercase text-gray-600 block mb-2">
+            Hoặc nhập mã giảm giá
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Nhập mã giảm giá"
+              className="flex-1 outline-none p-2.5 text-gray-600 border"
+              value={couponCode}
+              onChange={(e) => setCouponCode(e.target.value)}
+              disabled={!!selectedVoucher || !!appliedCoupon}
+            />
+            <button 
+              className="bg-orange-600 text-white px-6 py-2.5 hover:bg-orange-700 disabled:bg-gray-400 disabled:cursor-not-allowed whitespace-nowrap"
+              onClick={validateCoupon}
+              disabled={isValidatingCoupon || !!appliedCoupon || !!selectedVoucher}
+            >
+              Áp dụng
+            </button>
+          </div>
+          {appliedCoupon && (
+            <div className="mt-2 text-sm text-green-600">
+              Mã giảm giá #{appliedCoupon.code} đã được áp dụng
+              <button 
+                className="ml-2 text-red-600 hover:text-red-700"
+                onClick={() => {
+                  setAppliedCoupon(null);
+                  setCouponCode('');
+                  setSelectedVoucher(null);
+                }}
+              >
+                Xóa
+              </button>
+            </div>
+          )}
+        </div>
+
         <hr className="border-gray-500/30 my-5" />
 
         <div className="space-y-4">
