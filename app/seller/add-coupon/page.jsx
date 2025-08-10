@@ -20,6 +20,8 @@ const AddCoupon = () => {
     minOrderAmount: "0",
     prefix: "COUPON",
     isInfinite: false,
+    isUnlimitedUses: false,
+    isNoMinOrder: false,
   });
 
   const generateCode = () => {
@@ -38,6 +40,12 @@ const AddCoupon = () => {
       const submitData = {
         ...formData,
         endDate: formData.isInfinite ? null : formData.endDate,
+        startDate: formData.isInfinite ? null : formData.startDate,
+        maxUses: formData.isUnlimitedUses ? null : formData.maxUses,
+        minOrderAmount: formData.isNoMinOrder ? null : formData.minOrderAmount,
+        isInfinite: formData.isInfinite,
+        isUnlimitedUses: formData.isUnlimitedUses,
+        isNoMinOrder: formData.isNoMinOrder,
       };
 
       const { data } = await axios.post(
@@ -179,32 +187,60 @@ const AddCoupon = () => {
             <label className="text-base font-medium">
               Số lượng sử dụng tối đa
             </label>
-            <input
-              type="number"
-              name="maxUses"
-              value={formData.maxUses}
-              onChange={handleChange}
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              placeholder="Ví dụ: 10"
-              min="1"
-              required
-            />
+            <div className="mb-3">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isUnlimitedUses"
+                  checked={formData.isUnlimitedUses}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700">Sử dụng vô hạn</span>
+              </label>
+            </div>
+            {!formData.isUnlimitedUses && (
+              <input
+                type="number"
+                name="maxUses"
+                value={formData.maxUses}
+                onChange={handleChange}
+                className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                placeholder="Ví dụ: 10"
+                min="1"
+                required={!formData.isUnlimitedUses}
+              />
+            )}
           </div>
 
           <div className="flex flex-col gap-1 max-w-md">
             <label className="text-base font-medium">
               Giá trị đơn hàng tối thiểu (VND)
             </label>
-            <input
-              type="number"
-              name="minOrderAmount"
-              value={formData.minOrderAmount}
-              onChange={handleChange}
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
-              placeholder="Ví dụ: 1000000"
-              min="0"
-              required
-            />
+            <div className="mb-3">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="isNoMinOrder"
+                  checked={formData.isNoMinOrder}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700">Không giới hạn đơn hàng</span>
+              </label>
+            </div>
+            {!formData.isNoMinOrder && (
+              <input
+                type="number"
+                name="minOrderAmount"
+                value={formData.minOrderAmount}
+                onChange={handleChange}
+                className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+                placeholder="Ví dụ: 1000000"
+                min="0"
+                required={!formData.isNoMinOrder}
+              />
+            )}
           </div>
 
           <div className="pt-4">

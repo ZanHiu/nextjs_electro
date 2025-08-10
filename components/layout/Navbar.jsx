@@ -20,6 +20,7 @@ import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNone
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import EmojiEventsOutlinedIcon from '@mui/icons-material/EmojiEventsOutlined';
 
 const Navbar = () => {
   const { isSeller, router, user, currency, getCartCount } = useAppContext();
@@ -197,6 +198,13 @@ const Navbar = () => {
 
         {user ? (
           <UserButton>
+            <UserButton.MenuItems>
+              <UserButton.Action 
+                label="Xếp hạng" 
+                labelIcon={<EmojiEventsOutlinedIcon sx={{ fontSize: 18 }} />} 
+                onClick={() => router.push('/my-rank')} 
+              />
+            </UserButton.MenuItems>
             <UserButton.MenuItems>
               <UserButton.Action 
                 label="Sản phẩm yêu thích" 
