@@ -22,19 +22,40 @@ const AddProduct = () => {
   // Thuộc tính chung của sản phẩm (lưu vào Product.commonAttributes)
   const [commonAttributes, setCommonAttributes] = useState([]);
   
-  // BƯỚC 1: Kho thuộc tính (ProductAttribute)
-  const [availableAttributes, setAvailableAttributes] = useState([]);
+  // Kho thuộc tính có sẵn từ API
+  const [availableAttributesFromAPI, setAvailableAttributesFromAPI] = useState([]);
   
-  // BƯỚC 2: Kho màu sắc/hình ảnh (ProductImage)
+  // Kho màu sắc/hình ảnh (ProductImage)
   const [availableColors, setAvailableColors] = useState([]);
   
-  // BƯỚC 3: Tạo variants (ProductVariant)
+  // Tạo variants (ProductVariant)
   const [variants, setVariants] = useState([]);
 
   useEffect(() => {
     if (brands.length > 0) setBrand(brands[0]._id);
     if (categories.length > 0) setCategory(categories[0]._id);
   }, [brands, categories]);
+
+  // Load danh sách thuộc tính từ API
+  useEffect(() => {
+    const fetchAttributes = async () => {
+      try {
+        const token = await getToken();
+        const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/attributes/list`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        });
+        if (data.success) {
+          setAvailableAttributesFromAPI(data.allAttributes);
+        }
+      } catch (error) {
+        console.error('Error fetching attributes:', error);
+      }
+    };
+
+    fetchAttributes();
+  }, [getToken]);
 
   // Handlers cho thuộc tính chung
   const handleAddCommonAttribute = () => {
@@ -49,24 +70,6 @@ const AddProduct = () => {
     const updated = [...commonAttributes];
     updated[index][field] = value;
     setCommonAttributes(updated);
-  };
-
-  // ===== QUẢN LÝ KHO THUỘC TÍNH =====
-  const handleAddAttribute = () => {
-    setAvailableAttributes([
-      ...availableAttributes,
-      { name: '', value: '' }
-    ]);
-  };
-
-  const handleRemoveAttribute = (idx) => {
-    setAvailableAttributes(availableAttributes.filter((_, i) => i !== idx));
-  };
-
-  const handleAttributeChange = (idx, field, value) => {
-    const updated = [...availableAttributes];
-    updated[idx][field] = value;
-    setAvailableAttributes(updated);
   };
 
   // ===== QUẢN LÝ KHO MÀU SẮC =====
@@ -100,7 +103,8 @@ const AddProduct = () => {
     setVariants([
       ...variants,
       {
-        selectedAttributes: [], // Array of attribute indices
+        selectedColorIndex: 0,
+        selectedAttributeIds: [], // Array of attribute IDs from API
         price: '',
         offerPrice: ''
       }
@@ -117,14 +121,14 @@ const AddProduct = () => {
     setVariants(updated);
   };
 
-  const handleVariantAttributeToggle = (variantIdx, attrIdx) => {
+  const handleVariantAttributeToggle = (variantIdx, attributeId) => {
     const updated = [...variants];
-    const selectedAttrs = updated[variantIdx].selectedAttributes || [];
+    const selectedIds = updated[variantIdx].selectedAttributeIds || [];
     
-    if (selectedAttrs.includes(attrIdx)) {
-      updated[variantIdx].selectedAttributes = selectedAttrs.filter(i => i !== attrIdx);
+    if (selectedIds.includes(attributeId)) {
+      updated[variantIdx].selectedAttributeIds = selectedIds.filter(id => id !== attributeId);
     } else {
-      updated[variantIdx].selectedAttributes = [...selectedAttrs, attrIdx];
+      updated[variantIdx].selectedAttributeIds = [...selectedIds, attributeId];
     }
     setVariants(updated);
   };
@@ -161,6 +165,10 @@ const AddProduct = () => {
         toast.error(`Biến thể thứ ${i + 1} chưa có giá!`);
         return;
       }
+      if (!variants[i].selectedAttributeIds || variants[i].selectedAttributeIds.length === 0) {
+        toast.error(`Biến thể thứ ${i + 1} chưa chọn thuộc tính!`);
+        return;
+      }
     }
     
     setLoading(true);
@@ -174,13 +182,13 @@ const AddProduct = () => {
     formData.append("category", category);
     formData.append("views", views);
 
-    // Chuẩn bị dữ liệu theo format EAV
+    // Chuẩn bị dữ liệu theo format mới
     const productData = {
       commonAttributes: commonAttributes.filter(attr => attr.name && attr.value), // Thuộc tính chung
-      attributes: availableAttributes.filter(attr => attr.name && attr.value), // Thuộc tính riêng
       colors: availableColors.filter(color => color.name),
       variants: variants.map(variant => ({
-        attributeIndices: variant.selectedAttributes || [],
+        colorIndex: variant.selectedColorIndex,
+        selectedAttributeIds: variant.selectedAttributeIds || [],
         price: variant.price,
         offerPrice: variant.offerPrice
       }))
@@ -216,7 +224,6 @@ const AddProduct = () => {
         setCategory(categories[0]?._id || '');
         setViews('');
         setCommonAttributes([]);
-        setAvailableAttributes([]);
         setAvailableColors([]);
         setVariants([]);
       } else {
@@ -229,11 +236,20 @@ const AddProduct = () => {
     }
   };
 
+  // Nhóm thuộc tính theo tên
+  const groupedAttributes = availableAttributesFromAPI.reduce((groups, attr) => {
+    if (!groups[attr.name]) {
+      groups[attr.name] = [];
+    }
+    groups[attr.name].push(attr);
+    return groups;
+  }, {});
+
   return (
     <div className="flex-1 h-screen flex flex-col overflow-scroll justify-between text-sm">
       {loading ? <Loading /> : (
         <form onSubmit={handleSubmit} className="w-full md:p-10 p-4 space-y-6 max-w-4xl">
-          <h1 className="text-2xl font-semibold mb-6">Thêm sản phẩm (EAV Model)</h1>
+          <h1 className="text-2xl font-semibold mb-6">Thêm sản phẩm</h1>
           
           {/* Thông tin cơ bản */}
           <div className="bg-white p-6 rounded-lg border shadow-sm">
@@ -374,60 +390,11 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* BƯỚC 1: Kho thuộc tính */}
-          <div className="bg-blue-50 p-6 rounded-lg border-2 border-blue-200 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-lg font-medium text-blue-800">BƯỚC 1: Tạo kho thuộc tính</h2>
-                <p className="text-sm text-blue-600">Thêm tất cả các thuộc tính có thể có (VD: RAM 8GB, RAM 16GB, Storage 256GB, Storage 512GB...)</p>
-              </div>
-              <button 
-                type="button" 
-                onClick={handleAddAttribute} 
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-              >
-                + Thêm thuộc tính
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              {availableAttributes.map((attr, idx) => (
-                <div key={idx} className="flex gap-3 items-center p-3 bg-white rounded border">
-                  <input
-                    type="text"
-                    placeholder="Tên thuộc tính (VD: RAM)"
-                    value={attr.name}
-                    onChange={(e) => handleAttributeChange(idx, 'name', e.target.value)}
-                    className="flex-1 outline-none py-2 px-3 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Giá trị (VD: 8GB)"
-                    value={attr.value}
-                    onChange={(e) => handleAttributeChange(idx, 'value', e.target.value)}
-                    className="flex-1 outline-none py-2 px-3 rounded border border-gray-300"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveAttribute(idx)}
-                    className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                  >
-                    Xóa
-                  </button>
-                </div>
-              ))}
-              
-              {availableAttributes.length === 0 && (
-                <p className="text-blue-600 text-center py-4">Chưa có thuộc tính nào. Nhấn "Thêm thuộc tính" để bắt đầu.</p>
-              )}
-            </div>
-          </div>
-
-          {/* BƯỚC 2: Kho màu sắc */}
+          {/* Kho màu sắc */}
           <div className="bg-green-50 p-6 rounded-lg border-2 border-green-200 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-medium text-green-800">BƯỚC 2: Tạo kho màu sắc <span className="text-red-500">*</span></h2>
+                <h2 className="text-lg font-medium text-green-800">Kho màu sắc <span className="text-red-500">*</span></h2>
                 <p className="text-sm text-green-600">Thêm tất cả các màu sắc có thể có và ảnh tương ứng</p>
               </div>
               <button 
@@ -502,7 +469,7 @@ const AddProduct = () => {
                                   height={40}
                                   className="mx-auto mb-1 opacity-50"
                                 />
-                                <p className="text-xs text-gray-500">Thêm ảnh</p>
+                                <p className="text-xs text-gray-500">Ảnh {imgIdx + 1}</p>
                               </div>
                             )}
                           </div>
@@ -515,18 +482,17 @@ const AddProduct = () => {
             </div>
           </div>
 
-          {/* BƯỚC 3: Tạo variants */}
+          {/* Tạo variants */}
           <div className="bg-orange-50 p-6 rounded-lg border-2 border-orange-200 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-lg font-medium text-orange-800">BƯỚC 3: Tạo biến thể sản phẩm <span className="text-red-500">*</span></h2>
-                <p className="text-sm text-orange-600">Chọn tổ hợp thuộc tính + giá để tạo các biến thể. Hệ thống sẽ tự động tạo variants cho tất cả màu sắc.</p>
+                <h2 className="text-lg font-medium text-orange-800">Tạo biến thể sản phẩm <span className="text-red-500">*</span></h2>
+                <p className="text-sm text-orange-600">Chọn thuộc tính từ kho có sẵn và đặt giá cho từng biến thể</p>
               </div>
               <button 
                 type="button" 
                 onClick={handleAddVariant} 
                 className="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors"
-                disabled={availableAttributes.length === 0}
               >
                 + Thêm biến thể
               </button>
@@ -536,98 +502,98 @@ const AddProduct = () => {
               <div className="text-center py-8 bg-white rounded border-2 border-dashed border-orange-300">
                 <p className="text-orange-600 mb-2">Chưa có biến thể nào</p>
                 <p className="text-red-500 text-sm">Cần ít nhất 1 biến thể cho sản phẩm</p>
-                {availableAttributes.length === 0 && (
-                  <p className="text-gray-500 text-sm mt-1">Hãy thêm thuộc tính trước khi tạo biến thể</p>
-                )}
               </div>
             )}
             
             <div className="space-y-4">
-              {variants.map((variant, idx) => (
-                <div key={idx} className="bg-white p-4 rounded border">
+              {variants.map((variant, variantIdx) => (
+                <div key={variantIdx} className="bg-white p-4 rounded border">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="font-medium">Biến thể #{idx + 1}</h3>
+                    <h3 className="font-medium">Biến thể #{variantIdx + 1}</h3>
                     <button
                       type="button"
-                      onClick={() => handleRemoveVariant(idx)}
+                      onClick={() => handleRemoveVariant(variantIdx)}
                       className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
                     >
                       Xóa biến thể
                     </button>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Loại bỏ phần chọn màu */}
-                    
-                    {/* Giá */}
+
+                  {/* Chọn màu sắc và giá */}
+                  <div className="grid grid-cols-3 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Giá *</label>
+                      <label className="block text-sm font-medium mb-1">Màu sắc *</label>
+                      <select 
+                        value={variant.selectedColorIndex || 0} 
+                        onChange={e => handleVariantChange(variantIdx, 'selectedColorIndex', parseInt(e.target.value))} 
+                        className="w-full outline-none py-2 px-3 rounded border border-gray-300"
+                        disabled={availableColors.length === 0}
+                      >
+                        {availableColors.length === 0 ? (
+                          <option value={0}>Chưa có màu nào</option>
+                        ) : (
+                          availableColors.map((color, colorIdx) => (
+                            <option key={colorIdx} value={colorIdx}>{color.name || `Màu ${colorIdx + 1}`}</option>
+                          ))
+                        )}
+                      </select>
+                      {availableColors.length === 0 && (
+                        <p className="text-red-500 text-xs mt-1">Vui lòng thêm màu sắc trước khi tạo biến thể</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">Giá gốc *</label>
                       <input 
                         type="number" 
-                        placeholder="0" 
                         value={variant.price} 
-                        onChange={e => handleVariantChange(idx, 'price', e.target.value)} 
+                        onChange={e => handleVariantChange(variantIdx, 'price', e.target.value)} 
                         className="w-full outline-none py-2 px-3 rounded border border-gray-300" 
+                        placeholder="VD: 1000000" 
                         required
                       />
                     </div>
-                    
-                    {/* Giá khuyến mãi */}
                     <div>
                       <label className="block text-sm font-medium mb-1">Giá khuyến mãi</label>
                       <input 
                         type="number" 
-                        placeholder="0" 
                         value={variant.offerPrice} 
-                        onChange={e => handleVariantChange(idx, 'offerPrice', e.target.value)} 
+                        onChange={e => handleVariantChange(variantIdx, 'offerPrice', e.target.value)} 
                         className="w-full outline-none py-2 px-3 rounded border border-gray-300" 
+                        placeholder="VD: 900000" 
                       />
                     </div>
                   </div>
                   
-                  {/* Chọn thuộc tính */}
-                  {availableAttributes.length > 0 && (
-                    <div className="mt-4">
-                      <label className="block text-sm font-medium mb-2">Chọn thuộc tính cho biến thể này</label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {availableAttributes.map((attr, attrIdx) => (
-                          <label key={attrIdx} className="flex items-center space-x-2 p-2 border rounded cursor-pointer hover:bg-gray-50">
-                            <input
-                              type="checkbox"
-                              checked={(variant.selectedAttributes || []).includes(attrIdx)}
-                              onChange={() => handleVariantAttributeToggle(idx, attrIdx)}
-                              className="rounded"
-                            />
-                            <span className="text-sm">
-                              {attr.name}: {attr.value}
-                            </span>
-                          </label>
+                  {/* Chọn thuộc tính từ kho có sẵn */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium mb-2">Chọn thuộc tính</label>
+                    {Object.keys(groupedAttributes).length === 0 ? (
+                      <div className="text-center py-4 bg-gray-50 rounded border">
+                        <p className="text-gray-500">Chưa có thuộc tính nào trong kho.</p>
+                        <p className="text-sm text-blue-600">Hãy thêm thuộc tính trong trang "Quản lý thuộc tính"</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-3">
+                        {Object.entries(groupedAttributes).map(([attributeName, attributes]) => (
+                          <div key={attributeName} className="border rounded p-3">
+                            <h4 className="font-medium mb-2">{attributeName}</h4>
+                            <div className="flex flex-wrap gap-2">
+                              {attributes.map((attr) => (
+                                <label key={attr._id} className="flex items-center space-x-2 cursor-pointer">
+                                  <input
+                                    type="checkbox"
+                                    checked={variant.selectedAttributeIds.includes(attr._id)}
+                                    onChange={() => handleVariantAttributeToggle(variantIdx, attr._id)}
+                                    className="rounded"
+                                  />
+                                  <span className="text-sm bg-gray-100 px-2 py-1 rounded">{attr.value}</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
                         ))}
                       </div>
-                      
-                      {(!variant.selectedAttributes || variant.selectedAttributes.length === 0) && (
-                        <p className="text-gray-500 text-sm mt-2">Chưa chọn thuộc tính nào</p>
-                      )}
-                    </div>
-                  )}
-                  
-                  {/* Preview biến thể */}
-                  <div className="mt-4 p-3 bg-gray-50 rounded">
-                    <h4 className="text-sm font-medium mb-2">Preview biến thể:</h4>
-                    <div className="text-sm text-gray-600">
-                      <p><strong>Tạo cho tất cả màu:</strong> {availableColors.map(c => c.name).join(', ') || 'Chưa có màu'}</p>
-                      <p><strong>Giá:</strong> {variant.price ? `${parseInt(variant.price).toLocaleString()}đ` : 'Chưa nhập'}</p>
-                      {variant.offerPrice && (
-                        <p><strong>Giá KM:</strong> {parseInt(variant.offerPrice).toLocaleString()}đ</p>
-                      )}
-                      <p><strong>Thuộc tính:</strong> {
-                        (variant.selectedAttributes || []).length > 0 
-                          ? (variant.selectedAttributes || []).map(attrIdx => 
-                              `${availableAttributes[attrIdx]?.name}: ${availableAttributes[attrIdx]?.value}`
-                            ).join(', ')
-                          : 'Không có'
-                      }</p>
-                    </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -635,6 +601,13 @@ const AddProduct = () => {
           </div>
 
           <div className="flex justify-end space-x-4 pt-6">
+            <button
+              type="button"
+              onClick={() => window.history.back()}
+              className="px-6 py-2 border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+            >
+              Hủy
+            </button>
             <button
               type="submit"
               disabled={loading}
