@@ -189,13 +189,6 @@ const Navbar = () => {
           </span>
         </button>
 
-        <button
-          onClick={() => router.push('/notification')}
-          className="hover:text-gray-900 transition"
-        >
-          <NotificationsNoneOutlinedIcon sx={{ fontSize: 20 }} />
-        </button>
-
         {user ? (
           <UserButton>
             <UserButton.MenuItems>

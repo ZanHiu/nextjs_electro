@@ -39,9 +39,10 @@ const Product = () => {
         if (data.variants && data.variants.length > 0) {
           setActiveVariant(data.variants[0]);
           setSelectedAttributes(data.variants[0].attributes);
-          setMainImage(data.variants[0].images[0]);
+          // Sử dụng images từ EAV model
+          setMainImage(data.variants[0].images && data.variants[0].images[0]);
         } else {
-          setMainImage(data.product.image[0]);
+          setMainImage(data.product.image && data.product.image[0]);
         }
       } else {
         toast.error(data.message);
@@ -50,14 +51,29 @@ const Product = () => {
       toast.error(error.message);
     }
   };
-
-  // Khi chọn thuộc tính (color, storage, ...)
+  // Khi chọn thuộc tính (storage, ram, ...)
   const handleSelectAttribute = (attrName, value) => {
     const newAttrs = { ...selectedAttributes, [attrName]: value };
     setSelectedAttributes(newAttrs);
-    // Tìm variant phù hợp
+    // Tìm variant phù hợp với thuộc tính đã chọn và màu hiện tại
     const found = variants.find(v => {
-      return Object.entries(newAttrs).every(([k, v2]) => v.attributes[k] === v2);
+      const attributesMatch = Object.entries(newAttrs).every(([k, v2]) => v.attributes[k] === v2);
+      const colorMatch = !activeVariant || v.colorName === activeVariant.colorName;
+      return attributesMatch && colorMatch;
+    });
+    if (found) {
+      setActiveVariant(found);
+      setMainImage(found.images[0]);
+    }
+  };
+
+  // Khi chọn màu sắc thông qua imageId
+  const handleSelectColor = (colorName) => {
+    // Tìm variant có màu được chọn và thuộc tính phù hợp
+    const found = variants.find(v => {
+      const colorMatch = v.colorName === colorName;
+      const attributesMatch = Object.entries(selectedAttributes).every(([k, v2]) => v.attributes[k] === v2);
+      return colorMatch && attributesMatch;
     });
     if (found) {
       setActiveVariant(found);
@@ -81,13 +97,21 @@ const Product = () => {
     fetchReviews(id, "product");
   }, [id]);
 
-  // Lấy danh sách thuộc tính có trong variants
+  // Lấy danh sách thuộc tính có trong variants (không bao gồm màu)
   const attributeOptions = {};
   variants.forEach(variant => {
     Object.entries(variant.attributes).forEach(([key, value]) => {
       if (!attributeOptions[key]) attributeOptions[key] = new Set();
       attributeOptions[key].add(value);
     });
+  });
+
+  // Lấy danh sách màu sắc có trong variants
+  const colorOptions = new Set();
+  variants.forEach(variant => {
+    if (variant.colorName) {
+      colorOptions.add(variant.colorName);
+    }
   });
 
   return productData ? (
@@ -98,7 +122,7 @@ const Product = () => {
           <div className="px-5 lg:px-16 xl:px-20">
             <div className="rounded-lg overflow-hidden bg-gray-500/10 mb-4">
               <Image
-                src={mainImage || (firstVariant && firstVariant.images[0]) || (productData.image && productData.image[0])}
+                src={mainImage || (activeVariant && activeVariant.images && activeVariant.images[0]) || (firstVariant && firstVariant.images && firstVariant.images[0]) || (productData.image && productData.image[0])}
                 alt="alt"
                 className="w-full h-auto object-cover mix-blend-multiply"
                 width={1280}
@@ -107,7 +131,7 @@ const Product = () => {
             </div>
 
             <div className="grid grid-cols-4 gap-4">
-              {(activeVariant ? activeVariant.images : (firstVariant && firstVariant.images) || productData.image).map((image, index) => (
+              {(activeVariant ? activeVariant.images : (firstVariant && firstVariant.images) || productData.image || []).map((image, index) => (
                 <div
                   key={index}
                   onClick={() => setMainImage(image)}
@@ -122,6 +146,36 @@ const Product = () => {
                   />
                 </div>
               ))}
+            </div>
+            <hr className="bg-gray-600 my-6" />
+            <div className="overflow-x-auto">
+              <table className="table-auto border-collapse w-full max-w-96">
+                <tbody>
+                  {/* Hiển thị màu sắc từ activeVariant */}
+                  {activeVariant && activeVariant.colorName && (
+                    <tr>
+                      <td className="text-gray-600 font-medium">Màu sắc</td>
+                      <td className="text-gray-800/50">{activeVariant.colorName}</td>
+                    </tr>
+                  )}
+
+                  {/* Hiển thị thuộc tính riêng từ activeVariant */}
+                  {activeVariant && activeVariant.attributes && Object.entries(activeVariant.attributes).map(([attr, value]) => (
+                    <tr key={attr}>
+                      <td className="text-gray-600 font-medium">{VariantLabels[attr] || attr}</td>
+                      <td className="text-gray-800/50">{value || '-'}</td>
+                    </tr>
+                  ))}
+
+                  {/* Hiển thị thuộc tính chung từ commonAttributes */}
+                  {productData.commonAttributes && Object.entries(productData.commonAttributes).map(([attr, value]) => (
+                    <tr key={attr}>
+                      <td className="text-gray-600 font-medium">{VariantLabels[attr] || attr}</td>
+                      <td className="text-gray-800/50">{value || '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
 
@@ -146,6 +200,28 @@ const Product = () => {
             </div>
             <p className="text-gray-600 mt-3">{productData.description}</p>
             <div className="flex flex-col gap-4 mt-4">
+              {/* Hiển thị lựa chọn màu sắc */}
+              {colorOptions.size > 0 && (
+                <div className="flex flex-col">
+                  <span className="text-sm text-gray-600 mb-1">Màu sắc</span>
+                  <div className="flex gap-2">
+                    {[...colorOptions].map(colorName => (
+                      <button
+                        key={colorName}
+                        className={`px-3 py-1 rounded border ${
+                          activeVariant && activeVariant.colorName === colorName 
+                            ? 'bg-orange-500 text-white' 
+                            : 'bg-gray-100 text-gray-800/80'
+                        }`}
+                        onClick={() => handleSelectColor(colorName)}
+                      >
+                        {colorName}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               {/* Hiển thị các lựa chọn thuộc tính */}
               {Object.entries(attributeOptions).map(([attr, values]) => (
                 <div key={attr} className="flex flex-col">
@@ -154,7 +230,11 @@ const Product = () => {
                     {[...values].map(val => (
                       <button
                         key={val}
-                        className={`px-3 py-1 rounded border ${selectedAttributes[attr] === val ? 'bg-orange-500 text-white' : 'bg-gray-100 text-gray-800/80'}`}
+                        className={`px-3 py-1 rounded border ${
+                          selectedAttributes[attr] === val 
+                            ? 'bg-orange-500 text-white' 
+                            : 'bg-gray-100 text-gray-800/80'
+                        }`}
                         onClick={() => handleSelectAttribute(attr, val)}
                       >
                         {val}
@@ -182,48 +262,6 @@ const Product = () => {
                     <td className="text-gray-600 font-medium">{productData.category?.name ? 'Danh mục' : ''}</td>
                     <td className="text-gray-800/50">{productData.category?.name || ''}</td>
                   </tr>
-                  {Object.entries(attributeOptions).map(([attr, values]) => (
-                    <tr key={attr}>
-                      <td className="text-gray-600 font-medium">{VariantLabels[attr] || attr}</td>
-                      <td className="text-gray-800/50 ">{selectedAttributes[attr] || '-'}</td>
-                  </tr>
-                  ))}
-                  {productData.specs?.cpu && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">CPU</td>
-                      <td className="text-gray-800/50">{productData.specs.cpu}</td>
-                    </tr>
-                  )}
-                  {productData.specs?.vga && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">VGA</td>
-                      <td className="text-gray-800/50">{productData.specs.vga}</td>
-                    </tr>
-                  )}
-                  {productData.specs?.os && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">Hệ điều hành</td>
-                      <td className="text-gray-800/50">{productData.specs.os}</td>
-                    </tr>
-                  )}
-                  {productData.specs?.pin && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">Pin</td>
-                      <td className="text-gray-800/50">{productData.specs.pin}</td>
-                    </tr>
-                  )}
-                  {productData.specs?.manhinh && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">Màn hình</td>
-                      <td className="text-gray-800/50">{productData.specs.manhinh}</td>
-                    </tr>
-                  )}
-                  {productData.specs?.camera && (
-                    <tr>
-                      <td className="text-gray-600 font-medium">Camera</td>
-                      <td className="text-gray-800/50">{productData.specs.camera}</td>
-                    </tr>
-                  )}
                 </tbody>
               </table>
             </div>

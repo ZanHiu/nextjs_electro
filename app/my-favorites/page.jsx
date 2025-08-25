@@ -4,6 +4,7 @@ import { useAppContext } from "@/context/AppContext";
 import ProductCard from "@/components/product/ProductCard";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import Loading from "@/components/common/Loading";
 import axios from "axios";
 import toast from "react-hot-toast";
 
@@ -57,9 +58,7 @@ const MyFavorites = () => {
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-orange-600"></div>
-          </div>
+          <Loading />
         ) : favoriteProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-12 pb-14">
             {favoriteProducts.map((product, index) => (

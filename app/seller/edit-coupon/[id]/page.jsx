@@ -74,7 +74,7 @@ const EditCoupon = () => {
       };
 
       const { data } = await axios.put(
-        `${process.env.NEXT_PUBLIC_API_URL}/coupons/edit/${id}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/coupons/update/${id}`,
         updateData,
         {
           headers: {

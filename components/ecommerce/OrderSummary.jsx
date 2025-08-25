@@ -96,7 +96,7 @@ const OrderSummary = () => {
       if (data.success) {
         setAppliedCoupon(data.coupon);
         setCouponCode(data.coupon.code);
-        toast.success('Coupon applied!');
+        toast.success("Áp mã giảm giá thành công");
       } else {
         setAppliedCoupon(null);
         setCouponCode('');
