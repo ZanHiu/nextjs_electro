@@ -253,10 +253,6 @@ const EditProduct = () => {
         toast.error(`Biến thể thứ ${i + 1} chưa có giá!`);
         return;
       }
-      if (!variants[i].selectedAttributeIds || variants[i].selectedAttributeIds.length === 0) {
-        toast.error(`Biến thể thứ ${i + 1} chưa chọn thuộc tính!`);
-        return;
-      }
     }
     
     setLoading(true);
