@@ -28,6 +28,8 @@ const SideBar = () => {
       children: [
         { name: "Danh sách sản phẩm", path: "/seller/products" },
         { name: "Thêm sản phẩm", path: "/seller/add-product" },
+        // { name: "Danh sách thuộc tính", path: "/seller/attributes" },
+        { name: "Thêm thuộc tính", path: "/seller/add-attribute" },
       ],
     },
     {
