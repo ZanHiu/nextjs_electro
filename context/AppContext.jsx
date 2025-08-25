@@ -257,6 +257,11 @@ export const AppContextProvider = (props) => {
   };
 
   const addToCart = async (productId, variantId = null) => {
+    if (!user) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng");
+      return;
+    }
+
     const key = variantId ? `${productId}|${variantId}` : `${productId}|`;
     let cartData = structuredClone(cartItems);
     if (cartData[key]) {
@@ -265,9 +270,6 @@ export const AppContextProvider = (props) => {
       cartData[key] = 1;
     }
     setCartItems(cartData);
-    // if (!user) {
-    //   localStorage.setItem("cart", JSON.stringify(cartData));
-    // }
     if (user) {
       try {
         const token = await getToken();
@@ -280,7 +282,7 @@ export const AppContextProvider = (props) => {
             },
           }
         );
-        toast.success("Item added to cart");
+        toast.success("Đã thêm sản phẩm vào giỏ hàng");
       } catch (error) {
         toast.error(error.response?.data?.message || error.message);
       }
@@ -307,7 +309,7 @@ export const AppContextProvider = (props) => {
               },
             }
           );
-          toast.success("Cart updated");
+          toast.success("Cập nhật giỏ hàng thành công");
         } catch (error) {
           toast.error(error.response?.data?.message || error.message);
         }
@@ -343,13 +345,13 @@ export const AppContextProvider = (props) => {
     return Math.floor(totalAmount * 100) / 100;
   };
 
-  const fetchReviews = async (targetId) => {
+  const fetchReviews = async (productId) => {
     setLoading(true);
     try {
-      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/product/${targetId}`);
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/reviews/product/${productId}`);
       if (data.success) {
         setReviews(data.reviews);
-        setAllReviews(prev => ({ ...prev, [targetId]: data.reviews }));
+        setAllReviews(prev => ({ ...prev, [productId]: data.reviews }));
         setDataFetched(prev => ({ ...prev, allReviews: true }));
       } else {
         toast.error(data.message);
@@ -393,10 +395,10 @@ export const AppContextProvider = (props) => {
         // Chuyển đổi array thành object với key là productId
         const reviewsByProduct = {};
         data.reviews.forEach(review => {
-          if (!reviewsByProduct[review.targetId]) {
-            reviewsByProduct[review.targetId] = [];
+          if (!reviewsByProduct[review.productId]) {
+            reviewsByProduct[review.productId] = [];
           }
-          reviewsByProduct[review.targetId].push(review);
+          reviewsByProduct[review.productId].push(review);
         });
         setAllReviews(reviewsByProduct);
         setDataFetched(prev => ({ ...prev, allReviews: true }));
@@ -408,16 +410,16 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const postReview = async (targetId, content, ratingValue, token, orderId) => {
+  const postReview = async (productId, content, ratingValue, token, orderId) => {
     try {
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/reviews`,
-        { targetId, content, ratingValue, orderId },
+        { productId, content, ratingValue, orderId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
         toast.success(data.message);
-        fetchReviews(targetId);
+        fetchReviews(productId);
       } else {
         toast.error(data.message);
       }
@@ -426,7 +428,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const updateReview = async (reviewId, content, ratingValue, token) => {
+  const updateReview = async (reviewId, content, ratingValue, token, productId) => {
     try {
       const { data } = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/reviews/${reviewId}`,
@@ -436,9 +438,8 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         toast.success(data.message);
         // Refresh reviews after update
-        const review = reviews.find(r => r._id === reviewId);
-        if (review) {
-          fetchReviews(review.targetId);
+        if (productId) {
+          fetchReviews(productId);
         }
       } else {
         toast.error(data.message);
@@ -483,9 +484,23 @@ export const AppContextProvider = (props) => {
 
   const postComment = async (targetId, type, content, token, parentId = null) => {
     try {
+      // Tạo payload dựa trên type
+      const payload = {
+        type,
+        content,
+        parentId
+      };
+      
+      // Thêm productId hoặc blogId tùy theo type
+      if (type === 'product') {
+        payload.productId = targetId;
+      } else if (type === 'blog') {
+        payload.blogId = targetId;
+      }
+      
       const { data } = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/comments`,
-        { targetId, type, content, parentId },
+        payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       if (data.success) {
@@ -499,7 +514,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const updateComment = async (commentId, content, token) => {
+  const updateComment = async (commentId, content, token, targetId, type) => {
     try {
       const { data } = await axios.put(
         `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
@@ -509,9 +524,8 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         toast.success(data.message);
         // Refresh comments after update
-        const comment = comments.find(c => c._id === commentId);
-        if (comment) {
-          fetchComments(comment.targetId, comment.type);
+        if (targetId && type) {
+          fetchComments(targetId, type);
         }
       } else {
         toast.error(data.message);
@@ -521,7 +535,7 @@ export const AppContextProvider = (props) => {
     }
   };
 
-  const deleteComment = async (commentId, token) => {
+  const deleteComment = async (commentId, token, targetId, type) => {
     try {
       const { data } = await axios.delete(
         `${process.env.NEXT_PUBLIC_API_URL}/comments/${commentId}`,
@@ -530,9 +544,8 @@ export const AppContextProvider = (props) => {
       if (data.success) {
         toast.success(data.message);
         // Refresh comments after delete
-        const comment = comments.find(c => c._id === commentId);
-        if (comment) {
-          fetchComments(comment.targetId, comment.type);
+        if (targetId && type) {
+          fetchComments(targetId, type);
         }
       } else {
         toast.error(data.message);

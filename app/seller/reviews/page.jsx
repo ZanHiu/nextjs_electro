@@ -77,7 +77,7 @@ const ReviewList = () => {
                 <th className="w-1/3 px-4 py-3 font-medium truncate">Nội dung</th>
                 <th className="w-1/6 px-4 py-3 font-medium truncate">Đánh giá</th>
                 <th className="w-1/6 px-4 py-3 font-medium truncate">Ngày</th>
-                <th className="w-1/6 px-4 py-3 font-medium truncate max-sm:hidden">Hành động</th>
+                {/* <th className="w-1/6 px-4 py-3 font-medium truncate max-sm:hidden">Hành động</th> */}
               </tr>
             </thead>
             <tbody className="text-sm text-gray-500">
@@ -105,7 +105,7 @@ const ReviewList = () => {
                     </div>
                   </td>
                   <td className="px-4 py-3">{formatDate(review.createdAt)}</td>
-                  <td className="px-4 py-3 max-sm:hidden">
+                  {/* <td className="px-4 py-3 max-sm:hidden">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleDeleteReview(review._id)}
@@ -114,7 +114,7 @@ const ReviewList = () => {
                         <span className="hidden md:block">Xóa</span>
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

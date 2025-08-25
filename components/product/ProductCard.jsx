@@ -74,12 +74,23 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
     }
   };
 
-  // Lấy variant đầu tiên nếu có
+  // Lấy variant đầu tiên nếu có với logic EAV mới
   const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
-  const displayImage = firstVariant && firstVariant.images && firstVariant.images.length > 0 ? firstVariant.images[0] : (product.image && product.image[0]);
-  const displayPrice = firstVariant ? firstVariant.price : product.price;
-  const displayOfferPrice = firstVariant ? firstVariant.offerPrice : product.offerPrice;
-  const displayColor = firstVariant && firstVariant.attributes && firstVariant.attributes.color;
+  
+  // Hiển thị hình ảnh từ EAV model
+  const displayImage = firstVariant && firstVariant.images && firstVariant.images.length > 0 
+    ? firstVariant.images[0] 
+    : (product.image && product.image[0]); // fallback cho dữ liệu cũ
+  
+  // Hiển thị giá từ variant
+  const displayPrice = firstVariant ? firstVariant.price : (product.price || 0);
+  const displayOfferPrice = firstVariant ? firstVariant.offerPrice : (product.offerPrice || 0);
+  
+  // Hiển thị tên màu từ EAV model
+  // const displayColor = firstVariant ? firstVariant.colorName : null;
+  
+  // Hiển thị thuộc tính từ EAV model
+  // const displayAttributes = firstVariant ? firstVariant.attributes : {};
 
   return (
     <div
@@ -121,6 +132,7 @@ const ProductCard = ({ product, onFavoriteRemoved, favoriteProductIds: propFavor
       <p className="w-full text-xs text-gray-500/70 max-sm:hidden truncate">
         {product.description}
       </p>
+      {/* Hiển thị màu sắc nếu có */}
       {/* {displayColor && (
         <p className="text-xs text-gray-500/80">Màu: {displayColor}</p>
       )} */}

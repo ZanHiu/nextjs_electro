@@ -1,6 +1,9 @@
 "use client";
 import React, { useState } from "react";
 import { useAppContext } from "@/context/AppContext";
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import { assets } from "@/assets/assets";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -63,8 +66,8 @@ const AddBlog = () => {
       );
 
       if (data.success) {
-        toast.success("Blog added successfully!");
-        await fetchHomeBlogs(); // Fetch updated blogs
+        toast.success("Thêm bài viết thành công");
+        await fetchHomeBlogs();
         router.push("/");
       }
     } catch (error) {
@@ -73,61 +76,67 @@ const AddBlog = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-semibold mb-6">Add New Blog</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label className="block mb-2">Blog Title</label>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">Content</label>
-          <Editor
-            value={formData.content}
-            onChange={handleContentChange}
-            className="h-60 overflow-y-auto"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-2">Image</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-          {preview && (
-            <div className="mt-4">
-              <Image
-                src={preview}
-                alt="Preview"
-                width={400}
-                height={300}
-                className="rounded"
+    <>
+      <Navbar />
+      <div className="px-6 md:px-16 lg:px-32 py-16 flex flex-col md:flex-row justify-between">
+        <form onSubmit={handleSubmit} className="w-full">
+          <p className="text-2xl md:text-3xl text-gray-500">
+            Thêm{" "}
+            <span className="font-semibold text-orange-600">Bài viết</span>
+          </p>
+          <div className="space-y-3 max-w-sm mt-10">
+            <input
+              className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
+              type="text"
+              name="name"
+              placeholder="Tiêu đề"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+            <div className="w-full">
+              <Editor
+                value={formData.content}
+                onChange={handleContentChange}
+                className="min-h-[120px] focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
               />
             </div>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700"
-        >
-          Add Blog
-        </button>
-      </form>
-    </div>
+            <input
+              className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              required
+            />
+            {preview && (
+              <div className="mt-4">
+                <Image
+                  src={preview}
+                  alt="Preview"
+                  width={200}
+                  height={150}
+                  className="rounded border border-gray-500/30"
+                />
+              </div>
+            )}
+          </div>
+          <button
+            type="submit"
+            className="max-w-sm w-full mt-6 bg-orange-600 text-white py-3 hover:bg-orange-700 uppercase"
+          >
+            Thêm bài viết
+          </button>
+        </form>
+        <Image
+          className="md:mr-16 mt-16 md:mt-0"
+          src={assets.my_blog_image}
+          alt="my_blog_image"
+          width={403}
+          height={356}
+        />
+      </div>
+      <Footer />
+    </>
   );
 };
 

@@ -55,7 +55,7 @@ const Users = () => {
         }
       );
       if (data.success) {
-        toast.success("User role updated successfully");
+        toast.success(data.message);
         fetchUsers();
       }
     } catch (error) {
@@ -76,7 +76,7 @@ const Users = () => {
         }
       );
       if (data.success) {
-        toast.success(isBlocked ? "User blocked successfully" : "User unblocked successfully");
+        toast.success(data.message);
         fetchUsers();
       }
     } catch (error) {

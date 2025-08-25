@@ -90,7 +90,7 @@ const Orders = () => {
       );
 
       if (data.success) {
-        toast.success("Order status updated successfully");
+        toast.success(data.message);
         fetchOrdersByTab(activeTab);
       }
     } catch (error) {
@@ -125,8 +125,8 @@ const Orders = () => {
           <div className="w-full rounded-md bg-white shadow-sm">
             <div className="grid grid-cols-12 gap-4 p-4 font-medium text-gray-700 border-b">
               <div className="col-span-4">Chi tiết sản phẩm</div>
-              <div className="col-span-4">Thông tin khách hàng</div>
-              <div className="col-span-2">Thông tin thanh toán</div>
+              <div className="col-span-3">Thông tin khách hàng</div>
+              <div className="col-span-3">Thông tin thanh toán</div>
               <div className="col-span-2">Trạng thái đơn hàng</div>
             </div>
             {orders.map((order, index) => (
@@ -152,19 +152,19 @@ const Orders = () => {
                   </div>
                 </div>
 
-                <div className="col-span-4 text-sm">
+                <div className="col-span-3 text-sm">
                   <p className="font-medium">{order.address.fullName}</p>
                   <p className="text-gray-500">{order.address.area}</p>
                   <p className="text-gray-500">{`${order.address.city}, ${order.address.state}`}</p>
                   <p className="text-gray-500">{order.address.phoneNumber}</p>
                 </div>
 
-                <div className="col-span-2 text-sm">
+                <div className="col-span-3 text-sm">
                   <p className="font-medium">{formatPrice(order.amount)}{currency}</p>
-                  <p className={`font-bold ${getPaymentStatusColor(order.paymentStatus)}`}>
-                    Thanh toán: {order.paymentStatus}
-                  </p>
                   <p className="text-gray-500">Phương thức: {order.paymentMethod}</p>
+                  <p className={`font-bold ${getPaymentStatusColor(order.paymentStatus)}`}>
+                    Trạng thái: {PaymentStatus[order.paymentStatus]}
+                  </p>
                 </div>
 
                 <div className="col-span-2 text-sm">

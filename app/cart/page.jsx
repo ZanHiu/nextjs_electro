@@ -6,12 +6,13 @@ import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import { useAppContext } from "@/context/AppContext";
 import { formatPrice } from "@/utils/format";
+import { VariantLabels } from "@/utils/constants";
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 
 const Cart = () => {
 
-  const { currency, router, products, cartItems, addToCart, updateCartQuantity, getCartCount } = useAppContext();
+  const { currency, router, products, cartItems, updateCartQuantity, getCartCount } = useAppContext();
 
   return (
     <>
@@ -48,12 +49,29 @@ const Cart = () => {
                   const [productId, variantId] = itemKey.split('|');
                   const product = products.find(product => product._id === productId);
                   if (!product || cartItems[itemKey] <= 0) return null;
-                  // Nếu có variantId, lấy variant tương ứng
+                  
+                  // Lấy variant tương ứng (bắt buộc có với EAV model mới)
                   const variant = variantId ? (product.variants || []).find(v => v._id === variantId) : null;
-                  const displayImage = variant && variant.images && variant.images.length > 0 ? variant.images[0] : (product.image && product.image[0]);
-                  const displayName = product.name + (variant ? ` (${Object.values(variant.attributes).join(', ')})` : '');
-                  const displayPrice = variant ? variant.offerPrice : product.offerPrice;
-                  const displayOriginPrice = variant ? variant.price : product.price;
+                  
+                  // Hiển thị hình ảnh từ EAV model
+                  const displayImage = variant?.images?.[0];
+                  
+                  // Hiển thị tên sản phẩm với màu sắc từ EAV model
+                  const displayName = product.name + (variant?.colorName ? ` (${variant.colorName})` : '');
+                  
+                  // Hiển thị giá từ variant
+                  const displayPrice = variant?.offerPrice || 0;
+                  const displayOriginPrice = variant?.price || 0;
+                  
+                  // Tạo chuỗi thuộc tính từ EAV model
+                  const getAttributeString = () => {
+                    if (!variant?.attributes) return '';
+                    
+                    return Object.entries(variant.attributes)
+                      .map(([key, value]) => `${VariantLabels[key] || key}: ${value}`)
+                      .join(', ');
+                  };
+                  
                   return (
                     <tr key={itemKey}>
                       <td className="flex items-center gap-4 py-4 md:px-4 px-1">
@@ -76,8 +94,8 @@ const Cart = () => {
                         </div>
                         <div className="text-sm hidden md:block">
                           <p className="text-gray-800">{displayName}</p>
-                          {variant && (
-                            <p className="text-xs text-gray-500/80">{Object.entries(variant.attributes).map(([k,v]) => `${k}: ${v}`).join(', ')}</p>
+                          {variant?.attributes && Object.keys(variant.attributes).length > 0 && (
+                            <p className="text-xs text-gray-500/80">{getAttributeString()}</p>
                           )}
                           <button
                             className="text-xs text-orange-600 mt-1"

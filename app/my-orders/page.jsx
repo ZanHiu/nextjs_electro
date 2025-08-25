@@ -11,7 +11,7 @@ import Loading from "@/components/common/Loading";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { formatPrice } from "@/utils/format";
-import { OrderStatus, PaymentStatus } from "@/utils/constants";
+import { OrderStatus, PaymentStatus, VariantLabels } from "@/utils/constants";
 
 const MyOrders = () => {
   const { currency, getToken, user, addToCart, router } = useAppContext();
@@ -87,14 +87,18 @@ const MyOrders = () => {
     }
   };
 
-  const handleReorder = async (order) => {
+    const handleReorder = async (order) => {
     try {
       for (const item of order.items) {
-        await addToCart(item.product._id, item.quantity);
+        const variantId = item.variant ? item.variant._id : null;
+        
+        for (let i = 0; i < item.quantity; i++) {
+          await addToCart(item.product._id, variantId);
+        }
       }
       router.push('/cart');
     } catch (error) {
-      toast.error("Failed to add items to cart");
+      toast.error("Không thể thêm sản phẩm vào giỏ hàng");
     }
   };
 
@@ -128,6 +132,13 @@ const MyOrders = () => {
     } catch (error) {
       toast.error(error.message || "Lỗi khi tạo lại thanh toán");
     }
+  };
+
+  const getAttributeString = (attributes) => {
+  if (!attributes) return "";
+  return Object.entries(attributes)
+    .map(([key, value]) => `${VariantLabels[key] || key}: ${value}`)
+    .join(", ");
   };
 
   return (
@@ -165,12 +176,6 @@ const MyOrders = () => {
               /> */}
               <h3 className="text-xl font-medium text-gray-800 mb-2">Bạn chưa có đơn hàng nào</h3>
               <p className="text-gray-500 mb-6">Hãy bắt đầu mua sắm để xem đơn hàng của bạn ở đây</p>
-              <button
-                onClick={() => router.push('/all-products')}
-                className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition"
-              >
-                Mua sắm ngay
-              </button>
             </div>
           ) : (
             <div className="space-y-4">
@@ -202,37 +207,33 @@ const MyOrders = () => {
                         <h4 className="font-medium text-gray-800 mb-3">Sản phẩm</h4>
                         <div className="space-y-4">
                           {order.items.map((item, idx) => {
-                            // Nếu có variant thì lấy thông tin từ variant, nếu không thì lấy từ product
-                            const hasVariant = !!item.variant;
-                            const displayImage = hasVariant && item.variant.images && item.variant.images.length > 0
-                              ? item.variant.images[0]
-                              : (item.product.image && item.product.image[0]);
-                            const displayName = item.product.name + (hasVariant && item.variant.attributes ? ` (${Object.values(item.variant.attributes).join(', ')})` : '');
-                            const displayPrice = hasVariant ? item.variant.offerPrice : item.product.offerPrice;
-                            const displayOriginPrice = hasVariant ? item.variant.price : item.product.price;
+                            const displayImage = item.variant?.images?.[0]?.url || item.variant?.images?.[0];
+                            const displayName = item.product.name + (item.variant?.colorName ? ` (${item.variant.colorName})` : "");
+                            const displayPrice = item.variant?.offerPrice || item.variant?.price;
+                            const displayOriginPrice = item.variant?.price;
                             return (
-                            <div key={idx} className="flex gap-4">
-                              <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
-                                <Image
+                              <div key={idx} className="flex gap-4">
+                                <div className="w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
+                                  <Image
                                     src={displayImage}
                                     alt={displayName}
-                                  className="w-full h-full object-cover"
-                                  width={80}
-                                  height={80}
-                                />
-                              </div>
-                              <div className="flex-1">
+                                    className="w-full h-full object-cover"
+                                    width={80}
+                                    height={80}
+                                  />
+                                </div>
+                                <div className="flex-1">
                                   <h5 className="font-medium text-gray-800 line-clamp-1">{displayName}</h5>
-                                  {hasVariant && item.variant.attributes && (
+                                  {item.variant?.attributes && Object.keys(item.variant.attributes).length > 0 && (
                                     <p className="text-xs text-gray-500/80 mb-1">
-                                      {Object.entries(item.variant.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')}
+                                      {getAttributeString(item.variant.attributes)}
                                     </p>
                                   )}
-                                <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                                  <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
                                   <div className="flex items-center gap-2">
-                                <p className="text-sm font-medium text-orange-500">
+                                    <p className="text-sm font-medium text-orange-500">
                                       {formatPrice(displayPrice)}{currency}
-                                </p>
+                                    </p>
                                     {displayOriginPrice > displayPrice && (
                                       <span className="text-xs text-gray-400 line-through">{formatPrice(displayOriginPrice)}{currency}</span>
                                     )}

@@ -43,32 +43,6 @@ const ProductList = () => {
     }
   }, [user, getToken]);
 
-  // const handleDelete = async (id) => {
-  //   if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này không?')) {
-  //     try {
-  //       const token = await getToken();
-  //       const { data } = await axios.delete(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/products/delete/${id}`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
-
-  //       if (data.success) {
-  //         toast.success(data.message);
-  //         // Refresh product list after deletion
-  //         fetchSellerProduct();
-  //       } else {
-  //         toast.error(data.message);
-  //       }
-  //     } catch (error) {
-  //       toast.error(error.message);
-  //     }
-  //   }
-  // };
-
   const handleToggleStatus = async (id, currentStatus) => {
     try {
       const token = await getToken();
@@ -159,17 +133,14 @@ const ProductList = () => {
                     <tr>
                       <td colSpan={5} className="p-0 bg-transparent">
                         <div className="p-2">
-                          {/* Hiển thị specs nếu có */}
-                          {product.specs && Object.keys(product.specs).some(key => product.specs[key]) && (
+                          {/* Hiển thị commonAttributes nếu có */}
+                          {product.commonAttributes && Object.keys(product.commonAttributes).length > 0 && (
                             <div className="mb-3 p-3 bg-gray-50 border border-gray-200 rounded">
-                              <div className="font-semibold text-gray-700 mb-1">Thông tin cơ bản:</div>
+                              <div className="font-semibold text-gray-700 mb-1">Thông tin chung:</div>
                               <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1 text-xs text-gray-700">
-                                {product.specs.cpu && <div><span className="font-medium">CPU:</span> {product.specs.cpu}</div>}
-                                {product.specs.vga && <div><span className="font-medium">VGA:</span> {product.specs.vga}</div>}
-                                {product.specs.os && <div><span className="font-medium">Hệ điều hành:</span> {product.specs.os}</div>}
-                                {product.specs.pin && <div><span className="font-medium">Pin:</span> {product.specs.pin}</div>}
-                                {product.specs.manhinh && <div><span className="font-medium">Màn hình:</span> {product.specs.manhinh}</div>}
-                                {product.specs.camera && <div><span className="font-medium">Camera:</span> {product.specs.camera}</div>}
+                                {Object.entries(product.commonAttributes).map(([key, value]) => (
+                                  <div key={key}><span className="font-medium">{key}:</span> {value}</div>
+                                ))}
                               </div>
                             </div>
                           )}
@@ -177,9 +148,8 @@ const ProductList = () => {
                             <thead className="text-left">
                               <tr className="bg-orange-50 text-xs font-semibold text-gray-700 border-b border-orange-200">
                                 <th className="pl-6 py-2 rounded-l-lg">Ảnh</th>
-                                <th className="py-2">Màu</th>
-                                <th className="py-2">Ram</th>
-                                <th className="py-2">Rom</th>
+                                <th className="py-2">Màu sắc</th>
+                                <th className="py-2">Thuộc tính</th>
                                 <th className="py-2">Giá gốc</th>
                                 <th className="py-2 rounded-r-lg">Giá giảm</th>
                               </tr>
@@ -190,24 +160,39 @@ const ProductList = () => {
                                   {/* Ảnh */}
                                   <td className="pl-6 py-3 flex items-center gap-2 rounded-l-lg">
                                     {Array.isArray(variant.images) && variant.images.length > 0 ? (
-                                      variant.images.map((img, i) => (
+                                      variant.images.slice(0, 3).map((img, i) => (
                                         <Image key={i} src={img} alt="variant" width={40} height={40} className="rounded border shadow-sm object-cover bg-white" />
                                       ))
-                                    ) : null}
-                                  </td>
-                                  {/* Màu */}
-                                  <td className="py-3 align-middle">
-                                    {variant.attributes && variant.attributes.color && (
-                                      <span className="px-2 py-0.5 bg-orange-100 border border-orange-300 rounded-full text-orange-700 font-semibold text-xs shadow-sm whitespace-nowrap">{variant.attributes.color}</span>
+                                    ) : (
+                                      <div className="w-10 h-10 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">No img</div>
+                                    )}
+                                    {variant.images && variant.images.length > 3 && (
+                                      <span className="text-xs text-gray-500">+{variant.images.length - 3}</span>
                                     )}
                                   </td>
-                                  {/* Ram */}
+                                  {/* Màu sắc */}
                                   <td className="py-3 align-middle">
-                                    {variant.attributes.ram && <div><span className="font-medium"></span> {variant.attributes.ram}</div>}
+                                    {variant.colorName ? (
+                                      <span className="px-2 py-0.5 bg-blue-100 border border-blue-300 rounded-full text-blue-700 font-semibold text-xs shadow-sm whitespace-nowrap">
+                                        {variant.colorName}
+                                      </span>
+                                    ) : (
+                                      <span className="text-gray-400 text-xs">Không có màu</span>
+                                    )}
                                   </td>
-                                  {/* Rom */}
+                                  {/* Thuộc tính */}
                                   <td className="py-3 align-middle">
-                                    {variant.attributes.rom && <div><span className="font-medium"></span> {variant.attributes.rom}</div>}
+                                    {variant.attributes && Object.keys(variant.attributes).length > 0 ? (
+                                      <div className="flex flex-wrap gap-1">
+                                        {Object.entries(variant.attributes).map(([key, value]) => (
+                                          <span key={key} className="px-2 py-0.5 bg-orange-100 border border-orange-300 rounded-full text-orange-700 font-semibold text-xs shadow-sm whitespace-nowrap">
+                                            {key}: {value}
+                                          </span>
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <span className="text-gray-400 text-xs">Không có thuộc tính riêng</span>
+                                    )}
                                   </td>
                                   {/* Giá gốc */}
                                   <td className="py-3 align-middle">

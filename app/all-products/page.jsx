@@ -10,6 +10,7 @@ import Filter from "@/components/product/Filter";
 import { useRouter } from "next/navigation";
 import ProductToolbar from "@/components/product/ProductToolbar";
 import { SortOptions } from "@/utils/constants";
+import Loading from "@/components/common/Loading";
 
 const getInitialFilter = (key, defaultValue = 'all') => {
   if (typeof window === "undefined") return defaultValue;
@@ -26,12 +27,12 @@ const getInitialPage = () => {
 // Helper function để lấy giá hiển thị từ product variants
 const getDisplayPrice = (product) => {
   const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
-  return firstVariant ? firstVariant.price : product.price;
+  return firstVariant ? firstVariant.price : (product.price || 0);
 };
 
 const getDisplayOfferPrice = (product) => {
   const firstVariant = product.variants && product.variants.length > 0 ? product.variants[0] : null;
-  return firstVariant ? firstVariant.offerPrice : product.offerPrice;
+  return firstVariant ? firstVariant.offerPrice : (product.offerPrice || 0);
 };
 
 const AllProducts = () => {
@@ -166,9 +167,7 @@ const AllProducts = () => {
             
             {/* Loading State */}
             {loading && (
-              <div className="flex justify-center items-center py-20">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
-              </div>
+              <Loading />
             )}
             
             {/* Products Grid */}

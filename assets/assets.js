@@ -10,6 +10,7 @@ import star_icon from "./star_icon.svg";
 import star_dull_icon from "./star_dull_icon.svg";
 import box_image from "./box_image.svg";
 import my_location_image from "./my_location_image.svg";
+import my_blog_image from "./my_blog_image.svg";
 import header_headphone_image from "./header_headphone_image.png";
 import header_playstation_image from "./header_playstation_image.png";
 import header_macbook_image from "./header_macbook_image.png";
@@ -53,6 +54,7 @@ export const assets = {
   star_icon,
   star_dull_icon,
   my_location_image,
+  my_blog_image,
   header_headphone_image,
   header_playstation_image,
   header_macbook_image,

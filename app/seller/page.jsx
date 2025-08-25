@@ -22,6 +22,7 @@ import Footer from "@/components/seller/Footer";
 import axios from 'axios';
 import { useAuth } from '@clerk/nextjs';
 import { toast } from 'react-hot-toast';
+import Loading from "@/components/common/Loading";
 
 ChartJS.register(
   CategoryScale,
@@ -254,9 +255,7 @@ const DashBoard = () => {
 
   if (loading) {
     return (
-      <div className="flex-1 h-screen flex items-center justify-center">
-        <div className="text-lg">Đang tải dữ liệu...</div>
-      </div>
+      <Loading />
     );
   }
 

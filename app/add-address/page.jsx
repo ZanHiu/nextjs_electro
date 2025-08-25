@@ -50,14 +50,14 @@ const AddAddress = () => {
       <div className="px-6 md:px-16 lg:px-32 py-16 flex flex-col md:flex-row justify-between">
         <form onSubmit={onSubmitHandler} className="w-full">
           <p className="text-2xl md:text-3xl text-gray-500">
-            Add Shipping{" "}
-            <span className="font-semibold text-orange-600">Address</span>
+            Thêm{" "}
+            <span className="font-semibold text-orange-600">Địa Chỉ</span>
           </p>
           <div className="space-y-3 max-w-sm mt-10">
             <input
               className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
               type="text"
-              placeholder="Full name"
+              placeholder="Họ và tên"
               onChange={(e) =>
                 setAddress({ ...address, fullName: e.target.value })
               }
@@ -66,7 +66,7 @@ const AddAddress = () => {
             <input
               className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
               type="text"
-              placeholder="Phone number"
+              placeholder="Số điện thoại"
               onChange={(e) =>
                 setAddress({ ...address, phoneNumber: e.target.value })
               }
@@ -75,7 +75,7 @@ const AddAddress = () => {
             <input
               className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
               type="text"
-              placeholder="Pin code"
+              placeholder="Mã bưu chính"
               onChange={(e) =>
                 setAddress({ ...address, pincode: e.target.value })
               }
@@ -85,7 +85,7 @@ const AddAddress = () => {
               className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500 resize-none"
               type="text"
               rows={4}
-              placeholder="Address (Area and Street)"
+              placeholder="Địa chỉ (Quận/Huyện, đường)"
               onChange={(e) => setAddress({ ...address, area: e.target.value })}
               value={address.area}
             ></textarea>
@@ -93,7 +93,7 @@ const AddAddress = () => {
               <input
                 className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
                 type="text"
-                placeholder="City/District/Town"
+                placeholder="Thành phố/Quận/Huyện"
                 onChange={(e) =>
                   setAddress({ ...address, city: e.target.value })
                 }
@@ -102,7 +102,7 @@ const AddAddress = () => {
               <input
                 className="px-2 py-2.5 focus:border-orange-500 transition border border-gray-500/30 rounded outline-none w-full text-gray-500"
                 type="text"
-                placeholder="State"
+                placeholder="Tỉnh/Thành phố"
                 onChange={(e) =>
                   setAddress({ ...address, state: e.target.value })
                 }
@@ -114,13 +114,15 @@ const AddAddress = () => {
             type="submit"
             className="max-w-sm w-full mt-6 bg-orange-600 text-white py-3 hover:bg-orange-700 uppercase"
           >
-            Save address
+            Thêm địa chỉ
           </button>
         </form>
         <Image
           className="md:mr-16 mt-16 md:mt-0"
           src={assets.my_location_image}
           alt="my_location_image"
+          width={403}
+          height={356}
         />
       </div>
       <Footer />
