@@ -10,6 +10,7 @@ const HomeVouchers = () => {
   const { getToken, currency } = useAppContext();
   const [publicVouchers, setPublicVouchers] = useState([]);
   const [loadingVouchers, setLoadingVouchers] = useState(true);
+  const [userCoupons, setUserCoupons] = useState([]);
 
   const fetchPublicVouchers = async () => {
     try {
@@ -22,20 +23,52 @@ const HomeVouchers = () => {
     }
   };
 
+  const fetchUserCoupons = async () => {
+    try {
+      const token = await getToken();
+      if (!token) return; // Nếu chưa đăng nhập thì không gọi API
+      
+      const { data } = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user-coupons/my`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (data.success) {
+        setUserCoupons(data.userCoupons);
+      }
+    } catch (err) {
+      // ignore - có thể user chưa đăng nhập
+    }
+  };
+
   const handleClaim = async (couponId) => {
     try {
       const token = await getToken();
       const { data } = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user-coupons/claim`, { couponId }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      if (data.success) toast.success(data.message);
-      else toast.error(data.message);
+      if (data.success) {
+        toast.success(data.message);
+        // Refresh danh sách voucher đã nhận
+        await fetchUserCoupons();
+      } else {
+        toast.error(data.message);
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || err.message);
     }
   };
 
-  useEffect(() => { fetchPublicVouchers(); }, []);
+  // Kiểm tra xem user đã nhận voucher này chưa
+  const isVoucherClaimed = (couponId) => {
+    return userCoupons.some(uc => 
+      uc.couponId._id === couponId && 
+      (uc.status === 'RECEIVED' || uc.status === 'USED')
+    );
+  };
+
+  useEffect(() => { 
+    fetchPublicVouchers();
+    fetchUserCoupons();
+  }, []);
 
   return (
     <div className="mt-14 pb-14">
@@ -49,43 +82,51 @@ const HomeVouchers = () => {
         <div className="text-center py-8">Hiện chưa có voucher nào.</div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 px-2 md:px-0">
-          {publicVouchers.map(v => (
-            <div
-              key={v._id}
-              className="flex bg-white rounded-xl border border-orange-200 shadow-sm hover:shadow-lg transition p-0 overflow-hidden h-full"
-            >
-              {/* Icon bên trái */}
-              <div className="flex items-center justify-center bg-orange-50 px-4 py-6">
-                <ConfirmationNumberOutlinedIcon sx={{ fontSize: 40 }} />
-              </div>
-              {/* Nội dung voucher */}
-              <div className="flex flex-col flex-1 justify-between p-4">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-lg text-orange-600 tracking-widest">{v.code}</span>
-                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${v.type === 'PERCENTAGE' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
-                      {v.type === 'PERCENTAGE' ? 'Phần trăm' : 'Tiền mặt'}
-                    </span>
+          {publicVouchers.map(v => {
+            const isClaimed = isVoucherClaimed(v._id);
+            return (
+              <div
+                key={v._id}
+                className="flex bg-white rounded-xl border border-orange-200 shadow-sm hover:shadow-lg transition p-0 overflow-hidden h-full"
+              >
+                {/* Icon bên trái */}
+                <div className="flex items-center justify-center bg-orange-50 px-4 py-6">
+                  <ConfirmationNumberOutlinedIcon sx={{ fontSize: 40 }} />
+                </div>
+                {/* Nội dung voucher */}
+                <div className="flex flex-col flex-1 justify-between p-4">
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-lg text-orange-600 tracking-widest">{v.code}</span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-semibold ${v.type === 'PERCENTAGE' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
+                        {v.type === 'PERCENTAGE' ? 'Phần trăm' : 'Tiền mặt'}
+                      </span>
+                    </div>
+                    <div className="text-gray-900 font-semibold text-base mb-1">
+                      {v.type === 'PERCENTAGE' ? `${v.value}%` : `${formatPrice(v.value)}${currency}`} giảm cho đơn từ {formatPrice(v.minOrderAmount)}{currency}
+                    </div>
+                    <div className="flex flex-wrap gap-x-2 text-xs text-gray-500 mb-1">
+                      <span>Hiệu lực: {formatDate(v.startDate)} - {formatDate(v.endDate)}</span>
+                      <span>• Số lượt tối đa: {v.maxUses}</span>
+                    </div>
                   </div>
-                  <div className="text-gray-900 font-semibold text-base mb-1">
-                    {v.type === 'PERCENTAGE' ? `${v.value}%` : `${formatPrice(v.value)}${currency}`} giảm cho đơn từ {formatPrice(v.minOrderAmount)}{currency}
-                  </div>
-                  <div className="flex flex-wrap gap-x-2 text-xs text-gray-500 mb-1">
-                    <span>Hiệu lực: {formatDate(v.startDate)} - {formatDate(v.endDate)}</span>
-                    <span>• Số lượt tối đa: {v.maxUses}</span>
+                  <div className="flex justify-end mt-2">
+                    <button
+                      className={`px-5 py-2 rounded-lg font-semibold shadow transition whitespace-nowrap ${
+                        isClaimed 
+                          ? 'bg-gray-400 text-white cursor-not-allowed' 
+                          : 'bg-orange-600 text-white hover:bg-orange-700'
+                      }`}
+                      onClick={() => !isClaimed && handleClaim(v._id)}
+                      disabled={isClaimed}
+                    >
+                      {isClaimed ? 'Đã nhận' : 'Nhận mã'}
+                    </button>
                   </div>
                 </div>
-                <div className="flex justify-end mt-2">
-                  <button
-                    className="px-5 py-2 bg-orange-600 text-white rounded-lg font-semibold shadow hover:bg-orange-700 transition whitespace-nowrap"
-                    onClick={() => handleClaim(v._id)}
-                  >
-                    Nhận mã
-                  </button>
-                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
