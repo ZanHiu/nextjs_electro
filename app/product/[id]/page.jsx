@@ -51,6 +51,7 @@ const Product = () => {
       toast.error(error.message);
     }
   };
+  
   // Khi chọn thuộc tính (storage, ram, ...)
   const handleSelectAttribute = (attrName, value) => {
     const newAttrs = { ...selectedAttributes, [attrName]: value };
